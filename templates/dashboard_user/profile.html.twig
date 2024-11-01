@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'home/base_home.html.twig' %}
 
 {% block title %}Profil de {{ app.user.username }}{% endblock %}
 
@@ -28,13 +28,13 @@
             <!-- Date de naissance -->
             <div>
                 <label class="text-gray-600 font-semibold">Date de naissance :</label>
-                <p class="text-gray-800">{{ app.user.birthday|date('d/m/Y') }}</p>
+                <p class="text-gray-800">{# {{ app.user.birthday|date('Y/m/d') }} #}</p>
             </div>
 
             <!-- Date de création du compte -->
             <div>
                 <label class="text-gray-600 font-semibold">Date de création du compte :</label>
-                <p class="text-gray-800">{{ app.user.created_at|date('d/m/Y') }}</p>
+                <p class="text-gray-800">{#{{ app.user.created_at|date('Y/m/d') }} #}</p>
             </div>
 
             <!-- Statut de vérification -->
@@ -52,8 +52,8 @@
 
         <!-- Boutons de modification du profil -->
         <div class="mt-8 flex space-x-4">
-            <a href="{{ path('app_profile_edit') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Modifier le profil</a>
-            <a href="{{ path('app_password_change') }}" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Changer de mot de passe</a>
+            <a href="{# {{ path('app_profile_edit') }} #}" class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-blue-600">Modifier le profil</a>
+            <a href="{# {{ path('app_password_change') }} #}" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-gray-600">Changer de mot de passe</a>
         </div>
     </div>
 {% endblock %}

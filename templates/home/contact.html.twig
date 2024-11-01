@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'home/base_home.html.twig' %}
 
 {% block title %}Contact{% endblock %}
 
@@ -10,7 +10,7 @@
             Vous avez des questions, des suggestions ou des préoccupations ? N'hésitez pas à nous contacter. Notre équipe est là pour vous aider.
         </p>
 
-        <form method="post" action="{{ path('contact_submit') }}" class="space-y-4">
+        <form method="post" action="#" class="space-y-4">
             <div>
                 <label for="name" class="block text-gray-700 font-semibold">Nom :</label>
                 <input type="text" id="name" name="name" class="w-full border border-gray-300 rounded-lg p-2">

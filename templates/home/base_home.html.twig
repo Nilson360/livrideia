@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Welcome!{% endblock %}</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
     {% block stylesheets %}
         {{ encore_entry_link_tags('app') }}
     {% endblock %}
@@ -29,11 +28,9 @@
             </div>
             <div class="flex items-center space-x-4">
                 {% if app.user %}
-                    <!-- Affiche le nom d'utilisateur et un bouton de déconnexion si connecté -->
                     <span class="text-gray-700">Bienvenue, {{ app.user.username }}</span>
                     <a href="{{ path('app_logout') }}" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Déconnexion</a>
                 {% else %}
-                    <!-- Affiche les boutons "Créer un compte" et "Se connecter" si non connecté -->
                     <a href="{{ path('app_register') }}" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Créer un compte</a>
                     <a href="{{ path('app_login') }}" class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">Se connecter</a>
                 {% endif %}
@@ -43,16 +40,12 @@
 </nav>
 
 <!-- Contenu principal de la page -->
-<div class="flex justify-center pt-16 flex-grow">
-    <div class="max-w-7xl w-full flex">
-        {% block sidebar_left %}{% endblock %}
-        {% block main_content %}{% endblock %}
-        {% block sidebar_right %}{% endblock %}
-    </div>
-</div>
+<main class="pt-16 flex-grow">
+    {% block body %}{% endblock %}
+</main>
 
 <!-- Footer -->
-<footer class="bg-gray-800 text-gray-300 py-8 mt-auto">
+<footer class="bg-gray-800 text-gray-300 py-8">
     <div class="max-w-7xl mx-auto px-4">
         <div class="flex justify-between items-center">
             <div>
