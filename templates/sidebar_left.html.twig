@@ -1,0 +1,83 @@
+{% block sidebar_left %}
+    <div class="w-1/4 p-4 hidden lg:block">
+
+        <!-- Section Livres de la semaine -->
+        <div class="bg-white shadow rounded-lg p-4 mb-6">
+            <h3 class="font-bold text-lg mb-4 text-green-500">Livres de la semaine</h3>
+            <ul>
+                <li class="mb-4">
+                    <a href="/livres/semaine1" class="flex items-start">
+                        <img src="/images/livres/semaine1.jpg" alt="Livre de la semaine 1" class="w-12 h-16 mr-3 rounded">
+                        <div>
+                            <p class="text-green-500 font-semibold hover:underline">Titre du Livre 1</p>
+                            <p class="text-gray-500 text-sm">Auteur</p>
+                        </div>
+                    </a>
+                </li>
+                <li class="mb-4">
+                    <a href="/livres/semaine2" class="flex items-start">
+                        <img src="/images/livres/semaine2.jpg" alt="Livre de la semaine 2" class="w-12 h-16 mr-3 rounded">
+                        <div>
+                            <p class="text-green-500 font-semibold hover:underline">Titre du Livre 2</p>
+                            <p class="text-gray-500 text-sm">Auteur</p>
+                        </div>
+                    </a>
+                </li>
+                <!-- Ajoutez d'autres livres ici -->
+            </ul>
+        </div>
+
+        <!-- Section Suggestions de livres pour toi -->
+        <div class="bg-white shadow rounded-lg p-4 mb-6">
+            <h3 class="font-bold text-lg mb-4 text-green-500">Nos suggestions pour toi</h3>
+            <ul>
+                <li class="mb-4">
+                    <a href="/livres/suggestion1" class="flex items-start">
+                        <img src="/images/livres/suggestion1.jpg" alt="Suggestion de livre 1" class="w-12 h-16 mr-3 rounded">
+                        <div>
+                            <p class="text-green-500 font-semibold hover:underline">Titre du Livre Suggestion 1</p>
+                            <p class="text-gray-500 text-sm">Auteur</p>
+                        </div>
+                    </a>
+                </li>
+                <li class="mb-4">
+                    <a href="/livres/suggestion2" class="flex items-start">
+                        <img src="/images/livres/suggestion2.jpg" alt="Suggestion de livre 2" class="w-12 h-16 mr-3 rounded">
+                        <div>
+                            <p class="text-green-500 font-semibold hover:underline">Titre du Livre Suggestion 2</p>
+                            <p class="text-gray-500 text-sm">Auteur</p>
+                        </div>
+                    </a>
+                </li>
+                <!-- Ajoutez d'autres suggestions ici -->
+            </ul>
+        </div>
+
+        <!-- Section Dernières sorties -->
+        <div class="bg-white shadow rounded-lg p-4">
+            <h3 class="font-bold text-lg mb-4 text-green-500">Dernières sorties</h3>
+            <ul>
+                <li class="mb-4">
+                    <a href="/livres/sortie1" class="flex items-start">
+                        <img src="/images/livres/sortie1.jpg" alt="Dernière sortie 1" class="w-12 h-16 mr-3 rounded">
+                        <div>
+                            <p class="text-green-500 font-semibold hover:underline">Titre du Livre Sortie 1</p>
+                            <p class="text-gray-500 text-sm">Auteur</p>
+                        </div>
+                    </a>
+                </li>
+                <li class="mb-4">
+                    <a href="/livres/sortie2" class="flex items-start">
+                        <img src="/images/livres/sortie2.jpg" alt="Dernière sortie 2" class="w-12 h-16 mr-3 rounded">
+                        <div>
+                            <p class="text-green-500 font-semibold hover:underline">Titre du Livre Sortie 2</p>
+                            <p class="text-gray-500 text-sm">Auteur</p>
+                        </div>
+                    </a>
+                </li>
+                <!-- Ajoutez d'autres sorties ici -->
+            </ul>
+        </div>
+
+    </div>
+{% endblock %}

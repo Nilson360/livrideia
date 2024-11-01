@@ -1,0 +1,78 @@
+{% extends 'auth/base_auth.html.twig' %}
+
+{% block title %}Register{% endblock %}
+
+{% block body %}
+    <h1 class="text-2xl font-bold text-gray-700 mb-6">Register</h1>
+
+    <form method="post" class="space-y-4">
+        {# Affichage des erreurs globales du formulaire #}
+        {% for error in registrationForm.vars.errors %}
+            <div class="bg-red-500 text-white text-sm p-2 rounded">{{ error.message }}</div>
+        {% endfor %}
+
+        <div class="mb-4">
+            <label for="username" class="block text-black font-semibold">Username</label>
+            {{ form_widget(registrationForm.username, {
+                'attr': {'class': 'w-full border border-gray-300 rounded-lg p-2 text-black focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 shadow-sm'}
+            }) }}
+            {{ form_errors(registrationForm.username) }}
+        </div>
+
+        <div class="mb-4">
+            <label for="email" class="block text-black font-semibold">Email</label>
+            {{ form_widget(registrationForm.email, {
+                'attr': {'class': 'w-full border border-gray-300 rounded-lg p-2 text-black focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 shadow-sm'}
+            }) }}
+            {{ form_errors(registrationForm.email) }}
+        </div>
+
+        <div class="mb-4">
+            <label for="fullName" class="block text-black font-semibold">Full Name</label>
+            {{ form_widget(registrationForm.fullName, {
+                'attr': {'class': 'w-full border border-gray-300 rounded-lg p-2 text-black focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 shadow-sm'}
+            }) }}
+            {{ form_errors(registrationForm.fullName) }}
+        </div>
+
+        <div class="mb-4">
+            <label for="birthday" class="block text-black font-semibold">Date of Birth</label>
+            {{ form_widget(registrationForm.birthday, {
+                'attr': {'class': 'w-full border border-gray-300 rounded-lg p-2 text-black focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 shadow-sm'}
+            }) }}
+            {{ form_errors(registrationForm.birthday) }}
+        </div>
+
+        <div class="mb-4">
+            <label for="plainPassword" class="block text-black font-semibold">Password</label>
+            {{ form_widget(registrationForm.plainPassword, {
+                'attr': {'class': 'w-full border border-gray-300 rounded-lg p-2 text-black focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 shadow-sm'}
+            }) }}
+            <small class="text-gray-500 block mt-1">Minimum 6 characters.</small>
+            {{ form_errors(registrationForm.plainPassword) }}
+        </div>
+
+        <div class="mb-4 flex items-start">
+            {{ form_widget(registrationForm.agreeTerms, {'attr': {'class': 'h-4 w-4 text-green-500 border-gray-300 rounded'}}) }}
+            <label for="agreeTerms" class="ml-2 text-black">I agree to the
+                <button type="button" class="text-green-500 underline" onclick="toggleTerms()">terms and conditions</button>.
+            </label>
+            {{ form_errors(registrationForm.agreeTerms) }}
+        </div>
+
+        <div id="termsContent" class="hidden bg-gray-100 p-4 rounded border border-gray-300 text-sm text-gray-700">
+            <p>Here are the terms and conditions of using our service...</p>
+            <p>Please read them carefully before you proceed.</p>
+        </div>
+        {{ form_rest(registrationForm) }}
+        <button type="submit" class="w-full bg-green-500 text-white py-2 rounded-lg font-semibold hover:bg-green-600 transition duration-200">
+            Register
+        </button>
+    </form>
+
+    <script>
+        function toggleTerms() {
+            document.getElementById('termsContent').classList.toggle('hidden');
+        }
+    </script>
+{% endblock %}

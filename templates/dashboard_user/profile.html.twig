@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profil de {{ app.user.username }}{% endblock %}
+
+{% block body %}
+    <div class="max-w-4xl mx-auto mt-8 p-6 bg-white shadow-lg rounded-lg">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Profil de {{ app.user.username }}</h1>
+
+        <div class="space-y-4">
+            <!-- Nom d'utilisateur -->
+            <div>
+                <label class="text-gray-600 font-semibold">Nom d'utilisateur :</label>
+                <p class="text-gray-800">{{ app.user.username }}</p>
+            </div>
+
+            <!-- Email -->
+            <div>
+                <label class="text-gray-600 font-semibold">Email :</label>
+                <p class="text-gray-800">{{ app.user.email }}</p>
+            </div>
+
+            <!-- Nom complet -->
+            <div>
+                <label class="text-gray-600 font-semibold">Nom complet :</label>
+                <p class="text-gray-800">{{ app.user.fullName }}</p>
+            </div>
+
+            <!-- Date de naissance -->
+            <div>
+                <label class="text-gray-600 font-semibold">Date de naissance :</label>
+                <p class="text-gray-800">{{ app.user.birthday|date('d/m/Y') }}</p>
+            </div>
+
+            <!-- Date de création du compte -->
+            <div>
+                <label class="text-gray-600 font-semibold">Date de création du compte :</label>
+                <p class="text-gray-800">{{ app.user.created_at|date('d/m/Y') }}</p>
+            </div>
+
+            <!-- Statut de vérification -->
+            <div>
+                <label class="text-gray-600 font-semibold">Statut de vérification :</label>
+                <p class="text-gray-800">
+                    {% if app.user.isVerified %}
+                        <span class="text-green-500">Vérifié</span>
+                    {% else %}
+                        <span class="text-red-500">Non vérifié</span>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+
+        <!-- Boutons de modification du profil -->
+        <div class="mt-8 flex space-x-4">
+            <a href="{{ path('app_profile_edit') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Modifier le profil</a>
+            <a href="{{ path('app_password_change') }}" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Changer de mot de passe</a>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'auth/base_auth.html.twig' %}
+
+{% block title %}Log in{% endblock %}
+
+{% block body %}
+    <h1 class="text-2xl font-bold text-gray-700 mb-4">Log in</h1>
+
+    <form method="post">
+        {% if error %}
+            <div class="bg-red-500 text-white text-sm p-2 rounded mb-4">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+        {% endif %}
+
+        {% if app.user %}
+            <div class="mb-4">
+                You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}" class="text-green-500">Logout</a>
+            </div>
+        {% endif %}
+
+        <div class="mb-4">
+            <label for="username" class="block text-gray-700">Username</label>
+            <input type="text" value="{{ last_username }}" name="_username" id="username" class="w-full border-gray-300 rounded-lg p-2 text-black focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 shadow-sm" autocomplete="username" required autofocus>
+        </div>
+        <div class="mb-4">
+            <label for="password" class="block text-gray-700">Password</label>
+            <input type="password" name="_password" id="password" class="w-full border-gray-300 rounded-lg p-2 text-black focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 shadow-sm" autocomplete="current-password" required>
+        </div>
+
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+        <div class="flex items-center mb-6">
+            <input type="checkbox" name="_remember_me" id="_remember_me" class="h-5 w-5 text-green-500 border-gray-300 rounded">
+            <label for="_remember_me" class="ml-2 text-gray-700">Remember me</label>
+        </div>
+
+        <button class="w-full bg-green-500 text-white py-2 rounded-lg font-semibold hover:bg-green-600 transition duration-200 shadow-lg">
+            Sign in
+        </button>
+    </form>
+{% endblock %}
