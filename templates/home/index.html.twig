@@ -1,15 +1,16 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Accueil{% endblock %}
+{% block title %}Page d'accueil{% endblock %}
 
 {% block sidebar_left %}
-    {% include 'sidebar_left.html.twig' %}
+    {% include 'home_page_components/sidebar_left.html.twig' %}
 {% endblock %}
 
+
 {% block main_content %}
-    {% include 'main_content.html.twig' %}
+    {% include 'home_page_components/main_content.html.twig' %}
 {% endblock %}
 
 {% block sidebar_right %}
-    {% include 'sidebar_right.html.twig' %}
+    {% include 'home_page_components/sidebar_right.html.twig' %}
 {% endblock %}

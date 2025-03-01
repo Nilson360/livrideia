@@ -15,28 +15,70 @@
     <div class="max-w-7xl mx-auto px-4">
         <div class="flex justify-between items-center h-16">
             <div class="flex-shrink-0">
-                <a href="{{ path('app_home') }}" class="text-xl font-bold text-green-500">{% block site_name %}Livrideia{% endblock %}</a>
+                <a href="{{ path('app_home') }}" class="text-xl font-bold text-green-500">
+                    {% block site_name %}Livrideia{% endblock %}
+                </a>
             </div>
-            <div class="flex items-center space-x-4">
-                <a href="{{ path('app_home') }}" class="text-gray-700 hover:text-green-500">Accueil</a>
-                <a href="#" class="text-gray-700 hover:text-green-500">Explorer</a>
-                <a href="#" class="text-gray-700 hover:text-green-500">Notifications</a>
-                <a href="#" class="text-gray-700 hover:text-green-500">Messages</a>
+            <div class="hidden md:flex md:items-center md:space-x-4">
+                <a href="{{ path('app_home') }}" class="text-gray-700 hover:text-green-500 text-sm">Accueil</a>
+                <a href="#" class="text-gray-700 hover:text-green-500 text-sm">Notifications</a>
+                <a href="#" class="text-gray-700 hover:text-green-500 text-sm">Messages</a>
                 {% if app.user %}
-                    <a href="{{ path('dashboard-user-profile') }}" class="text-gray-700 hover:text-green-500">Profil</a>
+                    <a href="{{ path('dashboard-user-profile') }}" class="text-gray-700 hover:text-green-500 text-sm">Profil</a>
                 {% endif %}
             </div>
-            <div class="flex items-center space-x-4">
+            <div class="hidden md:flex md:items-center md:space-x-4">
                 {% if app.user %}
-                    <span class="text-gray-700">Bienvenue, {{ app.user.username }}</span>
-                    <a href="{{ path('app_logout') }}" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Déconnexion</a>
+                    <span class="text-gray-700 text-sm">Bienvenue, {{ app.user.username }}</span>
+                    <a href="{{ path('app_logout') }}" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 text-sm">Déconnexion</a>
                 {% else %}
-                    <a href="{{ path('app_register') }}" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Créer un compte</a>
-                    <a href="{{ path('app_login') }}" class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">Se connecter</a>
+                    <a href="{{ path('app_register') }}" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 text-sm">Créer un compte</a>
+                    <a href="{{ path('app_login') }}" class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 text-sm">Se connecter</a>
                 {% endif %}
+            </div>
+            <!-- Bouton menu mobile (affiché sur sm et moins) -->
+            <div class="flex items-center md:hidden">
+                <button id="mobile-menu-button" class="p-2 rounded-md text-gray-700 hover:text-green-500 focus:outline-none">
+                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
             </div>
         </div>
     </div>
+    <!-- Menu mobile -->
+    <div id="mobile-menu" class="hidden md:hidden">
+        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            <a href="{{ path('app_home') }}" class="block text-gray-700 hover:text-green-500 text-base">Accueil</a>
+            <a href="#" class="block text-gray-700 hover:text-green-500 text-base">Explorer</a>
+            <a href="#" class="block text-gray-700 hover:text-green-500 text-base">Notifications</a>
+            <a href="#" class="block text-gray-700 hover:text-green-500 text-base">Messages</a>
+            {% if app.user %}
+                <a href="{{ path('dashboard-user-profile') }}" class="block text-gray-700 hover:text-green-500 text-base">Profil</a>
+            {% endif %}
+        </div>
+        <div class="border-t border-gray-200 pt-4 pb-3">
+            {% if app.user %}
+                <div class="px-5">
+                    <span class="block text-gray-700 text-base">Bienvenue, {{ app.user.username }}</span>
+                </div>
+                <div class="mt-3 px-2 space-y-1">
+                    <a href="{{ path('app_logout') }}" class="block bg-red-500 text-white px-4 py-2 rounded text-base text-center hover:bg-red-600">Déconnexion</a>
+                </div>
+            {% else %}
+                <div class="mt-3 px-2 space-y-1">
+                    <a href="{{ path('app_register') }}" class="block bg-green-500 text-white px-4 py-2 rounded text-base text-center hover:bg-green-600">Créer un compte</a>
+                    <a href="{{ path('app_login') }}" class="block bg-orange-500 text-white px-4 py-2 rounded text-base text-center hover:bg-orange-600">Se connecter</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <script>
+        document.getElementById('mobile-menu-button').addEventListener('click', function () {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
 </nav>
 
 <!-- Contenu principal de la page -->
@@ -47,16 +89,16 @@
 <!-- Footer -->
 <footer class="bg-gray-800 text-gray-300 py-8">
     <div class="max-w-7xl mx-auto px-4">
-        <div class="flex justify-between items-center">
+        <div class="flex flex-col sm:flex-row justify-between items-center">
             <div>
                 <p class="text-lg font-bold text-green-500">Livrideia</p>
                 <p class="text-sm">© {{ "now"|date("Y") }} Livrideia. Tous droits réservés.</p>
             </div>
-            <div class="flex space-x-4">
-                <a href="{{ path('app_terms_of_service') }}" class="text-gray-300 hover:text-green-500">Conditions d'utilisation</a>
-                <a href="{{ path('app_privacy_policy') }}" class="text-gray-300 hover:text-green-500">Politique de confidentialité</a>
-                <a href="{{ path('app_contact') }}" class="text-gray-300 hover:text-green-500">Contact</a>
-                <a href="{{ path('app_about') }}" class="text-gray-300 hover:text-green-500">À propos</a>
+            <div class="flex flex-wrap gap-4 mt-4 sm:mt-0">
+                <a href="{{ path('app_terms_of_service') }}" class="text-gray-300 hover:text-green-500 text-sm">Conditions d'utilisation</a>
+                <a href="{{ path('app_privacy_policy') }}" class="text-gray-300 hover:text-green-500 text-sm">Politique de confidentialité</a>
+                <a href="{{ path('app_contact') }}" class="text-gray-300 hover:text-green-500 text-sm">Contact</a>
+                <a href="{{ path('app_about') }}" class="text-gray-300 hover:text-green-500 text-sm">À propos</a>
             </div>
         </div>
     </div>

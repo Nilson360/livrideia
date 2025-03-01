@@ -1,59 +1,97 @@
-{% extends 'base_home.html.twig' %}
+{% extends 'home/base_home.html.twig' %}
 
-{% block title %}Profil de {{ app.user.username }}{% endblock %}
+{% block title %}Profil de {{ user.username }}{% endblock %}
 
 {% block body %}
-    <div class="max-w-4xl mx-auto mt-8 p-6 bg-white shadow-lg rounded-lg">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6">Profil de {{ app.user.username }}</h1>
-
-        <div class="space-y-4">
-            <!-- Nom d'utilisateur -->
-            <div>
-                <label class="text-gray-600 font-semibold">Nom d'utilisateur :</label>
-                <p class="text-gray-800">{{ app.user.username }}</p>
+    <div class="max-w-5xl mx-auto mt-8 mb-16">
+        <!-- Image de couverture -->
+        <div class="hidden sm:block h-56 bg-gray-300 rounded-t-lg relative">
+            <!-- Optionnel : insérer ici une image de couverture -->
+        </div>
+        <!-- Section Profil -->
+        <div class="bg-white rounded-b-lg shadow-lg p-6">
+            <div class="flex flex-col sm:flex-row items-center">
+                <div class="w-32 h-32 rounded-full bg-gray-200 border-4 border-white overflow-hidden">
+                    <!-- Optionnel : photo de profil -->
+                </div>
+                <div class="mt-4 sm:mt-0 sm:ml-6 text-center sm:text-left">
+                    <h1 class="text-3xl font-bold text-gray-800">{{ user.username }}</h1>
+                    <p class="text-gray-600">{{ user.fullName }}</p>
+                    <div class="mt-4 flex flex-col sm:flex-row gap-2 sm:gap-4 justify-center sm:justify-start">
+                        <a href="{{ path('dashboard-user-profile-edit') }}"
+                           class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 text-sm">
+                            Modifier le profil
+                        </a>
+                        <a href="{{ path('dashboard-user-profile-change-password') }}"
+                           class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 text-sm">
+                            Changer de mot de passe
+                        </a>
+                    </div>
+                </div>
             </div>
 
-            <!-- Email -->
-            <div>
-                <label class="text-gray-600 font-semibold">Email :</label>
-                <p class="text-gray-800">{{ app.user.email }}</p>
-            </div>
-
-            <!-- Nom complet -->
-            <div>
-                <label class="text-gray-600 font-semibold">Nom complet :</label>
-                <p class="text-gray-800">{{ app.user.fullName }}</p>
-            </div>
-
-            <!-- Date de naissance -->
-            <div>
-                <label class="text-gray-600 font-semibold">Date de naissance :</label>
-                <p class="text-gray-800">{# {{ app.user.birthday|date('Y/m/d') }} #}</p>
-            </div>
-
-            <!-- Date de création du compte -->
-            <div>
-                <label class="text-gray-600 font-semibold">Date de création du compte :</label>
-                <p class="text-gray-800">{#{{ app.user.created_at|date('Y/m/d') }} #}</p>
-            </div>
-
-            <!-- Statut de vérification -->
-            <div>
-                <label class="text-gray-600 font-semibold">Statut de vérification :</label>
-                <p class="text-gray-800">
-                    {% if app.user.isVerified %}
-                        <span class="text-green-500">Vérifié</span>
-                    {% else %}
-                        <span class="text-red-500">Non vérifié</span>
-                    {% endif %}
-                </p>
+            <!-- Onglets de navigation (Publications, Photos, À propos) -->
+            <div class="mt-6 border-b border-gray-200">
+                <ul class="flex justify-center space-x-6">
+                    <li>
+                        <a href="#" class="pb-2 border-b-2 border-blue-500 font-semibold text-gray-800 text-sm">
+                            Publications
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="pb-2 text-gray-500 hover:text-gray-700 text-sm">
+                            Photos
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="pb-2 text-gray-500 hover:text-gray-700 text-sm">
+                            À propos
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
 
-        <!-- Boutons de modification du profil -->
-        <div class="mt-8 flex space-x-4">
-            <a href="{# {{ path('app_profile_edit') }} #}" class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-blue-600">Modifier le profil</a>
-            <a href="{# {{ path('app_password_change') }} #}" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-gray-600">Changer de mot de passe</a>
+        <!-- Contenu principal : deux colonnes responsive -->
+        <div class="mt-6 flex flex-col md:flex-row gap-6">
+            <!-- Colonne gauche (Informations) -->
+            <div class="md:w-1/3 space-y-4">
+                <div class="bg-white p-4 rounded-lg shadow">
+                    <h2 class="text-xl font-semibold mb-4">Informations</h2>
+                    <p><strong>Email : </strong> {{ user.email }}</p>
+                    <p><strong>Date de naissance : </strong>
+                        {% if user.birthday %}
+                            {{ user.birthday|date('d/m/Y') }}
+                        {% else %}
+                            Non renseignée
+                        {% endif %}
+                    </p>
+                    <p><strong>Créé le : </strong>
+                        {% if user.createdAt %}
+                            {{ user.createdAt|date('d/m/Y') }}
+                        {% else %}
+                            Indisponible
+                        {% endif %}
+                    </p>
+                    <p><strong>Statut : </strong>
+                        {% if user.isVerified %}
+                            <span class="text-green-500">Vérifié</span>
+                        {% else %}
+                            <span class="text-red-500">Non vérifié</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Colonne droite (Publications récentes) -->
+            <div class="md:w-2/3 space-y-4">
+                <div class="bg-white p-4 rounded-lg shadow">
+                    <h2 class="text-xl font-semibold mb-4">Publications récentes</h2>
+                    {% block posts %}
+                        {% include 'home_page_components/posts.html.twig' %}
+                    {% endblock %}
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

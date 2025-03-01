@@ -65,8 +65,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     private bool $isVerified = false;
-
-
+    #[ORM\OneToMany(targetEntity: Friend::class, mappedBy: 'sender', cascade: ['persist', 'remove'])]
+    private Collection $sentFriendRequests;
     public function __construct()
     {
         $this->posts = new ArrayCollection();
@@ -77,6 +77,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->isVerified = true;
         $this->receivedFriendRequests = new ArrayCollection();
         $this->created_at = new \DateTimeImmutable();
+        $this->sentFriendRequests = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -343,6 +344,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->isVerified = $isVerified;
 
+        return $this;
+    }
+
+    public function getSentFriendRequests(): Collection
+    {
+        return $this->sentFriendRequests;
+    }
+
+    public function addSentFriendRequest(Friend $friend): static
+    {
+        if (!$this->sentFriendRequests->contains($friend)) {
+            $this->sentFriendRequests->add($friend);
+            $friend->setSender($this);
+        }
+        return $this;
+    }
+
+    public function removeSentFriendRequest(Friend $friend): static
+    {
+        if ($this->sentFriendRequests->removeElement($friend)) {
+            if ($friend->getSender() === $this) {
+                $friend->setSender(null);
+            }
+        }
         return $this;
     }
 }

@@ -1,0 +1,50 @@
+{% block sidebar_right %}
+    <div class="w-1/4 p-4 hidden lg:block">
+        <!-- Suggestions de personnes à suivre -->
+        <div class="bg-white shadow rounded-lg p-4 mb-6">
+            <h3 class="font-bold text-lg mb-4 text-green-500">Qui suivre</h3>
+            <ul>
+                {% for suggested in suggestedUsers %}
+                    <li class="flex justify-between items-center mb-4">
+                        <div class="flex items-center space-x-4">
+                            <img src="{{ asset(suggested.avatarPath|default('/images/default.png')) }}" alt="Avatar de {{ suggested.username }}" class="w-10 h-10 rounded-full">
+                            <div>
+                                <p class="font-bold">{{ suggested.username }}</p>
+                                <p class="text-sm text-gray-500">@{{ suggested.pseudo|default(suggested.username) }}</p>
+                            </div>
+                        </div>
+                        <button class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 text-sm">Suivre</button>
+                    </li>
+                {% else %}
+                    <li class="text-gray-500 text-sm">Aucune suggestion pour le moment.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Demandes d'amitié reçues -->
+      {% if friendRequests|length >=1 %}
+        <div class="bg-white shadow rounded-lg p-4">
+            <h3 class="font-bold text-lg mb-4 text-green-500">Demandes d'amitié</h3>
+            <ul>
+                {% for request in friendRequests %}
+                    <li class="flex justify-between items-center mb-4">
+                        <div class="flex items-center space-x-4">
+                            <img src="{{ asset(request.sender.avatarPath|default('/images/default.png')) }}" alt="Avatar de {{ request.sender.username }}" class="w-10 h-10 rounded-full">
+                            <div>
+                                <p class="font-bold">{{ request.sender.username }}</p>
+                                <p class="text-sm text-gray-500">@{{ request.sender.pseudo|default(request.sender.username) }}</p>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 text-xs">Accepter</button>
+                            <button class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-xs">Refuser</button>
+                        </div>
+                    </li>
+                {% else %}
+                    <li class="text-gray-500 text-sm">Aucune demande d'amitié reçue.</li>
+                {% endfor %}
+            </ul>
+        </div>
+       {% endif %}
+    </div>
+{% endblock %}

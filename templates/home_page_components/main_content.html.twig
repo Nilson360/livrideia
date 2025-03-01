@@ -1,0 +1,364 @@
+{% block main_content %}
+    <div class="w-full md:w-2/3 lg:w-1/2 p-4">
+        {# Zone de création de publication #}
+        <div class="bg-white shadow rounded-lg p-4 mb-6">
+            {{ form_start(postForm, {'attr': {'class': 'space-y-4'}}) }}
+            {{ form_widget(postForm.content, {
+                'attr': {
+                    'class': 'w-full border border-gray-300 rounded-lg p-2',
+                    'rows': 3,
+                    'placeholder': 'Quoi de neuf ?'
+                }
+            }) }}
+            <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center mt-4 gap-2">
+                <div>
+                    {{ form_widget(postForm.imageFile, {
+                        'attr': {
+                            'class': 'text-orange-500 hover:underline',
+                            'accept': 'image/*'
+                        }
+                    }) }}
+                </div>
+                <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                    Publier
+                </button>
+            </div>
+            {{ form_end(postForm) }}
+        </div>
+
+        {# Parcours des publications #}
+        {% for post in posts %}
+            {# Déterminer si l'utilisateur connecté a déjà liké la publication #}
+            {% set userHasLiked = false %}
+            {% if app.user %}
+                {% for like in post.likes %}
+                    {% if like.user.id == app.user.id %}
+                        {% set userHasLiked = true %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+
+            {# Préparer les compteurs #}
+            {% set likeCount = post.likes|length %}
+            {% set commentCount = post.comments|length %}
+            {% set shareCount = post.shares|length %}
+
+            <div class="bg-white shadow rounded-lg p-4 mb-6">
+                {# Affichage principal du post #}
+                <div class="mb-4">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="font-bold text-sm sm:text-base">{{ post.user.fullName }}</span>
+                        <span class="text-gray-500 text-xs sm:text-sm">{{ post.createdAt|date('d/m/Y H:i') }}</span>
+                    </div>
+                    <p class="mt-2 text-sm sm:text-base">{{ post.content }}</p>
+                </div>
+
+                {% if post.imagePath %}
+                    <div class="mb-4">
+                        {# L'image s'affiche en pleine largeur sur mobile et avec dimensions fixes sur tablette/desktop #}
+                        <img src="{{ asset('uploads/' ~ post.imagePath) }}" alt="Image de publication" class="block mx-auto w-full sm:w-[1200px] h-auto sm:h-[630px] rounded-lg">
+                    </div>
+                {% endif %}
+
+                {# Bloc supérieur : compteurs (affiché uniquement s'il y a au moins un like, commentaire ou partage) #}
+                {% if likeCount > 0 or commentCount > 0 or shareCount > 0 %}
+                    <div class="stats-container flex flex-wrap items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            {% if likeCount > 0 %}
+                                <i class="fas fa-thumbs-up text-blue-500"></i>
+                                <span class="text-gray-600 like-count text-xs sm:text-sm">{{ likeCount }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            {% if commentCount > 0 %}
+                                <button class="toggle-comments text-gray-600 hover:text-gray-800 comment-count-btn text-xs sm:text-sm" data-count="{{ commentCount }}">
+                                    {{ commentCount }} commentaires
+                                </button>
+                            {% endif %}
+                            {% if shareCount > 0 %}
+                                <span class="text-gray-600 share-count text-xs sm:text-sm">
+                                {{ shareCount }} partages
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {# Barre d'actions : J’aime, Commenter (les boutons Envoyer et Partager sont commentés pour simplifier) #}
+                <div class="flex flex-wrap justify-around items-center border-t pt-2">
+                    <button class="like-button {% if userHasLiked %}text-blue-500{% else %}text-gray-600{% endif %} hover:text-gray-800 text-xs sm:text-sm" data-id="{{ post.id }}">
+                        <i class="fas fa-thumbs-up"></i> J'aime
+                    </button>
+                    <button class="toggle-comments text-gray-600 hover:text-gray-800 text-xs sm:text-sm">
+                        <i class="fas fa-comment"></i> Commenter
+                    </button>
+                </div>
+
+                {# Section commentaires (cachée par défaut) #}
+                <div class="comments-section mt-4 hidden">
+                    {% for comment in post.comments %}
+                        <div class="comment p-2 border-b flex flex-col sm:flex-row justify-between items-start sm:items-center">
+                            <div class="w-full">
+                                <div class="flex justify-between">
+                                    <span class="font-bold text-xs sm:text-sm">{{ comment.user.fullName }}</span>
+                                    <span class="text-gray-500 text-xs">{{ comment.createdAt|date('d/m/Y H:i') }}</span>
+                                </div>
+                                <p class="text-xs sm:text-sm">{{ comment.content }}</p>
+                            </div>
+                            {% if app.user and app.user.id == comment.user.id %}
+                                <div class="ml-0 sm:ml-2 mt-2 sm:mt-0">
+                                    <button class="edit-comment text-blue-500 hover:text-blue-700 text-xs sm:text-sm" data-comment-id="{{ comment.id }}">Modifier</button>
+                                    <button class="delete-comment text-red-500 hover:text-red-700 ml-2 text-xs sm:text-sm" data-comment-id="{{ comment.id }}">Supprimer</button>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    {# Zone d’ajout d’un nouveau commentaire #}
+                    <div class="add-comment mt-2 flex flex-col sm:flex-row items-stretch sm:items-center">
+                        <input type="text" placeholder="Ajouter un commentaire" class="comment-input w-full border rounded p-2 mb-2 sm:mb-0" data-post-id="{{ post.id }}">
+                        <button class="send-comment ml-0 sm:ml-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 text-xs sm:text-sm" data-post-id="{{ post.id }}">
+                            Envoyer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <p class="text-center text-gray-500">Aucune publication pour le moment.</p>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{# 1. Toggle d'affichage des commentaires #}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.toggle-comments').forEach(button => {
+            button.addEventListener('click', function() {
+                let container = this.closest('.bg-white');
+                let commentSection = container.querySelector('.comments-section');
+                commentSection.classList.toggle('hidden');
+            });
+        });
+    });
+</script>
+
+{# 2. Gestion du like (AJAX) #}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.like-button').forEach(button => {
+            button.addEventListener('click', function() {
+                let postId = this.getAttribute('data-id');
+                fetch('/post/' + postId + '/like', {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.likesCount !== undefined) {
+                            let container = this.closest('.bg-white');
+                            let likeCountEl = container.querySelector('.like-count');
+                            let statsContainer = container.querySelector('.stats-container');
+                            if (likeCountEl) {
+                                if (data.likesCount > 0) {
+                                    likeCountEl.textContent = data.likesCount;
+                                    likeCountEl.classList.remove('hidden');
+                                } else {
+                                    likeCountEl.textContent = '0';
+                                    likeCountEl.classList.add('hidden');
+                                }
+                            }
+                            if (data.status === 'liked') {
+                                this.classList.remove('text-gray-600');
+                                this.classList.add('text-blue-500');
+                            } else {
+                                this.classList.remove('text-blue-500');
+                                this.classList.add('text-gray-600');
+                            }
+                            if (statsContainer) {
+                                let commentCountBtn = statsContainer.querySelector('.comment-count-btn');
+                                let shareCountEl    = statsContainer.querySelector('.share-count');
+                                let commentCount    = commentCountBtn ? parseInt(commentCountBtn.getAttribute('data-count') || '0', 10) : 0;
+                                let shareCount      = shareCountEl ? parseInt(shareCountEl.textContent || '0', 10) : 0;
+                                if (data.likesCount === 0 && commentCount === 0 && shareCount === 0) {
+                                    statsContainer.classList.add('hidden');
+                                } else {
+                                    statsContainer.classList.remove('hidden');
+                                }
+                            }
+                        }
+                    })
+                    .catch(error => console.error('Erreur:', error));
+            });
+        });
+    });
+</script>
+
+{# 3. Envoi d'un nouveau commentaire (AJAX) #}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        function sendComment(button) {
+            let postId = button.getAttribute('data-post-id');
+            let input  = button.closest('.add-comment').querySelector('.comment-input');
+            let content = input.value.trim();
+            if (content === '') return;
+            fetch('/post/' + postId + '/comment', {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({ content: content })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'commented') {
+                        let commentsSection = button.closest('.comments-section');
+                        let newComment = document.createElement('div');
+                        newComment.classList.add('comment', 'p-2', 'border-b', 'flex', 'justify-between', 'items-center');
+                        newComment.innerHTML = `
+                    <div>
+                        <div class="flex justify-between">
+                            <span class="font-bold">${data.comment.user}</span>
+                            <span class="text-gray-500 text-xs">${data.comment.createdAt}</span>
+                        </div>
+                        <p class="text-xs">${data.comment.content}</p>
+                    </div>
+                    <div class="ml-2">
+                        <button class="edit-comment text-blue-500 hover:text-blue-700" data-comment-id="${data.comment.id}">Modifier</button>
+                        <button class="delete-comment text-red-500 hover:text-red-700 ml-2" data-comment-id="${data.comment.id}">Supprimer</button>
+                    </div>
+                `;
+                        commentsSection.insertBefore(newComment, commentsSection.querySelector('.add-comment'));
+                        input.value = '';
+                        let container = button.closest('.bg-white');
+                        let statsContainer   = container.querySelector('.stats-container');
+                        let commentCountBtn  = container.querySelector('.comment-count-btn');
+                        if (commentCountBtn) {
+                            commentCountBtn.setAttribute('data-count', data.commentsCount);
+                            commentCountBtn.textContent = data.commentsCount + ' commentaires';
+                            commentCountBtn.classList.remove('hidden');
+                        } else {
+                            if (statsContainer) {
+                                statsContainer.classList.remove('hidden');
+                            }
+                        }
+                        if (statsContainer) {
+                            // Mise à jour selon les compteurs restants...
+                        }
+                    }
+                })
+                .catch(error => console.error('Erreur:', error));
+        }
+        document.querySelectorAll('.send-comment').forEach(button => {
+            button.addEventListener('click', function() {
+                sendComment(this);
+            });
+        });
+        document.querySelectorAll('.comment-input').forEach(input => {
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    let button = this.parentElement.querySelector('.send-comment');
+                    sendComment(button);
+                }
+            });
+        });
+    });
+</script>
+
+{# 4. Suppression et édition d'un commentaire #}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('click', function(e) {
+            if (e.target && e.target.classList.contains('delete-comment')) {
+                e.preventDefault();
+                let commentId = e.target.getAttribute('data-comment-id');
+                fetch('/comment/' + commentId + '/delete', {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'deleted') {
+                            e.target.closest('.comment').remove();
+                            let container = e.target.closest('.bg-white');
+                            let commentCountBtn = container.querySelector('.comment-count-btn');
+                            if (commentCountBtn) {
+                                if (data.commentsCount > 0) {
+                                    commentCountBtn.setAttribute('data-count', data.commentsCount);
+                                    commentCountBtn.textContent = data.commentsCount + ' commentaires';
+                                } else {
+                                    commentCountBtn.classList.add('hidden');
+                                    commentCountBtn.setAttribute('data-count', 0);
+                                }
+                            }
+                        }
+                    })
+                    .catch(error => console.error('Erreur:', error));
+            }
+        });
+        document.addEventListener('click', function(e) {
+            if (e.target && e.target.classList.contains('edit-comment')) {
+                e.preventDefault();
+                let commentEl = e.target.closest('.comment');
+                let commentId = e.target.getAttribute('data-comment-id');
+                let contentEl = commentEl.querySelector('p');
+                let oldContent = contentEl.textContent;
+                contentEl.style.display = 'none';
+                e.target.style.display = 'none';
+                let deleteBtn = commentEl.querySelector('.delete-comment');
+                if (deleteBtn) { deleteBtn.style.display = 'none'; }
+                let inputEdit = document.createElement('input');
+                inputEdit.type = 'text';
+                inputEdit.value = oldContent;
+                inputEdit.classList.add('w-full', 'border', 'rounded', 'p-2', 'mt-2');
+                commentEl.insertBefore(inputEdit, contentEl.nextSibling);
+                let validateBtn = document.createElement('button');
+                validateBtn.textContent = 'Valider';
+                validateBtn.classList.add('bg-green-500', 'text-white', 'px-4', 'py-2', 'rounded', 'hover:bg-green-600', 'ml-2');
+                commentEl.insertBefore(validateBtn, inputEdit.nextSibling);
+                let cancelBtn = document.createElement('button');
+                cancelBtn.textContent = 'Annuler';
+                cancelBtn.classList.add('bg-gray-500', 'text-white', 'px-4', 'py-2', 'rounded', 'hover:bg-gray-600', 'ml-2');
+                commentEl.insertBefore(cancelBtn, validateBtn.nextSibling);
+                cancelBtn.addEventListener('click', function() {
+                    contentEl.style.display = '';
+                    e.target.style.display = '';
+                    if (deleteBtn) { deleteBtn.style.display = ''; }
+                    inputEdit.remove();
+                    validateBtn.remove();
+                    cancelBtn.remove();
+                });
+                validateBtn.addEventListener('click', function() {
+                    let newContent = inputEdit.value.trim();
+                    if (newContent === '') return;
+                    fetch('/comment/' + commentId + '/edit', {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: new URLSearchParams({ content: newContent })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'updated') {
+                                contentEl.textContent = data.comment.content;
+                                contentEl.style.display = '';
+                                e.target.style.display = '';
+                                if (deleteBtn) { deleteBtn.style.display = ''; }
+                                inputEdit.remove();
+                                validateBtn.remove();
+                                cancelBtn.remove();
+                            }
+                        })
+                        .catch(error => console.error('Erreur:', error));
+                });
+            }
+        });
+    });
+</script>

@@ -17,10 +17,7 @@ class Post
     private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    private ?string $contect = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $title = null;
+    private ?string $content = null;
 
     #[ORM\ManyToOne(inversedBy: 'posts')]
     private ?User $user = null;
@@ -48,7 +45,8 @@ class Post
      */
     #[ORM\OneToMany(targetEntity: Share::class, mappedBy: 'post')]
     private Collection $shares;
-
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $imagePath = null;
     public function __construct()
     {
         $this->comments = new ArrayCollection();
@@ -61,26 +59,14 @@ class Post
         return $this->id;
     }
 
-    public function getContect(): ?string
+    public function getContent(): ?string
     {
-        return $this->contect;
+        return $this->content;
     }
 
-    public function setContect(string $contect): static
+    public function setContent(string $content): static
     {
-        $this->contect = $contect;
-
-        return $this;
-    }
-
-    public function getTitle(): ?string
-    {
-        return $this->title;
-    }
-
-    public function setTitle(string $title): static
-    {
-        $this->title = $title;
+        $this->content = $content;
 
         return $this;
     }
@@ -208,6 +194,16 @@ class Post
             }
         }
 
+        return $this;
+    }
+    public function getImagePath(): ?string
+    {
+        return $this->imagePath;
+    }
+
+    public function setImagePath(?string $imagePath): static
+    {
+        $this->imagePath = $imagePath;
         return $this;
     }
 }

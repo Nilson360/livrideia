@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Security;
 
 use App\Entity\User;
 use App\Form\RegistrationFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -31,8 +32,12 @@ class RegistrationController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            // Connecter directement l'utilisateur après l'inscription
-            return $security->login($user, 'form_login', 'main');
+            $response  =  $security->login($user, 'form_login', 'main');
+
+            if($response instanceof Response) {
+                return $response;
+            }
+            return $this->redirectToRoute('app_home');
         }
 
         return $this->render('auth/registration/register.html.twig', [

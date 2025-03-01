@@ -1,0 +1,37 @@
+{% extends 'home/base_home.html.twig' %}
+
+{% block title %}Modifier mon profil{% endblock %}
+
+{% block body %}
+    <div class="max-w-4xl mx-auto mt-8 p-6 bg-white shadow-lg rounded-lg">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Modifier mon profil</h1>
+
+        <p class="text-gray-700 mb-4">
+            Mettez à jour vos informations personnelles. Veillez à ce que vos données soient correctes.
+        </p>
+
+        {{ form_start(form, {'attr': {'class': 'space-y-4'}}) }}
+        <div>
+            {{ form_label(form.fullName, 'Nom complet', {'label_attr': {'class': 'block text-gray-700 font-semibold'}}) }}
+            {{ form_widget(form.fullName, {'attr': {'class': 'w-full border border-gray-300 rounded-lg p-2'}}) }}
+            {{ form_errors(form.fullName) }}
+        </div>
+
+        <div>
+            {{ form_label(form.email, 'Email', {'label_attr': {'class': 'block text-gray-700 font-semibold'}}) }}
+            {{ form_widget(form.email, {'attr': {'class': 'w-full border border-gray-300 rounded-lg p-2'}}) }}
+            {{ form_errors(form.email) }}
+        </div>
+
+        <div>
+            {{ form_label(form.birthday, 'Date de naissance', {'label_attr': {'class': 'block text-gray-700 font-semibold'}}) }}
+            {{ form_widget(form.birthday, {'attr': {'class': 'w-full border border-gray-300 rounded-lg p-2'}}) }}
+            {{ form_errors(form.birthday) }}
+        </div>
+
+        <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">
+            Enregistrer
+        </button>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
