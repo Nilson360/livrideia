@@ -102,25 +102,50 @@ class FriendController extends AbstractController
     /**
      * Supprime une relation d'amitié existante.
      */
-    #[Route('/friend/remove/{id}', name: 'app_friend_remove', methods: ['POST'])]
-    public function removeFriend(Friend $friend, EntityManagerInterface $em): Response
+    #[Route('/friend/remove/{friendUserId}', name: 'app_friend_remove', methods: ['POST'])]
+    public function removeFriend($friendUserId, EntityManagerInterface $em): Response
     {
         $user = $this->getUser();
         if (!$user) {
             return $this->json(['error' => 'Utilisateur non authentifié.'], Response::HTTP_UNAUTHORIZED);
         }
-        // L'expéditeur ou le destinataire peuvent supprimer la relation
-        if ($friend->getSender()->getId() !== $user->getId() &&
-            $friend->getReceiver()->getId() !== $user->getId()) {
-            return $this->json(['error' => 'Accès refusé.'], Response::HTTP_FORBIDDEN);
+
+        // Récupérer l'utilisateur ami via son ID
+        $friendUser = $em->getRepository(User::class)->find($friendUserId);
+        if (!$friendUser) {
+            return $this->json(['error' => 'Utilisateur ami introuvable.'], Response::HTTP_NOT_FOUND);
+        }
+
+        // Vérifier que l'amitié existe grâce à la méthode isFriendsWith
+        if (!$user->isFriendsWith($friendUser)) {
+            return $this->json(['error' => 'Aucune relation d\'amitié trouvée.'], Response::HTTP_BAD_REQUEST);
+        }
+
+        // Rechercher la relation d'amitié dans laquelle le user est soit sender soit receiver
+        $friendRepo = $em->getRepository(Friend::class);
+        $friend = $friendRepo->findOneBy([
+            'sender'   => $user,
+            'receiver' => $friendUser,
+            'status'   => 'accepted'
+        ]);
+        if (!$friend) {
+            $friend = $friendRepo->findOneBy([
+                'sender'   => $friendUser,
+                'receiver' => $user,
+                'status'   => 'accepted'
+            ]);
+        }
+        if (!$friend) {
+            return $this->json(['error' => 'Relation d\'amitié introuvée.'], Response::HTTP_NOT_FOUND);
         }
 
         $em->remove($friend);
         $em->flush();
 
         return $this->json([
-            'status' => 'removed',
-            'message' => 'Relation d\'amitié supprimée.',
+            'status'  => 'removed',
+            'message' => 'Relation d\'amitié supprimée.'
         ]);
     }
+
 }

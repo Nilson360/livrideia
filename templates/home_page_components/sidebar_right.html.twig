@@ -2,49 +2,153 @@
     <div class="w-1/4 p-4 hidden lg:block">
         <!-- Suggestions de personnes à suivre -->
         <div class="bg-white shadow rounded-lg p-4 mb-6">
-            <h3 class="font-bold text-lg mb-4 text-green-500">Qui suivre</h3>
+            <h3 class="font-bold text-lg mb-4 text-green-500">Suggestions d'amitié</h3>
             <ul>
                 {% for suggested in suggestedUsers %}
                     <li class="flex justify-between items-center mb-4">
                         <div class="flex items-center space-x-4">
-                            <img src="{{ asset(suggested.avatarPath|default('/images/default.png')) }}" alt="Avatar de {{ suggested.username }}" class="w-10 h-10 rounded-full">
+                            <img src="{{ asset(suggested.avatarPath|default('/images/default-profile.png')) }}"
+                                 alt="Avatar de {{ suggested.username }}"
+                                 class="w-10 h-10 rounded-full">
                             <div>
-                                <p class="font-bold">{{ suggested.username }}</p>
-                                <p class="text-sm text-gray-500">@{{ suggested.pseudo|default(suggested.username) }}</p>
+                                <p class="font-bold text-sm">{{ suggested.username }}</p>
+                                <p class="text-xs text-gray-500">@{{ suggested.pseudo|default(suggested.username) }}</p>
                             </div>
                         </div>
-                        <button class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 text-sm">Suivre</button>
+                        <button class="friend-request-btn bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600 text-sm"
+                                data-user-id="{{ suggested.id }}">
+                            Ajouter
+                        </button>
                     </li>
                 {% else %}
                     <li class="text-gray-500 text-sm">Aucune suggestion pour le moment.</li>
                 {% endfor %}
             </ul>
         </div>
-
+        {% set pendingRequests = [] %}
+        {% for request in friendRequests %}
+            {% if request.status == 'pending' %}
+                {% set pendingRequests = pendingRequests|merge([request]) %}
+            {% endif %}
+        {% endfor %}
         <!-- Demandes d'amitié reçues -->
-      {% if friendRequests|length >=1 %}
-        <div class="bg-white shadow rounded-lg p-4">
-            <h3 class="font-bold text-lg mb-4 text-green-500">Demandes d'amitié</h3>
-            <ul>
-                {% for request in friendRequests %}
-                    <li class="flex justify-between items-center mb-4">
-                        <div class="flex items-center space-x-4">
-                            <img src="{{ asset(request.sender.avatarPath|default('/images/default.png')) }}" alt="Avatar de {{ request.sender.username }}" class="w-10 h-10 rounded-full">
+        {% if pendingRequests|length >= 1 %}
+            <div class="bg-white shadow rounded-lg p-4">
+                <h3 class="font-bold text-lg mb-4 text-green-500">Demandes d'amitié</h3>
+                <ul>
+                    {% for request in friendRequests %}
+                        {# request est un objet Friend #}
+                        <li class="flex justify-between items-center mb-4">
                             <div>
                                 <p class="font-bold">{{ request.sender.username }}</p>
                                 <p class="text-sm text-gray-500">@{{ request.sender.pseudo|default(request.sender.username) }}</p>
+
+                                <div class="flex space-x-2 mt-2">
+                                    {# On utilise request.id, car request est un objet Friend #}
+                                    <button class="accept-friend-btn bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 text-xs"
+                                            data-friend-id="{{ request.id }}">
+                                        Accepter
+                                    </button>
+                                    <button class="decline-friend-btn bg-orange-500 text-white px-3 py-1 rounded hover:bg-orange-600 text-xs"
+                                            data-friend-id="{{ request.id }}">
+                                        Refuser
+                                    </button>
+                                </div>
+                                <hr class="h-px bg-orange-200 border-0 mt-2">
                             </div>
-                        </div>
-                        <div class="flex space-x-2">
-                            <button class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 text-xs">Accepter</button>
-                            <button class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-xs">Refuser</button>
-                        </div>
-                    </li>
-                {% else %}
-                    <li class="text-gray-500 text-sm">Aucune demande d'amitié reçue.</li>
-                {% endfor %}
-            </ul>
-        </div>
-       {% endif %}
+                        </li>
+                    {% else %}
+                        <li class="text-gray-500 text-sm">Aucune demande d'amitié reçue.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Gérer l'envoi d'une demande d'amitié
+        document.querySelectorAll(".friend-request-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                let userId = this.getAttribute("data-user-id");
+                sendFriendRequest(userId, this);
+            });
+        });
+
+        // Gérer l'acceptation d'une demande d'amitié
+        document.querySelectorAll(".accept-friend-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                let requestId = this.getAttribute("data-friend-id");
+                acceptFriendRequest(requestId, this);
+            });
+        });
+
+        // Gérer le refus d'une demande d'amitié
+        document.querySelectorAll(".decline-friend-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                let requestId = this.getAttribute("data-friend-id");
+                declineFriendRequest(requestId, this);
+            });
+        });
+
+        // Fonction pour envoyer une demande d'amitié
+        function sendFriendRequest(userId, button) {
+            fetch(`/friend/add/${userId}`, {
+                method: "POST",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "pending") {
+                        button.textContent = "Demande envoyée";
+                        button.classList.add("bg-gray-500", "cursor-not-allowed");
+                        button.disabled = true;
+                    } else {
+                        alert(data.error);
+                    }
+                })
+                .catch(error => console.error("Erreur:", error));
+        }
+
+        // Fonction pour accepter une demande d'amitié
+        function acceptFriendRequest(requestId, button) {
+            fetch(`/friend/accept/${requestId}`, {
+                method: "POST",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "accepted") {
+                        button.closest("li").innerHTML = `<p class="text-green-500 font-bold">Ami(e) ajouté(e) !</p>`;
+                    } else {
+                        alert(data.error);
+                    }
+                })
+                .catch(error => console.error("Erreur:", error));
+        }
+
+        // Fonction pour refuser une demande d'amitié
+        function declineFriendRequest(requestId, button) {
+            fetch(`/friend/decline/${requestId}`, {
+                method: "POST",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "declined") {
+                        button.closest("li").innerHTML = `<p class="text-red-500 font-bold">Demande refusée.</p>`;
+                    } else {
+                        alert(data.error);
+                    }
+                })
+                .catch(error => console.error("Erreur:", error));
+        }
+    });
+</script>

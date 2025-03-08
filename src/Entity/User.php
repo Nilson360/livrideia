@@ -54,9 +54,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Like::class, mappedBy: 'user', cascade: ['persist', 'remove'])]
     private Collection $likes;
 
-    #[ORM\OneToMany(targetEntity: Friend::class, mappedBy: 'user', cascade: ['persist', 'remove'])]
-    private Collection $friends;
-
     #[ORM\OneToMany(targetEntity: Share::class, mappedBy: 'user', cascade: ['persist', 'remove'])]
     private Collection $shares;
 
@@ -72,7 +69,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->posts = new ArrayCollection();
         $this->comments = new ArrayCollection();
         $this->likes = new ArrayCollection();
-        $this->friends = new ArrayCollection();
         $this->shares = new ArrayCollection();
         $this->isVerified = true;
         $this->receivedFriendRequests = new ArrayCollection();
@@ -260,30 +256,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    // Gestion des relations avec Friend
-    public function getFriends(): Collection
-    {
-        return $this->friends;
-    }
-
-    public function addFriend(Friend $friend): static
-    {
-        if (!$this->friends->contains($friend)) {
-            $this->friends->add($friend);
-            $friend->setUser($this);
-        }
-        return $this;
-    }
-
-    public function removeFriend(Friend $friend): static
-    {
-        if ($this->friends->removeElement($friend)) {
-            if ($friend->getUser() === $this) {
-                $friend->setUser(null);
-            }
-        }
-        return $this;
-    }
 
     // Gestion des relations avec Share
     public function getShares(): Collection
@@ -370,4 +342,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
         return $this;
     }
+
+    public function isFriendsWith(User $user): bool {
+        foreach ($this->sentFriendRequests as $friendRequest) {
+            if ($friendRequest->getReceiver() === $user && $friendRequest->getStatus() === 'accepted') {
+                return true;
+            }
+        }
+
+        foreach ($this->receivedFriendRequests as $friendRequest) {
+            if ($friendRequest->getSender() === $user && $friendRequest->getStatus() === 'accepted') {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

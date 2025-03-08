@@ -1,0 +1,18 @@
+<ul class="bg-white p-4 rounded-lg shadow">
+    {% for friend in friends %}
+        <li class="friend-item flex justify-between items-center py-2" data-friend-id="{{ friend.id }}">
+            <div class="flex items-center">
+                <img src="{{ asset(friend.avatarPath|default('/images/default-profile.png')) }}" alt="Avatar de {{ friend.username }}" class="w-10 h-10 rounded-full">
+                <span class="ml-2">{{ friend.username }}</span>
+            </div>
+            <button class="remove-friend-btn bg-orange-500 text-white px-2 py-1 rounded hover:bg-orange-600 text-sm cursor-pointer" data-friend-id="{{ friend.id }}" aria-label="Supprimer l'amitié de {{ friend.username }}">
+                Supprimer l'amitié
+            </button>
+        </li>
+        {% if not loop.last %}
+            <hr class="my-2">
+        {% endif %}
+    {% else %}
+        <li class="text-gray-500 text-sm">Aucun ami pour le moment.</li>
+    {% endfor %}
+</ul>

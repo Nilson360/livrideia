@@ -2,6 +2,7 @@
 
 namespace App\Controller\DaashboardUser;
 
+use App\Entity\Friend;
 use App\Entity\Post;
 use App\Entity\User;
 use App\Form\ProfileType;
@@ -26,9 +27,17 @@ class UserProfileController extends AbstractController
         }
         $user = $em->getRepository(User::class)->find($user->getId());
         $posts = $em->getRepository(Post::class)->findBy(['user' => $user]);
+        // Récupération des relations d'amitié acceptées pour l'utilisateur connecté
+        $friendRepo = $em->getRepository(Friend::class);
+        $sentFriends = $friendRepo->findBy(['sender' => $user, 'status' => 'accepted']);
+        $receivedFriends = $friendRepo->findBy(['receiver' => $user, 'status' => 'accepted']);
+
+        // Fusionner les relations
+        $friendRelationships = array_merge($sentFriends, $receivedFriends);
         return $this->render('dashboard_user/profile.html.twig', [
             'user' => $user,
             'posts' => $posts,
+            'friends' => $friendRelationships,
         ]);
     }
 
@@ -97,6 +106,27 @@ class UserProfileController extends AbstractController
 
         return $this->render('dashboard_user/change_password.html.twig', [
             'form' => $form->createView(),
+        ]);
+    }
+    #[Route('/profile/{id}/friends', name: 'app_profile_friends', methods: ['GET'])]
+    public function friends(User $user, EntityManagerInterface $em): Response
+    {
+        // Récupérer les relations d'amitié acceptées pour l'utilisateur
+        $friendRepo = $em->getRepository(Friend::class);
+        $sentFriends = $friendRepo->findBy(['sender' => $user, 'status' => 'accepted']);
+        $receivedFriends = $friendRepo->findBy(['receiver' => $user, 'status' => 'accepted']);
+
+        // Fusionner les amis (pour chaque relation, on affiche l'autre utilisateur)
+        $friends = [];
+        foreach ($sentFriends as $friend) {
+            $friends[] = $friend->getReceiver();
+        }
+        foreach ($receivedFriends as $friend) {
+            $friends[] = $friend->getSender();
+        }
+
+        return $this->render('dashboard_user/friends.html.twig', [
+            'friends' => $friends,
         ]);
     }
 }

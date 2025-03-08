@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Friend;
 use App\Entity\Post;
 use App\Entity\User;
 use App\Form\PostFormType;
+use App\Service\FileUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,44 +16,57 @@ use Symfony\Component\Routing\Annotation\Route;
 class HomeController extends AbstractController
 {
     #[Route('/', name: 'app_home')]
-    public function index(Request $request, EntityManagerInterface $em): Response
+    public function index(Request $request, EntityManagerInterface $em, FileUploader $uploader): Response
     {
+        // Vérification de l'authentification
+        $user = $this->getUser();
+        if (!$user) {
+            $this->addFlash('error', 'Veuillez vous connecter pour accéder à cette page.');
+            return $this->redirectToRoute('app_login');
+        }
 
+        // Création du post
         $post = new Post();
         $form = $this->createForm(PostFormType::class, $post);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $user = $this->getUser();
             $post->setUser($user);
             $post->setCreatedAt(new \DateTimeImmutable('now'));
 
             $imageFile = $form->get('imageFile')->getData();
             if ($imageFile) {
-                $newFilename = uniqid().'.'.$imageFile->guessExtension();
-
-                $imageFile->move(
-                    $this->getParameter('uploads_directory'),
-                    $newFilename
-                );
-                $post->setImagePath($newFilename);
+                try {
+                    $newFilename = $uploader->upload($imageFile);
+                    $post->setImagePath($newFilename);
+                } catch (\Exception $e) {
+                    $this->addFlash('error', 'Erreur lors du téléchargement de l\'image.');
+                }
             }
             $em->persist($post);
             $em->flush();
 
+            $this->addFlash('success', 'Votre publication a été ajoutée.');
             return $this->redirectToRoute('app_home');
         }
-        //$posts = $em->getRepository(Post::class)->findBy(['user' => $this->getUser()], ['created_at' => 'DESC']);
-        $posts = $em->getRepository(Post::class)->findAll();
-        $suggestedUsers = $em->getRepository(User::class)->findAll();
-        $friendRequests = $this->getUser()->getReceivedFriendRequests();
+
+        // Récupération des posts triés par date de création décroissante (ajouter une méthode dans le repository)
+        $posts = $em->getRepository(Post::class)->findBy([], ['created_at' => 'DESC']);
+        // Utilisation d'une méthode dédiée dans le repository pour les suggestions d'amis
+        $suggestedUsers = $em->getRepository(User::class)->getSugeredUsers($user->getId());
+        // Récupérer les demandes d'amitié en attente
+        $friendRequests = $em->getRepository(Friend::class)->findBy([
+            'receiver' => $user,
+            'status'   => 'pending'
+        ]);
+
         return $this->render('home/index.html.twig', [
-            'postForm' => $form->createView(),
-            'posts' => $posts,
+            'postForm'       => $form->createView(),
+            'posts'          => $posts,
             'suggestedUsers' => $suggestedUsers,
-            'friendRequests' => $friendRequests
+            'friendRequests' => $friendRequests,
         ]);
     }
+
     #[Route('/conditions-utilisation', name: 'app_terms_of_service')]
     public function termsOfService(): Response
     {
