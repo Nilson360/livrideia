@@ -7,6 +7,13 @@ import './bootstrap.js';
  */
 import './styles/app.css';
 
+
+const eventSource = new EventSource('http://localhost:3000/.well-known/mercure?topic=notifications');
+eventSource.onmessage = function(event) {
+const data = JSON.parse(event.data);
+alert("🔔 Nouvelle notification : " + data.message);
+};
+
 // 1. Toggle d'affichage des commentaires
 
 document.addEventListener('DOMContentLoaded', function() {
