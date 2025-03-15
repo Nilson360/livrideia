@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\Entity\Comment;
 use App\Entity\Like;
 use App\Entity\Post;
+use App\Service\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,6 +15,13 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 class PostController extends AbstractController
 {
+    private NotificationService $notificationService;
+    private EntityManagerInterface $entityManager;
+    public function __construct(NotificationService $notificationService, EntityManagerInterface $entityManager)
+    {
+        $this->notificationService = $notificationService;
+        $this->entityManager = $entityManager;
+    }
     #[Route('/post/{id}/like', name: 'app_post_like', methods: ['POST'])]
     public function likePost(Post $post, EntityManagerInterface $em, Request $request): Response
     {
@@ -43,7 +51,7 @@ class PostController extends AbstractController
             $em->flush();
             $status = 'liked';
         }
-
+        $this->notificationService->sendNotification($post->getUser(), 'post_like', $user, $post);
         // Retourne le nouveau nombre de likes
         return $this->json([
             'status' => $status,
@@ -72,6 +80,7 @@ class PostController extends AbstractController
 
         $em->persist($comment);
         $em->flush();
+        $this->notificationService->sendNotification($post->getUser(), 'post_comment', $user, $post);
 
         return $this->json([
             'status'  => 'commented',

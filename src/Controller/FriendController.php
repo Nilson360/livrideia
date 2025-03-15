@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Friend;
 use App\Entity\User;
+use App\Service\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,6 +12,13 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class FriendController extends AbstractController
 {
+    private NotificationService $notificationService;
+    private EntityManagerInterface $entityManager;
+    public function __construct(NotificationService $notificationService, EntityManagerInterface $entityManager)
+    {
+        $this->notificationService = $notificationService;
+        $this->entityManager = $entityManager;
+    }
     /**
      * Envoie une demande d'amitié à un utilisateur donné.
      */
@@ -43,7 +51,7 @@ class FriendController extends AbstractController
 
         $em->persist($friend);
         $em->flush();
-
+        $this->notificationService->sendNotification($receiver,'friend_request', $sender);
         return $this->json([
             'status' => 'pending',
             'message' => 'Demande d\'amitié envoyée.',
@@ -68,6 +76,7 @@ class FriendController extends AbstractController
 
         $friend->setStatus('accepted');
         $em->flush();
+        $this->notificationService->sendNotification($friend->getSender(), 'friend_accept', $user);
 
         return $this->json([
             'status' => 'accepted',
