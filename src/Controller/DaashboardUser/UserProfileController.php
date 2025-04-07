@@ -129,4 +129,12 @@ class UserProfileController extends AbstractController
             'friends' => $friends,
         ]);
     }
+    #[Route('/utilisateur/{id}', name: 'dashboard_user_profile_other')]
+    public function userProfile(User $user): Response
+    {
+        return $this->render('dashboard_user/profile.html.twig', [
+            'user' => $user,
+            'posts' => $user->getPosts(),
+        ]);
+    }
 }

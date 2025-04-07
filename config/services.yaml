@@ -7,6 +7,8 @@ services:
         autoconfigure: true
         bind:
             $targetDirectory: '%uploads_directory%'
+    App\Service\LinkGenerator:
+        public: true
     App\Service\FileUploader: ~
     App\:
         resource: '../src/'

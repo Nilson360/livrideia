@@ -47,7 +47,10 @@
                 {# Affichage principal du post #}
                 <div class="mb-4">
                     <div class="flex flex-wrap items-center gap-2">
-                        <span class="font-bold text-sm sm:text-base">{{ post.user.fullName }}</span>
+                        <a href="{{ path('dashboard_user_profile_other', { id: post.user.id }) }}"
+                           class="text-green-600 font-bold text-sm sm:text-base hover:underline">
+                            {{ post.user.fullName }}
+                        </a>
                         <span class="text-gray-500 text-xs sm:text-sm">{{ post.createdAt|date('d/m/Y H:i') }}</span>
                     </div>
                     <p class="mt-2 text-sm sm:text-base">{{ post.content }}</p>
@@ -56,7 +59,8 @@
                 {% if post.imagePath %}
                     <div class="mb-4">
                         {# L'image s'affiche en pleine largeur sur mobile et avec dimensions fixes sur tablette/desktop #}
-                        <img src="{{ asset('uploads/' ~ post.imagePath) }}" alt="Image de publication" class="block mx-auto w-full sm:w-[1200px] h-auto sm:h-[630px] rounded-lg">
+                        <img src="{{ asset('uploads/' ~ post.imagePath) }}" alt="Image de publication"
+                             class="block mx-auto w-full sm:w-[1200px] h-auto sm:h-[630px] rounded-lg">
                     </div>
                 {% endif %}
 
@@ -71,7 +75,8 @@
                         </div>
                         <div class="flex items-center space-x-4">
                             {% if commentCount > 0 %}
-                                <button class="toggle-comments text-gray-600 hover:text-gray-800 comment-count-btn text-xs sm:text-sm" data-count="{{ commentCount }}">
+                                <button class="toggle-comments text-gray-600 hover:text-gray-800 comment-count-btn text-xs sm:text-sm"
+                                        data-count="{{ commentCount }}">
                                     {{ commentCount }} commentaires
                                 </button>
                             {% endif %}
@@ -86,7 +91,8 @@
 
                 {# Barre d'actions : J’aime, Commenter (les boutons Envoyer et Partager sont commentés pour simplifier) #}
                 <div class="flex flex-wrap justify-around items-center border-t pt-2">
-                    <button class="like-button {% if userHasLiked %}text-green-500{% else %}text-gray-600{% endif %} hover:text-gray-800 text-xs sm:text-sm" data-id="{{ post.id }}">
+                    <button class="like-button {% if userHasLiked %}text-green-500{% else %}text-gray-600{% endif %} hover:text-gray-800 text-xs sm:text-sm"
+                            data-id="{{ post.id }}">
                         <i class="fas fa-thumbs-up"></i> J'aime
                     </button>
                     <button class="toggle-comments text-gray-600 hover:text-gray-800 text-xs sm:text-sm">
@@ -100,23 +106,33 @@
                         <div class="comment p-2 border-b flex flex-col sm:flex-row justify-between items-start sm:items-center">
                             <div class="w-full">
                                 <div class="flex justify-between">
-                                    <span class="font-bold text-xs sm:text-sm">{{ comment.user.fullName }}</span>
+                                    <a href="{{ path('dashboard_user_profile_other', { id: comment.user.id }) }}"
+                                       class="text-green-600 font-semibold text-xs sm:text-sm hover:underline">
+                                        {{ comment.user.fullName }}
+                                    </a>
                                     <span class="text-gray-500 text-xs">{{ comment.createdAt|date('d/m/Y H:i') }}</span>
                                 </div>
                                 <p class="text-xs sm:text-sm">{{ comment.content }}</p>
                             </div>
                             {% if app.user and app.user.id == comment.user.id %}
                                 <div class="ml-0 sm:ml-2 mt-2 sm:mt-0">
-                                    <button class="edit-comment text-green-500 hover:text-green-700 text-xs sm:text-sm" data-comment-id="{{ comment.id }}">Modifier</button>
-                                    <button class="delete-comment text-red-500 hover:text-red-700 ml-2 text-xs sm:text-sm" data-comment-id="{{ comment.id }}">Supprimer</button>
+                                    <button class="edit-comment text-green-500 hover:text-green-700 text-xs sm:text-sm"
+                                            data-comment-id="{{ comment.id }}">Modifier
+                                    </button>
+                                    <button class="delete-comment text-red-500 hover:text-red-700 ml-2 text-xs sm:text-sm"
+                                            data-comment-id="{{ comment.id }}">Supprimer
+                                    </button>
                                 </div>
                             {% endif %}
                         </div>
                     {% endfor %}
                     {# Zone d’ajout d’un nouveau commentaire #}
                     <div class="add-comment mt-2 flex flex-col sm:flex-row items-stretch sm:items-center">
-                        <input type="text" placeholder="Ajouter un commentaire" class="comment-input w-full border rounded p-2 mb-2 sm:mb-0" data-post-id="{{ post.id }}">
-                        <button class="send-comment ml-0 sm:ml-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 text-xs sm:text-sm" data-post-id="{{ post.id }}">
+                        <input type="text" placeholder="Ajouter un commentaire"
+                               class="comment-input w-full border rounded p-2 mb-2 sm:mb-0"
+                               data-post-id="{{ post.id }}">
+                        <button class="send-comment ml-0 sm:ml-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 text-xs sm:text-sm"
+                                data-post-id="{{ post.id }}">
                             Envoyer
                         </button>
                     </div>
@@ -130,9 +146,9 @@
 
 {# 1. Toggle d'affichage des commentaires #}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.toggle-comments').forEach(button => {
-            button.addEventListener('click', function() {
+            button.addEventListener('click', function () {
                 let container = this.closest('.bg-white');
                 let commentSection = container.querySelector('.comments-section');
                 commentSection.classList.toggle('hidden');
@@ -143,9 +159,9 @@
 
 {# 2. Gestion du like (AJAX) #}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.like-button').forEach(button => {
-            button.addEventListener('click', function() {
+            button.addEventListener('click', function () {
                 let postId = this.getAttribute('data-id');
                 fetch('/post/' + postId + '/like', {
                     method: 'POST',
@@ -178,9 +194,9 @@
                             }
                             if (statsContainer) {
                                 let commentCountBtn = statsContainer.querySelector('.comment-count-btn');
-                                let shareCountEl    = statsContainer.querySelector('.share-count');
-                                let commentCount    = commentCountBtn ? parseInt(commentCountBtn.getAttribute('data-count') || '0', 10) : 0;
-                                let shareCount      = shareCountEl ? parseInt(shareCountEl.textContent || '0', 10) : 0;
+                                let shareCountEl = statsContainer.querySelector('.share-count');
+                                let commentCount = commentCountBtn ? parseInt(commentCountBtn.getAttribute('data-count') || '0', 10) : 0;
+                                let shareCount = shareCountEl ? parseInt(shareCountEl.textContent || '0', 10) : 0;
                                 if (data.likesCount === 0 && commentCount === 0 && shareCount === 0) {
                                     statsContainer.classList.add('hidden');
                                 } else {
@@ -197,10 +213,10 @@
 
 {# 3. Envoi d'un nouveau commentaire (AJAX) #}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         function sendComment(button) {
             let postId = button.getAttribute('data-post-id');
-            let input  = button.closest('.add-comment').querySelector('.comment-input');
+            let input = button.closest('.add-comment').querySelector('.comment-input');
             let content = input.value.trim();
             if (content === '') return;
             fetch('/post/' + postId + '/comment', {
@@ -209,7 +225,7 @@
                     'X-Requested-With': 'XMLHttpRequest',
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
-                body: new URLSearchParams({ content: content })
+                body: new URLSearchParams({content: content})
             })
                 .then(response => response.json())
                 .then(data => {
@@ -233,8 +249,8 @@
                         commentsSection.insertBefore(newComment, commentsSection.querySelector('.add-comment'));
                         input.value = '';
                         let container = button.closest('.bg-white');
-                        let statsContainer   = container.querySelector('.stats-container');
-                        let commentCountBtn  = container.querySelector('.comment-count-btn');
+                        let statsContainer = container.querySelector('.stats-container');
+                        let commentCountBtn = container.querySelector('.comment-count-btn');
                         if (commentCountBtn) {
                             commentCountBtn.setAttribute('data-count', data.commentsCount);
                             commentCountBtn.textContent = data.commentsCount + ' commentaires';
@@ -251,13 +267,14 @@
                 })
                 .catch(error => console.error('Erreur:', error));
         }
+
         document.querySelectorAll('.send-comment').forEach(button => {
-            button.addEventListener('click', function() {
+            button.addEventListener('click', function () {
                 sendComment(this);
             });
         });
         document.querySelectorAll('.comment-input').forEach(input => {
-            input.addEventListener('keypress', function(e) {
+            input.addEventListener('keypress', function (e) {
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     let button = this.parentElement.querySelector('.send-comment');
@@ -270,8 +287,8 @@
 
 {# 4. Suppression et édition d'un commentaire #}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        document.addEventListener('click', function(e) {
+    document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('click', function (e) {
             if (e.target && e.target.classList.contains('delete-comment')) {
                 e.preventDefault();
                 let commentId = e.target.getAttribute('data-comment-id');
@@ -301,7 +318,7 @@
                     .catch(error => console.error('Erreur:', error));
             }
         });
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', function (e) {
             if (e.target && e.target.classList.contains('edit-comment')) {
                 e.preventDefault();
                 let commentEl = e.target.closest('.comment');
@@ -311,7 +328,9 @@
                 contentEl.style.display = 'none';
                 e.target.style.display = 'none';
                 let deleteBtn = commentEl.querySelector('.delete-comment');
-                if (deleteBtn) { deleteBtn.style.display = 'none'; }
+                if (deleteBtn) {
+                    deleteBtn.style.display = 'none';
+                }
                 let inputEdit = document.createElement('input');
                 inputEdit.type = 'text';
                 inputEdit.value = oldContent;
@@ -325,15 +344,17 @@
                 cancelBtn.textContent = 'Annuler';
                 cancelBtn.classList.add('bg-gray-500', 'text-white', 'px-4', 'py-2', 'rounded', 'hover:bg-gray-600', 'ml-2');
                 commentEl.insertBefore(cancelBtn, validateBtn.nextSibling);
-                cancelBtn.addEventListener('click', function() {
+                cancelBtn.addEventListener('click', function () {
                     contentEl.style.display = '';
                     e.target.style.display = '';
-                    if (deleteBtn) { deleteBtn.style.display = ''; }
+                    if (deleteBtn) {
+                        deleteBtn.style.display = '';
+                    }
                     inputEdit.remove();
                     validateBtn.remove();
                     cancelBtn.remove();
                 });
-                validateBtn.addEventListener('click', function() {
+                validateBtn.addEventListener('click', function () {
                     let newContent = inputEdit.value.trim();
                     if (newContent === '') return;
                     fetch('/comment/' + commentId + '/edit', {
@@ -342,7 +363,7 @@
                             'X-Requested-With': 'XMLHttpRequest',
                             'Content-Type': 'application/x-www-form-urlencoded'
                         },
-                        body: new URLSearchParams({ content: newContent })
+                        body: new URLSearchParams({content: newContent})
                     })
                         .then(response => response.json())
                         .then(data => {
@@ -350,7 +371,9 @@
                                 contentEl.textContent = data.comment.content;
                                 contentEl.style.display = '';
                                 e.target.style.display = '';
-                                if (deleteBtn) { deleteBtn.style.display = ''; }
+                                if (deleteBtn) {
+                                    deleteBtn.style.display = '';
+                                }
                                 inputEdit.remove();
                                 validateBtn.remove();
                                 cancelBtn.remove();

@@ -58,6 +58,13 @@ class PostController extends AbstractController
             'likesCount' => count($post->getLikes())
         ]);
     }
+    #[Route('/post/{id}', name: 'app_post_show', methods: ['GET'])]
+    public function show(Post $post): Response
+    {
+        return $this->render('post/show.html.twig', [
+            'post' => $post,
+        ]);
+    }
     #[Route('/post/{id}/comment', name: 'app_post_comment', methods: ['POST'])]
     public function commentPost(Post $post, Request $request, EntityManagerInterface $em): Response
     {

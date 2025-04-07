@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Notification;
+use App\Service\LinkGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,39 +16,42 @@ class NotificationController extends AbstractController
 {
     private EntityManagerInterface $em;
     private HubInterface $hub;
+    private LinkGenerator $linkGenerator;
 
-    public function __construct(EntityManagerInterface $em, HubInterface $hub) {
+    public function __construct(EntityManagerInterface $em, HubInterface $hub, LinkGenerator $linkGenerator)
+    {
         $this->em = $em;
         $this->hub = $hub;
+        $this->linkGenerator = $linkGenerator;
     }
 
     #[Route('/notify', name: 'send_notification', methods: ['GET','POST'])]
     public function notify(): JsonResponse
     {
         $user = $this->getUser();
-        if(!$user) {
+        if (!$user) {
             return $this->json(['status' => 'User not authenticated'], 401);
         }
 
         $message = "Votre publication a reçu un nouveau like !";
         $type = "like";
 
-        // Enregistrer en base de données
         $notification = new Notification();
         $notification->setMessage($message)
-                     ->setType($type)
-                     ->setRecipient($user);
+            ->setType($type)
+            ->setRecipient($user);
         $this->em->persist($notification);
         $this->em->flush();
 
-        // Publie la notification sur un topic spécifique à l'utilisateur
+        $link = $this->linkGenerator->toProfile($user);
 
         $update = new Update(
-            'notifications_user_'.$user->getId(),
+            'notifications_user_' . $user->getId(),
             json_encode([
                 'message' => $message,
                 'type' => $type,
-                'notificationId' => $notification->getId()
+                'notificationId' => $notification->getId(),
+                'link' => $link
             ]),
             true
         );
@@ -60,14 +64,18 @@ class NotificationController extends AbstractController
     public function notificationList(): Response
     {
         $user = $this->getUser();
-        if(!$user) {
+        if (!$user) {
             throw $this->createAccessDeniedException();
         }
 
-        $notifications = $this->em->getRepository(Notification::class)->findBy(['recipient' => $user], ['createdAt' => 'DESC']);
+        $notifications = $this->em->getRepository(Notification::class)->findBy(
+            ['recipient' => $user],
+            ['createdAt' => 'DESC']
+        );
 
         return $this->render('notifications/list.html.twig', [
             'notifications' => $notifications,
+            'linkGenerator' => $this->linkGenerator,
         ]);
     }
 
@@ -88,6 +96,7 @@ class NotificationController extends AbstractController
 
         return $this->redirectToRoute('notifications_list');
     }
+
     #[Route('/notifications/unread-count', name: 'notifications_unread_count', methods: ['GET'])]
     public function getUnreadNotificationCount(): JsonResponse
     {
@@ -98,7 +107,7 @@ class NotificationController extends AbstractController
 
         $count = $this->em->getRepository(Notification::class)
             ->count(['recipient' => $user, 'isRead' => false]);
+
         return $this->json(['count' => $count]);
     }
-
 }

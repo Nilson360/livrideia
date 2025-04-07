@@ -11,7 +11,7 @@
                                  alt="Avatar de {{ suggested.username }}"
                                  class="w-10 h-10 rounded-full">
                             <div>
-                                <p class="font-bold text-sm">{{ suggested.username }}</p>
+                                <a href="{{ path('dashboard_user_profile_other', {'id': suggested.id}) }}" class="font-bold text-sm text-green-600 hover:underline">{{ suggested.username }}</a>
                                 <p class="text-xs text-gray-500">@{{ suggested.pseudo|default(suggested.username) }}</p>
                             </div>
                         </div>
@@ -25,26 +25,26 @@
                 {% endfor %}
             </ul>
         </div>
+
         {% set pendingRequests = [] %}
         {% for request in friendRequests %}
             {% if request.status == 'pending' %}
                 {% set pendingRequests = pendingRequests|merge([request]) %}
             {% endif %}
         {% endfor %}
+
         <!-- Demandes d'amitié reçues -->
         {% if pendingRequests|length >= 1 %}
             <div class="bg-white shadow rounded-lg p-4">
                 <h3 class="font-bold text-lg mb-4 text-green-500">Demandes d'amitié</h3>
                 <ul>
                     {% for request in friendRequests %}
-                        {# request est un objet Friend #}
                         <li class="flex justify-between items-center mb-4">
                             <div>
-                                <p class="font-bold">{{ request.sender.username }}</p>
+                                <a href="{{ path('dashboard_user_profile_other', {'id': request.sender.id}) }}" class="font-bold text-green-600 hover:underline">{{ request.sender.username }}</a>
                                 <p class="text-sm text-gray-500">@{{ request.sender.pseudo|default(request.sender.username) }}</p>
 
                                 <div class="flex space-x-2 mt-2">
-                                    {# On utilise request.id, car request est un objet Friend #}
                                     <button class="accept-friend-btn bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 text-xs"
                                             data-friend-id="{{ request.id }}">
                                         Accepter
@@ -65,6 +65,7 @@
         {% endif %}
     </div>
 {% endblock %}
+
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {

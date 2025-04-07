@@ -56,12 +56,12 @@ class HomeController extends AbstractController
         // Récupérer les demandes d'amitié en attente
         $friendRequests = $em->getRepository(Friend::class)->findBy([
             'receiver' => $user,
-            'status'   => 'pending'
+            'status' => 'pending'
         ]);
 
         return $this->render('home/index.html.twig', [
-            'postForm'       => $form->createView(),
-            'posts'          => $posts,
+            'postForm' => $form->createView(),
+            'posts' => $posts,
             'suggestedUsers' => $suggestedUsers,
             'friendRequests' => $friendRequests,
         ]);
@@ -90,4 +90,29 @@ class HomeController extends AbstractController
     {
         return $this->render('home/about.html.twig');
     }
+
+    #[Route('/livres/semaine', name: 'app_books_week')]
+    public function booksOfTheWeek(): Response
+    {
+        return $this->render('books/week.html.twig', [
+            'books' => []
+        ]);
+    }
+
+    #[Route('/livres/suggestions', name: 'app_books_suggestions')]
+    public function suggestedBooks(): Response
+    {
+        return $this->render('books/suggestions.html.twig', [
+            'books' => []
+        ]);
+    }
+
+    #[Route('/livres/sorties', name: 'app_books_latest')]
+    public function latestBooks(): Response
+    {
+        return $this->render('books/latest.html.twig', [
+            'books' => []
+        ]);
+    }
+
 }
