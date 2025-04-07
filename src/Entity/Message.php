@@ -29,6 +29,9 @@ class Message
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $isRead = false;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -95,6 +98,18 @@ class Message
     public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function isRead(): ?bool
+    {
+        return $this->isRead;
+    }
+
+    public function setIsRead(?bool $isRead): static
+    {
+        $this->isRead = $isRead;
 
         return $this;
     }
