@@ -61,3 +61,33 @@ fetch('/notifications/unread-count', {
 updateNotificationCount();
 setInterval(updateNotificationCount, 10000);
 });
+
+// Écoute les évenements du chant
+
+document.addEventListener('DOMContentLoaded', () => {
+    const userId = document.body.dataset.userId;
+    if (!userId) {
+        console.error("ID utilisateur non défini");
+        return;
+    }
+
+    const eventSource = new EventSource(`http://localhost:8080/.well-known/mercure?topic=chat_user_${userId}`);
+
+    eventSource.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        console.log("📩 Nouveau message reçu :", data);
+
+        // Mettre à jour l'affichage des messages en direct
+        const chatContainer = document.getElementById("chat-messages");
+        if (chatContainer) {
+            const messageDiv = document.createElement("div");
+            messageDiv.classList.add("message", data.sender === userId ? "sent" : "received");
+            messageDiv.textContent = `${data.sender}: ${data.content}`;
+            chatContainer.appendChild(messageDiv);
+        }
+    };
+
+    eventSource.onerror = function(event) {
+        console.error("Erreur Mercure", event);
+    };
+});

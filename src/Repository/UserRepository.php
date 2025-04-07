@@ -52,7 +52,26 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $qb;
     }
 
+    /**
+     * Récupère tous les amis d'un utilisateur donné
+     */
+    public function findFriends(User $user): array
+    {
+        $entityManager = $this->getEntityManager();
+        $query = $entityManager->createQuery(
+            'SELECT u FROM App\Entity\User u
+            WHERE u.id IN (
+                SELECT CASE 
+                    WHEN f.sender = :user THEN IDENTITY(f.receiver) 
+                    ELSE IDENTITY(f.sender) 
+                END
+                FROM App\Entity\Friend f
+                WHERE (f.sender = :user OR f.receiver = :user) AND f.status = :status
+            )'
+        )->setParameter('user', $user)
+            ->setParameter('status', 'accepted');
 
-
+        return $query->getResult();
+    }
 
 }
