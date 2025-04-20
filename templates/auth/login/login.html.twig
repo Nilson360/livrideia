@@ -1,39 +1,55 @@
 {% extends 'auth/base_auth.html.twig' %}
 
-{% block title %}Log in{% endblock %}
+{% block title %}Connexion{% endblock %}
 
 {% block body %}
-    <h1 class="text-2xl font-bold text-gray-700 mb-4">Log in</h1>
+    <h1 class="text-2xl font-bold text-leather mb-6 italic text-center">Connexion</h1>
 
-    <form method="post">
+    <form method="post" class="space-y-4">
         {% if error %}
-            <div class="bg-red-500 text-white text-sm p-2 rounded mb-4">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            <div class="bg-red-500 text-white text-sm p-2 rounded shadow">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
         {% endif %}
 
         {% if app.user %}
-            <div class="mb-4">
-                You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}" class="text-green-500">Logout</a>
+            <div class="mb-4 text-center text-sm text-green-700">
+                Connecté en tant que <strong>{{ app.user.userIdentifier }}</strong>.
+                <a href="{{ path('app_logout') }}" class="text-green-600 underline hover:text-green-800">Déconnexion</a>
             </div>
         {% endif %}
 
-        <div class="mb-4">
-            <label for="username" class="block text-gray-700">Username</label>
-            <input type="text" value="{{ last_username }}" name="_username" id="username" class="w-full border-gray-300 rounded-lg p-2 text-black focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 shadow-sm" autocomplete="username" required autofocus>
+        <div>
+            <label for="username" class="block text-bookmark font-semibold mb-1">Nom d'utilisateur</label>
+            <input type="text" value="{{ last_username }}" name="_username" id="username"
+                   class="w-full border border-bookmark rounded-lg p-2 text-ink bg-parchment placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-leather"
+                   autocomplete="username" required autofocus>
         </div>
-        <div class="mb-4">
-            <label for="password" class="block text-gray-700">Password</label>
-            <input type="password" name="_password" id="password" class="w-full border-gray-300 rounded-lg p-2 text-black focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 shadow-sm" autocomplete="current-password" required>
+
+        <div>
+            <label for="password" class="block text-bookmark font-semibold mb-1">Mot de passe</label>
+            <input type="password" name="_password" id="password"
+                   class="w-full border border-bookmark rounded-lg p-2 text-ink bg-parchment placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-leather"
+                   autocomplete="current-password" required>
         </div>
 
         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-        <div class="flex items-center mb-6">
-            <input type="checkbox" name="_remember_me" id="_remember_me" class="h-5 w-5 text-green-500 border-gray-300 rounded">
-            <label for="_remember_me" class="ml-2 text-gray-700">Remember me</label>
+        <div class="flex items-center">
+            <input type="checkbox" name="_remember_me" id="_remember_me"
+                   class="h-4 w-4 text-leather border-gray-300 rounded">
+            <label for="_remember_me" class="ml-2 text-sm text-ink">Se souvenir de moi</label>
         </div>
 
-        <button class="w-full bg-green-500 text-white py-2 rounded-lg font-semibold hover:bg-green-600 transition duration-200 shadow-lg">
-            Sign in
+        <button type="submit"
+                class="w-full bg-leather text-white py-2 rounded-lg font-semibold hover:bg-[#6f442a] transition duration-200 shadow">
+            Se connecter
         </button>
     </form>
+
+    <div class="text-center mt-6 text-sm">
+        <p class="text-ink">Pas encore de compte ?</p>
+        <a href="{{ path('app_register') }}"
+           class="inline-block mt-2 bg-bookmark text-white py-2 px-4 rounded-lg hover:bg-leather transition duration-200 shadow">
+            Créer un compte
+        </a>
+    </div>
 {% endblock %}

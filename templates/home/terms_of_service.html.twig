@@ -1,35 +1,45 @@
-{% extends 'home/base_home.html.twig' %}
+{% extends 'base.html.twig' %}
 
 {% block title %}Conditions d'utilisation{% endblock %}
 
-{% block body %}
-    <div class="max-w-4xl mx-auto mt-8 p-6 bg-white shadow-lg rounded-lg">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6">Conditions d'utilisation</h1>
+{% block main_content %}
+    <div class="max-w-4xl mx-auto mt-10 p-6 bg-[#fdf9f3] border border-bookmark shadow rounded-xl text-sm text-ink leading-relaxed mb-16">
+        <h1 class="text-3xl font-bold text-leather mb-6 italic flex items-center gap-2">
+            <svg class="w-6 h-6 text-bookmark" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                      d="M16 3H8C5.79086 3 4 4.79086 4 7V17C4 19.2091 5.79086 21 8 21H16C18.2091 21 20 19.2091 20 17V7C20 4.79086 18.2091 3 16 3Z"/>
+                <path stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                      d="M9 7H15"/>
+            </svg>
+            Conditions d'utilisation
+        </h1>
 
-        <p class="text-gray-700 mb-4">
-            Bienvenue sur Livrideia, une plateforme dédiée aux passionnés de lecture. En utilisant ce site, vous acceptez les présentes conditions d'utilisation. Veuillez les lire attentivement.
+        <p class="mb-4">
+            Bienvenue sur <strong>Livrideia</strong>, plateforme dédiée aux passionnés de lecture. En accédant à notre site, vous acceptez les conditions suivantes.
         </p>
 
-        <h2 class="text-2xl font-semibold text-gray-800 mt-6 mb-4">1. Compte Utilisateur</h2>
-        <p class="text-gray-700 mb-4">
-            Pour accéder à certains services, vous devrez créer un compte en fournissant des informations exactes et à jour. Vous êtes responsable de la sécurité de votre compte et des activités qui s'y déroulent.
+        <h2 class="text-xl font-semibold text-leather mt-6 mb-2">1. Compte Utilisateur</h2>
+        <p class="mb-4">
+            La création d’un compte nécessite des informations exactes et à jour. Vous êtes seul responsable de la confidentialité de vos identifiants et des activités associées à votre compte.
         </p>
 
-        <h2 class="text-2xl font-semibold text-gray-800 mt-6 mb-4">2. Utilisation Acceptable</h2>
-        <p class="text-gray-700 mb-4">
-            Vous vous engagez à utiliser Livrideia dans le respect des lois en vigueur. Toute publication de contenu inapproprié, offensant ou illégal est interdite.
+        <h2 class="text-xl font-semibold text-leather mt-6 mb-2">2. Utilisation Acceptable</h2>
+        <p class="mb-4">
+            L’usage de Livrideia doit se faire dans le respect des lois et des autres utilisateurs. Il est interdit de publier tout contenu diffamatoire, offensant ou illicite.
         </p>
 
-        <h2 class="text-2xl font-semibold text-gray-800 mt-6 mb-4">3. Droits de Propriété Intellectuelle</h2>
-        <p class="text-gray-700 mb-4">
-            Les contenus publiés sur Livrideia, tels que les textes, images et logos, sont protégés par les lois sur la propriété intellectuelle. Toute reproduction ou distribution sans autorisation est interdite.
+        <h2 class="text-xl font-semibold text-leather mt-6 mb-2">3. Droits de Propriété Intellectuelle</h2>
+        <p class="mb-4">
+            Tous les contenus (textes, images, logos) présents sur Livrideia sont protégés par les droits d’auteur. Toute reproduction sans autorisation est strictement interdite.
         </p>
 
-        <h2 class="text-2xl font-semibold text-gray-800 mt-6 mb-4">4. Modifications des Conditions</h2>
-        <p class="text-gray-700 mb-4">
-            Livrideia se réserve le droit de modifier les présentes conditions à tout moment. Les utilisateurs seront informés des changements et devront accepter les nouvelles conditions pour continuer à utiliser le site.
+        <h2 class="text-xl font-semibold text-leather mt-6 mb-2">4. Modifications des Conditions</h2>
+        <p class="mb-4">
+            Nous nous réservons le droit de modifier les présentes conditions à tout moment. Vous serez informé des changements, et l’utilisation continue du site implique leur acceptation.
         </p>
 
-        <p class="text-gray-700 mt-6">En utilisant notre site, vous reconnaissez avoir lu et accepté nos conditions d'utilisation.</p>
+        <p class="mt-6">
+            En utilisant Livrideia, vous confirmez avoir pris connaissance et accepté nos conditions d’utilisation.
+        </p>
     </div>
 {% endblock %}

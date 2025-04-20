@@ -3,17 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Authentication{% endblock %}</title>
+    <title>{% block title %}Authentification{% endblock %}</title>
+    <link rel="icon" href="/images/book-icon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
     {% block stylesheets %}
         {{ encore_entry_link_tags('app') }}
     {% endblock %}
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col justify-center items-center">
+<body class="bg-parchment text-ink font-serif min-h-screen flex flex-col justify-center items-center px-4">
 
-<div class="w-full max-w-md mx-auto bg-white shadow-lg rounded-lg p-8">
+<div class="w-full max-w-md bg-white border border-bookmark shadow-xl rounded-xl p-8">
     {% block flash_messages %}
         {% for flash_error in app.flashes('verify_email_error') %}
-            <div class="bg-red-500 text-white text-sm p-2 rounded mb-4">{{ flash_error }}</div>
+            <div class="bg-red-500 text-white text-sm p-3 rounded mb-4">
+                {{ flash_error }}
+            </div>
         {% endfor %}
     {% endblock %}
 
