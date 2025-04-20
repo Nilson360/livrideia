@@ -1,75 +1,107 @@
 {% block sidebar_left %}
-    <div class="w-1/4 p-4 hidden lg:block">
+    <div class="w-1/4 p-4 hidden lg:block space-y-6">
 
-        <!-- Section Livres de la semaine -->
-        <div class="bg-white shadow rounded-lg p-4 mb-6">
-            <h3 class="font-bold text-lg mb-4 text-orange-500">Livres de la semaine</h3>
-            <ul>
-                <li class="mb-4">
-                    <a href="{{ path('app_books_week') }}" class="flex items-start">
-                        <img src="/images/default.png" alt="Livre de la semaine 1" class="w-12 h-16 mr-3 rounded">
+        <!-- 📚 Livres de la semaine -->
+        <div class="bg-[#fdf9f3] border border-bookmark rounded-xl shadow-sm p-4">
+            <h3 class="text-leather font-bold text-lg mb-4 italic flex items-center gap-2">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
+                    <path d="M12 6.90909C10.8999 5.50893 9.20406 4.10877 5.00119 4.00602C4.72513 3.99928 4.5 4.22351 4.5 4.49965C4.5 6.54813 4.5 14.3034 4.5 16.597C4.5 16.8731 4.72515 17.09 5.00114 17.099C9.20405 17.2364 10.8999 19.0998 12 20.5M12 6.90909C13.1001 5.50893 14.7959 4.10877 18.9988 4.00602C19.2749 3.99928 19.5 4.21847 19.5 4.49461C19.5 6.78447 19.5 14.3064 19.5 16.5963C19.5 16.8724 19.2749 17.09 18.9989 17.099C14.796 17.2364 13.1001 19.0998 12 20.5M12 6.90909L12 20.5" stroke="#000000" stroke-linejoin="round"/>
+                    <path d="M19.2353 6H21.5C21.7761 6 22 6.22386 22 6.5V19.539C22 19.9436 21.5233 20.2124 21.1535 20.0481C20.3584 19.6948 19.0315 19.2632 17.2941 19.2632C14.3529 19.2632 12 21 12 21C12 21 9.64706 19.2632 6.70588 19.2632C4.96845 19.2632 3.64156 19.6948 2.84647 20.0481C2.47668 20.2124 2 19.9436 2 19.539V6.5C2 6.22386 2.22386 6 2.5 6H4.76471" stroke="#000000" stroke-linejoin="round"/>
+                </svg>
+                Livres de la semaine
+            </h3>
+
+            <ul class="space-y-4">
+                <li>
+                    <a href="{{ path('app_books_week') }}"
+                       class="flex items-start gap-3 hover:bg-parchment p-2 rounded transition">
+                        <img src="/images/default.png" alt="Livre 1"
+                             class="w-12 h-16 rounded shadow border border-bookmark">
                         <div>
-                            <p class="text-green-500 font-semibold hover:underline text-sm">Titre du Livre 1</p>
-                            <p class="text-gray-500 text-sm">Auteur</p>
+                            <p class="text-bookmark font-semibold hover:underline text-sm">Titre du Livre 1</p>
+                            <p class="text-gray-500 text-xs">Auteur</p>
                         </div>
                     </a>
                 </li>
-                <li class="mb-4">
-                    <a href="{{ path('app_books_week') }}" class="flex items-start">
-                        <img src="/images/default.png" alt="Livre de la semaine 2" class="w-12 h-16 mr-3 rounded">
+                <li>
+                    <a href="{{ path('app_books_week') }}"
+                       class="flex items-start gap-3 hover:bg-parchment p-2 rounded transition">
+                        <img src="/images/default.png" alt="Livre 2"
+                             class="w-12 h-16 rounded shadow border border-bookmark">
                         <div>
-                            <p class="text-green-500 font-semibold hover:underline">Titre du Livre 2</p>
-                            <p class="text-gray-500 text-sm">Auteur</p>
+                            <p class="text-bookmark font-semibold hover:underline text-sm">Titre du Livre 2</p>
+                            <p class="text-gray-500 text-xs">Auteur</p>
                         </div>
                     </a>
                 </li>
             </ul>
         </div>
 
-        <!-- Section Suggestions de livres pour toi -->
-        <div class="bg-white shadow rounded-lg p-4 mb-6">
-            <h3 class="font-bold text-lg mb-4 text-orange-500">Nos suggestions pour toi</h3>
-            <ul>
-                <li class="mb-4">
-                    <a href="{{ path('app_books_suggestions') }}" class="flex items-start">
-                        <img src="/images/default.png" alt="Suggestion de livre 1" class="w-12 h-16 mr-3 rounded">
+        <!-- 🪶 Suggestions pour toi -->
+        <div class="bg-[#fdf9f3] border border-bookmark rounded-xl shadow-sm p-4">
+            <h3 class="text-leather font-bold text-lg mb-4 italic flex items-center gap-2">
+                <svg fill="#000000" viewBox="0 -0.11 33.736 33.736" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
+                    <g transform="translate(-287.982 -577.197)">
+                        <path d="M288.983,610.716a1,1,0,0,1-.528-1.85c.141-.088,14.151-8.859,17.653-17.833a1,1,0,0,1,1.863.727c-3.745,9.6-17.863,18.434-18.462,18.8A.993.993,0,0,1,288.983,610.716Z"/>
+                        <path d="M292.256,607.871l-.017-1.09a28.119,28.119,0,0,1,4.178-14.957l.3-.441h3.806L299.6,588.4l.293-.4c5.611-7.734,15.292-10.108,19.194-10.77a2.261,2.261,0,0,1,2.621,2.408c-1.791,25.095-28.105,28.1-28.371,28.125Zm5.547-14.488a26.983,26.983,0,0,0-3.554,12.23c4.909-.811,23.983-5.3,25.469-26.121a.275.275,0,0,0-.09-.232.224.224,0,0,0-.2-.06c-3.59.608-12.393,2.752-17.614,9.575l.776,2.529a1.607,1.607,0,0,1-1.536,2.079Z"/>
+                    </g>
+                </svg>
+                Suggestions littéraires
+            </h3>
+            <ul class="space-y-4">
+                <li>
+                    <a href="{{ path('app_books_suggestions') }}"
+                       class="flex items-start gap-3 hover:bg-parchment p-2 rounded transition">
+                        <img src="{{ asset('/images/default.png') }}" alt="Suggestion 1"
+                             class="w-12 h-16 rounded shadow border border-bookmark">
                         <div>
-                            <p class="text-green-500 font-semibold hover:underline">Titre du Livre Suggestion 1</p>
-                            <p class="text-gray-500 text-sm">Auteur</p>
+                            <p class="text-bookmark font-semibold hover:underline text-sm">Livre Suggestion 1</p>
+                            <p class="text-gray-500 text-xs">Auteur</p>
                         </div>
                     </a>
                 </li>
-                <li class="mb-4">
-                    <a href="{{ path('app_books_suggestions') }}" class="flex items-start">
-                        <img src="/images/default.png" alt="Suggestion de livre 2" class="w-12 h-16 mr-3 rounded">
+                <li>
+                    <a href="{{ path('app_books_suggestions') }}"
+                       class="flex items-start gap-3 hover:bg-parchment p-2 rounded transition">
+                        <img src="/images/default.png" alt="Suggestion 2"
+                             class="w-12 h-16 rounded shadow border border-bookmark">
                         <div>
-                            <p class="text-green-500 font-semibold hover:underline">Titre du Livre Suggestion 2</p>
-                            <p class="text-gray-500 text-sm">Auteur</p>
+                            <p class="text-bookmark font-semibold hover:underline text-sm">Livre Suggestion 2</p>
+                            <p class="text-gray-500 text-xs">Auteur</p>
                         </div>
                     </a>
                 </li>
             </ul>
         </div>
 
-        <!-- Section Dernières sorties -->
-        <div class="bg-white shadow rounded-lg p-4">
-            <h3 class="font-bold text-lg mb-4 text-orange-500">Dernières sorties</h3>
-            <ul>
-                <li class="mb-4">
-                    <a href="{{ path('app_books_latest') }}" class="flex items-start">
-                        <img src="/images/default.png" alt="Dernière sortie 1" class="w-12 h-16 mr-3 rounded">
+        <!-- Dernières parutions -->
+        <div class="bg-[#fdf9f3] border border-bookmark rounded-xl shadow-sm p-4">
+            <h3 class="text-leather font-bold text-lg mb-4 italic flex items-center gap-2">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
+                    <path d="M12 6.90909C10.8999 5.50893 9.20406 4.10877 5.00119 4.00602C4.72513 3.99928 4.5 4.22351 4.5 4.49965C4.5 6.54813 4.5 14.3034 4.5 16.597C4.5 16.8731 4.72515 17.09 5.00114 17.099C9.20405 17.2364 10.8999 19.0998 12 20.5M12 6.90909C13.1001 5.50893 14.7959 4.10877 18.9988 4.00602C19.2749 3.99928 19.5 4.21847 19.5 4.49461C19.5 6.78447 19.5 14.3064 19.5 16.5963C19.5 16.8724 19.2749 17.09 18.9989 17.099C14.796 17.2364 13.1001 19.0998 12 20.5M12 6.90909L12 20.5" stroke="#000000" stroke-linejoin="round"/>
+                </svg>
+                Dernières parutions
+            </h3>
+            <ul class="space-y-4">
+                <li>
+                    <a href="{{ path('app_books_latest') }}"
+                       class="flex items-start gap-3 hover:bg-parchment p-2 rounded transition">
+                        <img src="/images/default.png" alt="Sortie 1"
+                             class="w-12 h-16 rounded shadow border border-bookmark">
                         <div>
-                            <p class="text-green-500 font-semibold hover:underline">Titre du Livre Sortie 1</p>
-                            <p class="text-gray-500 text-sm">Auteur</p>
+                            <p class="text-bookmark font-semibold hover:underline text-sm">Livre Sortie 1</p>
+                            <p class="text-gray-500 text-xs">Auteur</p>
                         </div>
                     </a>
                 </li>
-                <li class="mb-4">
-                    <a href="{{ path('app_books_latest') }}" class="flex items-start">
-                        <img src="/images/default.png" alt="Dernière sortie 2" class="w-12 h-16 mr-3 rounded">
+                <li>
+                    <a href="{{ path('app_books_latest') }}"
+                       class="flex items-start gap-3 hover:bg-parchment p-2 rounded transition">
+                        <img src="/images/default.png" alt="Sortie 2"
+                             class="w-12 h-16 rounded shadow border border-bookmark">
                         <div>
-                            <p class="text-green-500 font-semibold hover:underline">Titre du Livre Sortie 2</p>
-                            <p class="text-gray-500 text-sm">Auteur</p>
+                            <p class="text-bookmark font-semibold hover:underline text-sm">Livre Sortie 2</p>
+                            <p class="text-gray-500 text-xs">Auteur</p>
                         </div>
                     </a>
                 </li>

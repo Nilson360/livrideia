@@ -1,4 +1,6 @@
 import './bootstrap.js';
+import { BookOpen, MessageCircle, Share2 } from 'lucide';
+
 /*
  * Welcome to your app's main JavaScript file!
  *

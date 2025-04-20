@@ -1,168 +1,189 @@
 {% block main_content %}
-    <div class="w-full md:w-2/3 lg:w-1/2 p-4">
-        {# Zone de création de publication #}
-        <div class="bg-white shadow rounded-lg p-4 mb-6">
+    <div class="w-full md:w-2/3 lg:w-1/2 p-4 space-y-6">
+
+        <!-- Zone de création de publication -->
+        <div class="bg-[#fdf9f3] border border-bookmark rounded-xl shadow p-6">
+            <h2 class="text-leather text-lg font-bold italic mb-4 flex items-center gap-2">
+                <svg fill="#000000" viewBox="0 -0.11 33.736 33.736" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                    <g id="SVGRepo_iconCarrier">
+                        <g transform="translate(-287.982 -577.197)">
+                            <path d="M288.983,610.716a1,1,0,0,1-.528-1.85c.141-.088,14.151-8.859,17.653-17.833a1,1,0,0,1,1.863.727c-3.745,9.6-17.863,18.434-18.462,18.8A.993.993,0,0,1,288.983,610.716Z"></path>
+                            <path d="M292.256,607.871l-.017-1.09a28.119,28.119,0,0,1,4.178-14.957l.3-.441h3.806L299.6,588.4l.293-.4c5.611-7.734,15.292-10.108,19.194-10.77a2.261,2.261,0,0,1,2.621,2.408c-1.791,25.095-28.105,28.1-28.371,28.125Zm5.547-14.488a26.983,26.983,0,0,0-3.554,12.23c4.909-.811,23.983-5.3,25.469-26.121a.275.275,0,0,0-.09-.232.224.224,0,0,0-.2-.06c-3.59.608-12.393,2.752-17.614,9.575l.776,2.529a1.607,1.607,0,0,1-1.536,2.079Z"></path>
+                        </g>
+                    </g>
+                </svg>
+                Votre plume
+            </h2>
+
             {{ form_start(postForm, {'attr': {'class': 'space-y-4'}}) }}
             {{ form_widget(postForm.content, {
                 'attr': {
-                    'class': 'w-full border border-gray-300 rounded-lg p-2',
-                    'rows': 3,
-                    'placeholder': 'Quoi de neuf ?'
+                    'class': 'w-full border border-bookmark rounded-lg p-3 bg-parchment text-ink placeholder-gray-500 text-sm',
+                    'rows': 4,
+                    'placeholder': 'Partagez une citation, un extrait ou une pensée...'
                 }
             }) }}
-            <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center mt-4 gap-2">
+            <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 mt-4">
                 <div>
                     {{ form_widget(postForm.imageFile, {
                         'attr': {
-                            'class': 'text-orange-500 hover:underline',
+                            'class': 'text-bookmark hover:underline text-sm',
                             'accept': 'image/*'
                         }
                     }) }}
                 </div>
-                <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                <button type="submit"
+                        class="bg-leather text-white px-5 py-2 rounded-lg shadow hover:bg-[#6f442a] text-sm font-semibold">
                     Publier
                 </button>
             </div>
             {{ form_end(postForm) }}
         </div>
 
-        {# Parcours des publications #}
+        <!-- 📜 Liste des publications -->
         {% for post in posts %}
-            {# Déterminer si l'utilisateur connecté a déjà liké la publication #}
-            {% set userHasLiked = false %}
-            {% if app.user %}
-                {% for like in post.likes %}
-                    {% if like.user.id == app.user.id %}
-                        {% set userHasLiked = true %}
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
-
-            {# Préparer les compteurs #}
+            {% set userHasLiked = app.user and post.likes|filter(like => like.user.id == app.user.id)|length > 0 %}
             {% set likeCount = post.likes|length %}
             {% set commentCount = post.comments|length %}
             {% set shareCount = post.shares|length %}
 
-            <div class="bg-white shadow rounded-lg p-4 mb-6">
-                {# Affichage principal du post #}
-                <div class="mb-4">
-                    <div class="flex flex-wrap items-center gap-2">
-                        <a href="{{ path('dashboard_user_profile_other', { id: post.user.id }) }}"
-                           class="text-green-600 font-bold text-sm sm:text-base hover:underline">
-                            {{ post.user.fullName }}
-                        </a>
-                        <span class="text-gray-500 text-xs sm:text-sm">{{ post.createdAt|date('d/m/Y H:i') }}</span>
-                    </div>
-                    <p class="mt-2 text-sm sm:text-base">{{ post.content }}</p>
+            <div class="post-container bg-[#fdf9f3] border border-bookmark rounded-xl shadow p-6 space-y-4">
+                <!-- En-tête du post -->
+                <div class="flex flex-wrap items-center gap-2 text-sm text-ink">
+                    <a href="{{ path('dashboard_user_profile_other', { id: post.user.id }) }}"
+                       class="text-leather font-bold hover:underline italic">
+                        {{ post.user.fullName }}
+                    </a>
+                    <span class="text-gray-500">· {{ post.createdAt|date('d/m/Y H:i') }}</span>
                 </div>
 
+                <p class="text-ink text-sm whitespace-pre-line">{{ post.content }}</p>
+
                 {% if post.imagePath %}
-                    <div class="mb-4">
-                        {# L'image s'affiche en pleine largeur sur mobile et avec dimensions fixes sur tablette/desktop #}
-                        <img src="{{ asset('uploads/' ~ post.imagePath) }}" alt="Image de publication"
-                             class="block mx-auto w-full sm:w-[1200px] h-auto sm:h-[630px] rounded-lg">
+                    <div>
+                        <img src="{{ asset('uploads/' ~ post.imagePath) }}"
+                             alt="Image de publication"
+                             class="block mx-auto rounded-lg border border-bookmark w-full max-h-[500px] object-cover">
                     </div>
                 {% endif %}
 
-                {# Bloc supérieur : compteurs (affiché uniquement s'il y a au moins un like, commentaire ou partage) #}
                 {% if likeCount > 0 or commentCount > 0 or shareCount > 0 %}
-                    <div class="stats-container flex flex-wrap items-center justify-between mb-2">
-                        <div class="flex items-center space-x-2">
+                    <div class="stats-container flex flex-wrap justify-between items-center text-xs text-gray-600 border-t pt-2">
+                        <div class="flex items-center gap-2">
                             {% if likeCount > 0 %}
-                                <i class="fas fa-thumbs-up text-green-500"></i>
-                                <span class="text-gray-600 like-count text-xs sm:text-sm">{{ likeCount }}</span>
+                                <span class="like-count">📖 {{ likeCount }}</span>
                             {% endif %}
                         </div>
-                        <div class="flex items-center space-x-4">
+                        <div class="flex items-center gap-4">
                             {% if commentCount > 0 %}
-                                <button class="toggle-comments text-gray-600 hover:text-gray-800 comment-count-btn text-xs sm:text-sm"
+                                <button class="toggle-comments hover:text-ink comment-count-btn"
                                         data-count="{{ commentCount }}">
-                                    {{ commentCount }} commentaires
+                                    💬 {{ commentCount }} commentaire{{ commentCount > 1 ? 's' : '' }}
                                 </button>
                             {% endif %}
                             {% if shareCount > 0 %}
-                                <span class="text-gray-600 share-count text-xs sm:text-sm">
-                                {{ shareCount }} partages
-                            </span>
+                                <span>🔁 {{ shareCount }}</span>
                             {% endif %}
                         </div>
                     </div>
                 {% endif %}
 
-                {# Barre d'actions : J’aime, Commenter (les boutons Envoyer et Partager sont commentés pour simplifier) #}
-                <div class="flex flex-wrap justify-around items-center border-t pt-2">
-                    <button class="like-button {% if userHasLiked %}text-green-500{% else %}text-gray-600{% endif %} hover:text-gray-800 text-xs sm:text-sm"
+                <!-- Barre d'actions -->
+                <div class="flex justify-around items-center text-sm border-t pt-2 text-bookmark">
+                    <button class="like-button flex items-center gap-1 {{ userHasLiked ? 'text-leather' : 'text-bookmark' }} hover:text-leather"
                             data-id="{{ post.id }}">
-                        <i class="fas fa-thumbs-up"></i> J'aime
+                        {% if userHasLiked %}
+                            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"
+                                 class="w-4 h-4">
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                      d="M15.9 4.5C15.9 3 14.418 2 13.26 2c-.806 0-.869.612-.993 1.82-.055.53-.121 1.174-.267 1.93-.386 2.002-1.72 4.56-2.996 5.325V17C9 19.25 9.75 20 13 20h3.773c2.176 0 2.703-1.433 2.899-1.964l.013-.036c.114-.306.358-.547.638-.82.31-.306.664-.653.927-1.18.311-.623.27-1.177.233-1.67-.023-.299-.044-.575.017-.83.064-.27.146-.475.225-.671.143-.356.275-.686.275-1.329 0-1.5-.748-2.498-2.315-2.498H15.5S15.9 6 15.9 4.5zM5.5 10A1.5 1.5 0 0 0 4 11.5v7a1.5 1.5 0 0 0 3 0v-7A1.5 1.5 0 0 0 5.5 10z"/>
+                            </svg>
+                        {% else %}
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4">
+                                <path d="M8 10V20M8 10L4 9.99998V20L8 20M8 10L13.1956 3.93847C13.6886 3.3633 14.4642 3.11604 15.1992 3.29977L15.2467 3.31166C16.5885 3.64711 17.1929 5.21057 16.4258 6.36135L14 9.99998H18.5604C19.8225 9.99998 20.7691 11.1546 20.5216 12.3922L19.3216 18.3922C19.1346 19.3271 18.3138 20 17.3604 20L8 20"
+                                      stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
+                            </svg>
+                        {% endif %}
+                        J’aime
                     </button>
-                    <button class="toggle-comments text-gray-600 hover:text-gray-800 text-xs sm:text-sm">
-                        <i class="fas fa-comment"></i> Commenter
+
+                    <button class="toggle-comments hover:text-leather flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                             stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.77 9.77 0 01-4.29-1l-4.42 1 .82-4.16A7.964 7.964 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                        </svg>
+                        Commenter
                     </button>
                 </div>
 
-                {# Section commentaires (cachée par défaut) #}
-                <div class="comments-section mt-4 hidden">
+                <!-- Zone des commentaires -->
+                <div class="comments-section mt-4 hidden space-y-3">
                     {% for comment in post.comments %}
-                        <div class="comment p-2 border-b flex flex-col sm:flex-row justify-between items-start sm:items-center">
-                            <div class="w-full">
-                                <div class="flex justify-between">
+                        <div class="border-t pt-2 text-sm text-ink">
+                            <div class="flex justify-between items-start">
+                                <div>
                                     <a href="{{ path('dashboard_user_profile_other', { id: comment.user.id }) }}"
-                                       class="text-green-600 font-semibold text-xs sm:text-sm hover:underline">
+                                       class="text-leather font-semibold hover:underline italic">
                                         {{ comment.user.fullName }}
                                     </a>
-                                    <span class="text-gray-500 text-xs">{{ comment.createdAt|date('d/m/Y H:i') }}</span>
+                                    <p class="text-xs text-gray-500">{{ comment.createdAt|date('d/m/Y H:i') }}</p>
+                                    <p class="mt-1">{{ comment.content }}</p>
                                 </div>
-                                <p class="text-xs sm:text-sm">{{ comment.content }}</p>
+                                {% if app.user and app.user.id == comment.user.id %}
+                                    <div class="ml-2 flex gap-2">
+                                        <button class="edit-comment text-leather hover:underline text-xs"
+                                                data-comment-id="{{ comment.id }}">✏️ Modifier
+                                        </button>
+                                        <button class="delete-comment text-red-600 hover:underline text-xs"
+                                                data-comment-id="{{ comment.id }}">🗑️ Supprimer
+                                        </button>
+                                    </div>
+                                {% endif %}
                             </div>
-                            {% if app.user and app.user.id == comment.user.id %}
-                                <div class="ml-0 sm:ml-2 mt-2 sm:mt-0">
-                                    <button class="edit-comment text-green-500 hover:text-green-700 text-xs sm:text-sm"
-                                            data-comment-id="{{ comment.id }}">Modifier
-                                    </button>
-                                    <button class="delete-comment text-red-500 hover:text-red-700 ml-2 text-xs sm:text-sm"
-                                            data-comment-id="{{ comment.id }}">Supprimer
-                                    </button>
-                                </div>
-                            {% endif %}
                         </div>
                     {% endfor %}
-                    {# Zone d’ajout d’un nouveau commentaire #}
-                    <div class="add-comment mt-2 flex flex-col sm:flex-row items-stretch sm:items-center">
-                        <input type="text" placeholder="Ajouter un commentaire"
-                               class="comment-input w-full border rounded p-2 mb-2 sm:mb-0"
+
+                    <!-- Formulaire d’ajout de commentaire -->
+                    <div class="add-comment flex flex-col sm:flex-row gap-2">
+                        <input type="text" placeholder="Exprimez-vous..."
+                               class="comment-input w-full border border-bookmark rounded p-2 text-sm bg-parchment"
                                data-post-id="{{ post.id }}">
-                        <button class="send-comment ml-0 sm:ml-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 text-xs sm:text-sm"
+                        <button class="send-comment bg-leather text-white px-4 py-2 rounded hover:bg-[#6f442a] text-sm"
                                 data-post-id="{{ post.id }}">
-                            Envoyer
+                            Publier
                         </button>
                     </div>
                 </div>
             </div>
         {% else %}
-            <p class="text-center text-gray-500">Aucune publication pour le moment.</p>
+            <p class="text-center text-gray-500 italic mt-8">Aucune publication pour le moment. Inspirez-nous !</p>
         {% endfor %}
+
     </div>
 {% endblock %}
 
-{# 1. Toggle d'affichage des commentaires #}
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        // === 1. Toggle des commentaires ===
         document.querySelectorAll('.toggle-comments').forEach(button => {
             button.addEventListener('click', function () {
-                let container = this.closest('.bg-white');
-                let commentSection = container.querySelector('.comments-section');
-                commentSection.classList.toggle('hidden');
+                const container = this.closest('.post-container');
+                const commentSection = container.querySelector('.comments-section');
+                commentSection?.classList.toggle('hidden');
             });
         });
-    });
-</script>
 
-{# 2. Gestion du like (AJAX) #}
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
+        // === 2. Gestion du like ===
         document.querySelectorAll('.like-button').forEach(button => {
             button.addEventListener('click', function () {
-                let postId = this.getAttribute('data-id');
+                const postId = this.getAttribute('data-id');
+                const container = this.closest('.post-container');
+
                 fetch('/post/' + postId + '/like', {
                     method: 'POST',
                     headers: {
@@ -172,192 +193,164 @@
                 })
                     .then(response => response.json())
                     .then(data => {
-                        if (data.likesCount !== undefined) {
-                            let container = this.closest('.bg-white');
-                            let likeCountEl = container.querySelector('.like-count');
-                            let statsContainer = container.querySelector('.stats-container');
-                            if (likeCountEl) {
-                                if (data.likesCount > 0) {
-                                    likeCountEl.textContent = data.likesCount;
-                                    likeCountEl.classList.remove('hidden');
-                                } else {
-                                    likeCountEl.textContent = '0';
-                                    likeCountEl.classList.add('hidden');
-                                }
-                            }
-                            if (data.status === 'liked') {
-                                this.classList.remove('text-gray-600');
-                                this.classList.add('text-green-500');
-                            } else {
-                                this.classList.remove('text-green-500');
-                                this.classList.add('text-gray-600');
-                            }
-                            if (statsContainer) {
-                                let commentCountBtn = statsContainer.querySelector('.comment-count-btn');
-                                let shareCountEl = statsContainer.querySelector('.share-count');
-                                let commentCount = commentCountBtn ? parseInt(commentCountBtn.getAttribute('data-count') || '0', 10) : 0;
-                                let shareCount = shareCountEl ? parseInt(shareCountEl.textContent || '0', 10) : 0;
-                                if (data.likesCount === 0 && commentCount === 0 && shareCount === 0) {
-                                    statsContainer.classList.add('hidden');
-                                } else {
-                                    statsContainer.classList.remove('hidden');
-                                }
-                            }
+                        const statsContainer = container.querySelector('.stats-container');
+                        const likeCountEl = container.querySelector('.like-count');
+
+                        if (likeCountEl) {
+                            likeCountEl.textContent = data.likesCount || 0;
+                            likeCountEl.classList.toggle('hidden', data.likesCount === 0);
+                        }
+
+                        this.classList.toggle('text-leather', data.status === 'liked');
+                        this.classList.toggle('text-bookmark', data.status !== 'liked');
+
+                        if (statsContainer) {
+                            const hasStats = data.likesCount > 0 || parseInt(statsContainer.querySelector('.comment-count-btn')?.dataset.count || 0) > 0;
+                            statsContainer.classList.toggle('hidden', !hasStats);
                         }
                     })
-                    .catch(error => console.error('Erreur:', error));
+                    .catch(err => console.error('Erreur like :', err));
             });
         });
-    });
-</script>
 
-{# 3. Envoi d'un nouveau commentaire (AJAX) #}
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
+        // === 3. Envoi d'un commentaire ===
         function sendComment(button) {
-            let postId = button.getAttribute('data-post-id');
-            let input = button.closest('.add-comment').querySelector('.comment-input');
-            let content = input.value.trim();
-            if (content === '') return;
+            const container = button.closest('.post-container');
+            const postId = button.getAttribute('data-post-id');
+            const input = container.querySelector('.comment-input');
+            const content = input.value.trim();
+
+            if (!content) return;
+
             fetch('/post/' + postId + '/comment', {
                 method: 'POST',
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
-                body: new URLSearchParams({content: content})
+                body: new URLSearchParams({content})
             })
-                .then(response => response.json())
+                .then(res => res.json())
                 .then(data => {
                     if (data.status === 'commented') {
-                        let commentsSection = button.closest('.comments-section');
-                        let newComment = document.createElement('div');
-                        newComment.classList.add('comment', 'p-2', 'border-b', 'flex', 'justify-between', 'items-center');
+                        const commentsSection = container.querySelector('.comments-section');
+                        const newComment = document.createElement('div');
+                        newComment.className = 'border-t pt-2 text-sm text-ink';
                         newComment.innerHTML = `
-                    <div>
-                        <div class="flex justify-between">
-                            <span class="font-bold">${data.comment.user}</span>
-                            <span class="text-gray-500 text-xs">${data.comment.createdAt}</span>
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-leather font-semibold italic">${data.comment.user}</span>
+                                <p class="text-xs text-gray-500">${data.comment.createdAt}</p>
+                                <p class="mt-1">${data.comment.content}</p>
+                            </div>
+                            <div class="ml-2 flex gap-2">
+                                <button class="edit-comment text-leather hover:underline text-xs" data-comment-id="${data.comment.id}">✏️ Modifier</button>
+                                <button class="delete-comment text-red-600 hover:underline text-xs" data-comment-id="${data.comment.id}">🗑️ Supprimer</button>
+                            </div>
                         </div>
-                        <p class="text-xs">${data.comment.content}</p>
-                    </div>
-                    <div class="ml-2">
-                        <button class="edit-comment text-green-500 hover:text-blue-700" data-comment-id="${data.comment.id}">Modifier</button>
-                        <button class="delete-comment text-red-500 hover:text-red-700 ml-2" data-comment-id="${data.comment.id}">Supprimer</button>
-                    </div>
-                `;
+                    `;
                         commentsSection.insertBefore(newComment, commentsSection.querySelector('.add-comment'));
                         input.value = '';
-                        let container = button.closest('.bg-white');
-                        let statsContainer = container.querySelector('.stats-container');
-                        let commentCountBtn = container.querySelector('.comment-count-btn');
+
+                        const commentCountBtn = container.querySelector('.comment-count-btn');
                         if (commentCountBtn) {
-                            commentCountBtn.setAttribute('data-count', data.commentsCount);
-                            commentCountBtn.textContent = data.commentsCount + ' commentaires';
+                            commentCountBtn.dataset.count = data.commentsCount;
+                            commentCountBtn.textContent = `💬 ${data.commentsCount} commentaire${data.commentsCount > 1 ? 's' : ''}`;
                             commentCountBtn.classList.remove('hidden');
-                        } else {
-                            if (statsContainer) {
-                                statsContainer.classList.remove('hidden');
-                            }
                         }
-                        if (statsContainer) {
-                            // Mise à jour selon les compteurs restants...
-                        }
+
+                        container.querySelector('.stats-container')?.classList.remove('hidden');
                     }
                 })
-                .catch(error => console.error('Erreur:', error));
+                .catch(err => console.error('Erreur commentaire :', err));
         }
 
         document.querySelectorAll('.send-comment').forEach(button => {
-            button.addEventListener('click', function () {
-                sendComment(this);
-            });
+            button.addEventListener('click', () => sendComment(button));
         });
+
         document.querySelectorAll('.comment-input').forEach(input => {
             input.addEventListener('keypress', function (e) {
                 if (e.key === 'Enter') {
                     e.preventDefault();
-                    let button = this.parentElement.querySelector('.send-comment');
-                    sendComment(button);
+                    sendComment(this.closest('.post-container').querySelector('.send-comment'));
                 }
             });
         });
-    });
-</script>
 
-{# 4. Suppression et édition d'un commentaire #}
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
+        // === 4. Suppression et édition d'un commentaire ===
         document.addEventListener('click', function (e) {
-            if (e.target && e.target.classList.contains('delete-comment')) {
+            const el = e.target;
+            const container = el.closest('.post-container');
+
+            // Suppression
+            if (el.classList.contains('delete-comment')) {
                 e.preventDefault();
-                let commentId = e.target.getAttribute('data-comment-id');
-                fetch('/comment/' + commentId + '/delete', {
+                const commentId = el.dataset.commentId;
+
+                fetch(`/comment/${commentId}/delete`, {
                     method: 'POST',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
+                    headers: {'X-Requested-With': 'XMLHttpRequest'}
                 })
-                    .then(response => response.json())
+                    .then(res => res.json())
                     .then(data => {
                         if (data.status === 'deleted') {
-                            e.target.closest('.comment').remove();
-                            let container = e.target.closest('.bg-white');
-                            let commentCountBtn = container.querySelector('.comment-count-btn');
-                            if (commentCountBtn) {
+                            el.closest('.border-t').remove();
+                            const btn = container.querySelector('.comment-count-btn');
+                            if (btn) {
                                 if (data.commentsCount > 0) {
-                                    commentCountBtn.setAttribute('data-count', data.commentsCount);
-                                    commentCountBtn.textContent = data.commentsCount + ' commentaires';
+                                    btn.dataset.count = data.commentsCount;
+                                    btn.textContent = `💬 ${data.commentsCount} commentaire${data.commentsCount > 1 ? 's' : ''}`;
                                 } else {
-                                    commentCountBtn.classList.add('hidden');
-                                    commentCountBtn.setAttribute('data-count', 0);
+                                    btn.classList.add('hidden');
                                 }
                             }
                         }
-                    })
-                    .catch(error => console.error('Erreur:', error));
+                    });
             }
-        });
-        document.addEventListener('click', function (e) {
-            if (e.target && e.target.classList.contains('edit-comment')) {
+
+            // Édition
+            if (el.classList.contains('edit-comment')) {
                 e.preventDefault();
-                let commentEl = e.target.closest('.comment');
-                let commentId = e.target.getAttribute('data-comment-id');
-                let contentEl = commentEl.querySelector('p');
-                let oldContent = contentEl.textContent;
-                contentEl.style.display = 'none';
-                e.target.style.display = 'none';
-                let deleteBtn = commentEl.querySelector('.delete-comment');
-                if (deleteBtn) {
-                    deleteBtn.style.display = 'none';
-                }
-                let inputEdit = document.createElement('input');
-                inputEdit.type = 'text';
-                inputEdit.value = oldContent;
-                inputEdit.classList.add('w-full', 'border', 'rounded', 'p-2', 'mt-2');
-                commentEl.insertBefore(inputEdit, contentEl.nextSibling);
-                let validateBtn = document.createElement('button');
-                validateBtn.textContent = 'Valider';
-                validateBtn.classList.add('bg-green-500', 'text-white', 'px-4', 'py-2', 'rounded', 'hover:bg-green-600', 'ml-2');
-                commentEl.insertBefore(validateBtn, inputEdit.nextSibling);
-                let cancelBtn = document.createElement('button');
-                cancelBtn.textContent = 'Annuler';
-                cancelBtn.classList.add('bg-gray-500', 'text-white', 'px-4', 'py-2', 'rounded', 'hover:bg-gray-600', 'ml-2');
-                commentEl.insertBefore(cancelBtn, validateBtn.nextSibling);
-                cancelBtn.addEventListener('click', function () {
-                    contentEl.style.display = '';
-                    e.target.style.display = '';
-                    if (deleteBtn) {
-                        deleteBtn.style.display = '';
-                    }
-                    inputEdit.remove();
-                    validateBtn.remove();
-                    cancelBtn.remove();
+                const commentBlock = el.closest('.border-t');
+                const p = commentBlock.querySelector('p.mt-1');
+                const oldText = p.textContent;
+
+                p.style.display = 'none';
+                el.style.display = 'none';
+
+                const deleteBtn = commentBlock.querySelector('.delete-comment');
+                deleteBtn?.style.setProperty('display', 'none');
+
+                const input = document.createElement('input');
+                input.value = oldText;
+                input.className = 'border rounded w-full p-2 mt-2 text-sm';
+                commentBlock.appendChild(input);
+
+                const valider = document.createElement('button');
+                valider.className = 'bg-green-600 text-white px-3 py-1 rounded text-sm ml-2';
+                valider.textContent = 'Valider';
+                commentBlock.appendChild(valider);
+
+                const annuler = document.createElement('button');
+                annuler.className = 'bg-gray-400 text-white px-3 py-1 rounded text-sm ml-2';
+                annuler.textContent = 'Annuler';
+                commentBlock.appendChild(annuler);
+
+                annuler.addEventListener('click', () => {
+                    input.remove();
+                    valider.remove();
+                    annuler.remove();
+                    p.style.display = '';
+                    el.style.display = '';
+                    deleteBtn?.style.setProperty('display', '');
                 });
-                validateBtn.addEventListener('click', function () {
-                    let newContent = inputEdit.value.trim();
-                    if (newContent === '') return;
-                    fetch('/comment/' + commentId + '/edit', {
+
+                valider.addEventListener('click', () => {
+                    const newContent = input.value.trim();
+                    if (!newContent) return;
+
+                    fetch(`/comment/${el.dataset.commentId}/edit`, {
                         method: 'POST',
                         headers: {
                             'X-Requested-With': 'XMLHttpRequest',
@@ -365,23 +358,24 @@
                         },
                         body: new URLSearchParams({content: newContent})
                     })
-                        .then(response => response.json())
+                        .then(res => res.json())
                         .then(data => {
                             if (data.status === 'updated') {
-                                contentEl.textContent = data.comment.content;
-                                contentEl.style.display = '';
-                                e.target.style.display = '';
-                                if (deleteBtn) {
-                                    deleteBtn.style.display = '';
-                                }
-                                inputEdit.remove();
-                                validateBtn.remove();
-                                cancelBtn.remove();
+                                p.textContent = data.comment.content;
+                                input.remove();
+                                valider.remove();
+                                annuler.remove();
+                                p.style.display = '';
+                                el.style.display = '';
+                                deleteBtn?.style.setProperty('display', '');
                             }
-                        })
-                        .catch(error => console.error('Erreur:', error));
+                        });
                 });
             }
         });
     });
 </script>
+
+
+
+

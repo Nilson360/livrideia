@@ -32,6 +32,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->persist($user);
         $this->getEntityManager()->flush();
     }
+
     public function getSugeredUsers($userId): array
     {
         $qb = $this->createQueryBuilder('u')
@@ -74,4 +75,14 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $query->getResult();
     }
 
+    public function searchByNameOrUsername(string $query): array
+    {
+        return $this->createQueryBuilder('u')
+            ->where('LOWER(u.username) LIKE :query')
+            ->orWhere('LOWER(u.fullName) LIKE :query')
+            ->setParameter('query', '%' . strtolower($query) . '%')
+            ->orderBy('u.username', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

@@ -1,120 +1,123 @@
 {% block posts %}
-{% for post in posts %}
+    {% for post in posts %}
+        {% set userHasLiked = app.user and post.likes|filter(like => like.user.id == app.user.id)|length > 0 %}
+        {% set likeCount = post.likes|length %}
+        {% set commentCount = post.comments|length %}
+        {% set shareCount = post.shares|length %}
 
-            {# Déterminer si l'utilisateur connecté a déjà liké la publication #}
-            {% set userHasLiked = false %}
-            {% if app.user %}
-                {% for like in post.likes %}
-                    {% if like.user.id == app.user.id %}
-                        {% set userHasLiked = true %}
-                    {% endif %}
-                {% endfor %}
+        <div class="bg-[#fdf9f3] border border-bookmark rounded-xl shadow p-6 mb-6 space-y-4 bg-white">
+            <!-- En-tête -->
+            <div class="flex items-center space-x-2 text-sm text-ink">
+                <span class="font-bold text-leather italic">{{ post.user.fullName }}</span>
+                <span class="text-gray-500">· {{ post.createdAt|date('d/m/Y H:i') }}</span>
+            </div>
+
+            <!-- Contenu -->
+            <p class="text-sm text-ink whitespace-pre-line">{{ post.content }}</p>
+
+            {% if post.imagePath %}
+                <div>
+                    <img src="{{ asset('uploads/' ~ post.imagePath) }}"
+                         alt="Image de publication"
+                         class="block mx-auto w-full max-h-[500px] object-cover rounded-lg border border-bookmark shadow">
+                </div>
             {% endif %}
 
-            {# Préparer les compteurs #}
-            {% set likeCount = post.likes|length %}
-            {% set commentCount = post.comments|length %}
-            {% set shareCount = post.shares|length %}
-
-            <div class="bg-white shadow rounded-lg p-4 mb-6">
-                {# Affichage principal du post #}
-                <div class="mb-4">
-                    <div class="flex items-center space-x-2">
-                        <span class="font-bold">{{ post.user.fullName }}</span>
-                        <span class="text-gray-500 text-sm">{{ post.createdAt|date('d/m/Y H:i') }}</span>
-                    </div>
-                    <p class="mt-2">{{ post.content }}</p>
-                </div>
-
-                {% if post.imagePath %}
-                    <div class="mb-4">
-                        <img src="{{ asset('uploads/' ~ post.imagePath) }}" alt="Image de publication" class="block mx-auto w-[1200px] h-[630px] rounded-lg">
-                    </div>
-                {% endif %}
-
-                {# Bloc supérieur : compteurs (likes, commentaires, partages) #}
-                {# Ne l'afficher que si l'un des compteurs est > 0 #}
-                {% if likeCount > 0 or commentCount > 0 or shareCount > 0 %}
-                    <div class="stats-container flex items-center justify-between mb-2">
-                        <div class="flex items-center space-x-2">
-                            {# Afficher le compteur de likes si > 0 #}
-                            {% if likeCount > 0 %}
-                                <i class="fas fa-thumbs-up text-blue-500"></i>
-                                <span class="text-gray-600 like-count">{{ likeCount }}</span>
-                            {% endif %}
-                        </div>
-                        <div class="flex items-center space-x-4">
-                            {# Le nombre de commentaires, s’il y en a #}
-                            {% if commentCount > 0 %}
-                                <button class="toggle-comments text-gray-600 hover:text-gray-800 comment-count-btn"
-                                        data-count="{{ commentCount }}">
-                                    {{ commentCount }} commentaires
-                                </button>
-                            {% endif %}
-                            {# Le nombre de partages, s’il y en a #}
-                            {% if shareCount > 0 %}
-                                <span class="text-gray-600 share-count">
-                                {{ shareCount }} partages
+            {% if likeCount > 0 or commentCount > 0 or shareCount > 0 %}
+                <div class="stats-container flex justify-between items-center text-xs text-gray-600 border-t pt-2">
+                    <div class="flex items-center gap-2">
+                        {% if likeCount > 0 %}
+                            <span class="like-count flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                          d="M8 10V20M8 10L4 10V20H8M8 10L13.2 3.94C13.69 3.36 14.46 3.12 15.2 3.3C16.59 3.65 17.19 5.21 16.43 6.36L14 10H18.56C19.82 10 20.77 11.15 20.52 12.39L19.32 18.39C19.13 19.33 18.31 20 17.36 20H8"/>
+                                </svg>
+                                {{ likeCount }}
                             </span>
-                            {% endif %}
-                        </div>
+                        {% endif %}
                     </div>
-                {% endif %}
-
-                {# Barre d'actions : J’aime, Commenter, Envoyer, Partager #}
-                <div class="flex justify-around items-center border-t pt-2">
-                    <button class="like-button {% if userHasLiked %}text-blue-500{% else %}text-gray-600{% endif %} hover:text-gray-800"
-                            data-id="{{ post.id }}">
-                        <i class="fas fa-thumbs-up"></i> J'aime
-                    </button>
-                    <button class="toggle-comments text-gray-600 hover:text-gray-800">
-                        <i class="fas fa-comment"></i> Commenter
-                    </button>
-                    <!--<button class="text-gray-600 hover:text-gray-800">
-                        <i class="fas fa-paper-plane"></i> Envoyer
-                    </button>
-                    <button class="text-gray-600 hover:text-gray-800">
-                        <i class="fas fa-share"></i> Partager
-                    </button>-->
+                    <div class="flex items-center gap-4">
+                        {% if commentCount > 0 %}
+                            <button class="toggle-comments hover:text-ink comment-count-btn"
+                                    data-count="{{ commentCount }}">
+                                <svg class="w-4 h-4 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.77 9.77 0 01-4.29-1l-4.42 1 .82-4.16A7.964 7.964 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                                </svg>
+                                {{ commentCount }} commentaire{{ commentCount > 1 ? 's' : '' }}
+                            </button>
+                        {% endif %}
+                        {% if shareCount > 0 %}
+                            <span class="share-count flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M4 12v2c0 2.21 1.79 4 4 4h6v4l8-6-8-6v4H8c-1.1 0-2-.9-2-2v-2"/>
+                                </svg>
+                                {{ shareCount }}
+                            </span>
+                        {% endif %}
+                    </div>
                 </div>
+            {% endif %}
 
-                {# Section commentaires (cachée par défaut) #}
-                <div class="comments-section mt-4 hidden">
-                    {% for comment in post.comments %}
-                        <div class="comment p-2 border-b flex justify-between items-center">
+            <!-- Actions -->
+            <div class="flex justify-around items-center text-sm border-t pt-2 text-bookmark">
+                <button class="like-button {{ userHasLiked ? 'text-leather' : 'text-bookmark' }} hover:text-leather"
+                        data-id="{{ post.id }}">
+                    <svg class="w-4 h-4 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M14 9V5a3 3 0 00-6 0v4H5a2 2 0 00-2 2v7a2 2 0 002 2h6a2 2 0 002-2v-7a2 2 0 00-2-2H8"/>
+                    </svg>
+                    J’aime
+                </button>
+                <button class="toggle-comments hover:text-leather flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.77 9.77 0 01-4.29-1l-4.42 1 .82-4.16A7.964 7.964 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                    </svg>
+                    Commenter
+                </button>
+            </div>
+
+            <!-- Commentaires -->
+            <div class="comments-section mt-4 hidden space-y-3">
+                {% for comment in post.comments %}
+                    <div class="border-t pt-2 text-sm text-ink comment">
+                        <div class="flex justify-between items-start">
                             <div>
-                                <div class="flex justify-between">
-                                    <span class="font-bold">{{ comment.user.fullName }}</span>
-                                    <span class="text-gray-500 text-sm">{{ comment.createdAt|date('d/m/Y H:i') }}</span>
-                                </div>
-                                <p>{{ comment.content }}</p>
+                                <span class="text-leather font-semibold italic">{{ comment.user.fullName }}</span>
+                                <p class="text-xs text-gray-500">{{ comment.createdAt|date('d/m/Y H:i') }}</p>
+                                <p class="mt-1">{{ comment.content }}</p>
                             </div>
-                            {# Boutons edit/suppr si c'est mon commentaire #}
                             {% if app.user and app.user.id == comment.user.id %}
-                                <div class="ml-2">
-                                    <button class="edit-comment text-blue-500 hover:text-blue-700"
-                                            data-comment-id="{{ comment.id }}">Modifier</button>
-                                    <button class="delete-comment text-red-500 hover:text-red-700 ml-2"
-                                            data-comment-id="{{ comment.id }}">Supprimer</button>
+                                <div class="ml-2 flex gap-2">
+                                    <button class="edit-comment text-leather hover:underline text-xs"
+                                            data-comment-id="{{ comment.id }}">Modifier
+                                    </button>
+                                    <button class="delete-comment text-red-600 hover:underline text-xs"
+                                            data-comment-id="{{ comment.id }}">Supprimer
+                                    </button>
                                 </div>
                             {% endif %}
                         </div>
-                    {% endfor %}
-                    {# Zone d’ajout d’un nouveau commentaire #}
-                    <div class="add-comment mt-2 flex items-center">
-                        <input type="text" placeholder="Ajouter un commentaire"
-                               class="comment-input w-full border rounded p-2" data-post-id="{{ post.id }}">
-                        <button class="send-comment ml-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                                data-post-id="{{ post.id }}">
-                            Envoyer
-                        </button>
                     </div>
+                {% endfor %}
+
+                <div class="add-comment mt-2 flex items-center">
+                    <input type="text" placeholder="Ajouter un commentaire"
+                           class="comment-input w-full border rounded p-2" data-post-id="{{ post.id }}">
+                    <button class="send-comment ml-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                            data-post-id="{{ post.id }}">
+                        Envoyer
+                    </button>
                 </div>
             </div>
-{% else %}
-<p class="text-center text-gray-500">Aucune publication pour le moment.</p>
-{% endfor %}
+        </div>
+    {% else %}
+        <p class="text-center text-gray-500">Aucune publication pour le moment.</p>
+    {% endfor %}
 {% endblock %}
+
 
 {% block javascript %}
 {# 1. Toggle d'affichage des commentaires #}

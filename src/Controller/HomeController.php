@@ -114,5 +114,19 @@ class HomeController extends AbstractController
             'books' => []
         ]);
     }
+    #[Route('/recherche', name: 'app_search')]
+    public function search(Request $request, EntityManagerInterface $em): Response
+    {
+        $query = $request->query->get('q');
+
+        $users = $em->getRepository(User::class)->searchByNameOrUsername($query);
+        $posts = $em->getRepository(Post::class)->searchByContent($query);
+
+        return $this->render('search/results.html.twig', [
+            'query' => $query,
+            'users' => $users,
+            'posts' => $posts,
+        ]);
+    }
 
 }

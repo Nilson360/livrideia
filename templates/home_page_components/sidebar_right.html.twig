@@ -1,71 +1,87 @@
 {% block sidebar_right %}
-    <div class="w-1/4 p-4 hidden lg:block">
-        <!-- Suggestions de personnes à suivre -->
-        <div class="bg-white shadow rounded-lg p-4 mb-6">
-            <h3 class="font-bold text-lg mb-4 text-green-500">Suggestions d'amitié</h3>
-            <ul>
+    <div class="w-1/4 p-4 hidden lg:block space-y-6">
+
+        <!-- Suggestions d’amitié -->
+        <div class="bg-[#fdf9f3] border border-bookmark rounded-xl shadow-sm p-4">
+            <h3 class="text-leather font-bold text-lg mb-4 italic flex items-center gap-2">
+                <svg fill="#000000" class="w-5 h-5 text-bookmark" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <g id="read">
+                        <g>
+                            <path d="M12,18.883a10.8,10.8,0,0,1-9.675-5.728,2.6,2.6,0,0,1,0-2.31A10.8,10.8,0,0,1,12,5.117a10.8,10.8,0,0,1,9.675,5.728h0a2.6,2.6,0,0,1,0,2.31A10.8,10.8,0,0,1,12,18.883ZM12,6.117a9.787,9.787,0,0,0-8.78,5.176,1.586,1.586,0,0,0,0,1.415A9.788,9.788,0,0,0,12,17.883a9.787,9.787,0,0,0,8.78-5.176,1.584,1.584,0,0,0,0-1.414h0A9.787,9.787,0,0,0,12,6.117Z"/>
+                            <path d="M12,16.049A4.049,4.049,0,1,1,16.049,12,4.054,4.054,0,0,1,12,16.049Zm0-7.1A3.049,3.049,0,1,0,15.049,12,3.052,3.052,0,0,0,12,8.951Z"/>
+                            <circle cx="12" cy="12" r="2.028"/>
+                        </g>
+                    </g>
+                </svg>
+                Lecteurs à découvrir
+            </h3>
+            <ul class="space-y-4">
                 {% for suggested in suggestedUsers %}
-                    <li class="flex justify-between items-center mb-4">
-                        <div class="flex items-center space-x-4">
+                    <li class="flex justify-between items-center gap-2">
+                        <div class="flex items-center gap-3">
                             <img src="{{ asset(suggested.avatarPath|default('/images/default-profile.png')) }}"
                                  alt="Avatar de {{ suggested.username }}"
-                                 class="w-10 h-10 rounded-full">
+                                 class="w-10 h-10 rounded-full border border-bookmark shadow-sm">
                             <div>
-                                <a href="{{ path('dashboard_user_profile_other', {'id': suggested.id}) }}" class="font-bold text-sm text-green-600 hover:underline">{{ suggested.username }}</a>
+                                <a href="{{ path('dashboard_user_profile_other', {'id': suggested.id}) }}"
+                                   class="text-leather font-semibold hover:underline text-sm italic">
+                                    {{ suggested.username }}
+                                </a>
                                 <p class="text-xs text-gray-500">@{{ suggested.pseudo|default(suggested.username) }}</p>
                             </div>
                         </div>
-                        <button class="friend-request-btn bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600 text-sm"
+                        <button class="friend-request-btn bg-leather text-white px-3 py-1 rounded shadow hover:bg-[#6f442a] text-xs"
                                 data-user-id="{{ suggested.id }}">
-                            Ajouter
+                            Se lier
                         </button>
                     </li>
                 {% else %}
-                    <li class="text-gray-500 text-sm">Aucune suggestion pour le moment.</li>
+                    <li class="text-gray-500 text-sm italic">Aucune suggestion pour le moment.</li>
                 {% endfor %}
             </ul>
         </div>
 
-        {% set pendingRequests = [] %}
-        {% for request in friendRequests %}
-            {% if request.status == 'pending' %}
-                {% set pendingRequests = pendingRequests|merge([request]) %}
-            {% endif %}
-        {% endfor %}
+        {% set pendingRequests = friendRequests|filter(r => r.status == 'pending') %}
 
-        <!-- Demandes d'amitié reçues -->
+        <!-- Demandes d’amitié reçues -->
         {% if pendingRequests|length >= 1 %}
-            <div class="bg-white shadow rounded-lg p-4">
-                <h3 class="font-bold text-lg mb-4 text-green-500">Demandes d'amitié</h3>
-                <ul>
-                    {% for request in friendRequests %}
-                        <li class="flex justify-between items-center mb-4">
+            <div class="bg-[#fdf9f3] border border-bookmark rounded-xl shadow-sm p-4">
+                <h3 class="text-leather font-bold text-lg mb-4 italic flex items-center gap-2">
+                    📬 Demandes reçues
+                </h3>
+                <ul class="space-y-4">
+                    {% for request in pendingRequests %}
+                        <li class="flex flex-col gap-2">
                             <div>
-                                <a href="{{ path('dashboard_user_profile_other', {'id': request.sender.id}) }}" class="font-bold text-green-600 hover:underline">{{ request.sender.username }}</a>
-                                <p class="text-sm text-gray-500">@{{ request.sender.pseudo|default(request.sender.username) }}</p>
-
-                                <div class="flex space-x-2 mt-2">
-                                    <button class="accept-friend-btn bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 text-xs"
-                                            data-friend-id="{{ request.id }}">
-                                        Accepter
-                                    </button>
-                                    <button class="decline-friend-btn bg-orange-500 text-white px-3 py-1 rounded hover:bg-orange-600 text-xs"
-                                            data-friend-id="{{ request.id }}">
-                                        Refuser
-                                    </button>
-                                </div>
-                                <hr class="h-px bg-orange-200 border-0 mt-2">
+                                <a href="{{ path('dashboard_user_profile_other', {'id': request.sender.id}) }}"
+                                   class="text-leather font-semibold hover:underline text-sm italic">
+                                    {{ request.sender.username }}
+                                </a>
+                                <p class="text-xs text-gray-500">
+                                    @{{ request.sender.pseudo|default(request.sender.username) }}
+                                </p>
                             </div>
+                            <div class="flex gap-2">
+                                <button class="accept-friend-btn bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-xs"
+                                        data-friend-id="{{ request.id }}">
+                                    Accepter
+                                </button>
+                                <button class="decline-friend-btn bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-xs"
+                                        data-friend-id="{{ request.id }}">
+                                    Refuser
+                                </button>
+                            </div>
+                            <hr class="h-px bg-bookmark/30 border-0">
                         </li>
                     {% else %}
-                        <li class="text-gray-500 text-sm">Aucune demande d'amitié reçue.</li>
+                        <li class="text-gray-500 text-sm italic">Aucune demande pour l’instant.</li>
                     {% endfor %}
                 </ul>
             </div>
         {% endif %}
+
     </div>
 {% endblock %}
-
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -105,7 +121,8 @@
                 .then(data => {
                     if (data.status === "pending") {
                         button.textContent = "Demande envoyée";
-                        button.classList.add("bg-gray-500", "cursor-not-allowed");
+                        button.classList.remove("bg-leather", "hover:bg-[#6f442a]");
+                        button.classList.add("bg-bookmark", "cursor-not-allowed", "opacity-80");
                         button.disabled = true;
                     } else {
                         alert(data.error);

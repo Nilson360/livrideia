@@ -40,4 +40,13 @@ class PostRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+    public function searchByContent(string $query): array
+    {
+        return $this->createQueryBuilder('p')
+            ->where('LOWER(p.content) LIKE :query')
+            ->setParameter('query', '%' . strtolower($query) . '%')
+            //->orderBy('p.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 }
