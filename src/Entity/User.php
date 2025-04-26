@@ -83,8 +83,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'sender')]
     private Collection $messages;
 
-    #[ORM\Column( type: 'boolean', nullable: true)]
+    #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $isSubscribedToNewsletter = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $avatarPath = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $coverPath = null;
 
     /**
      * @return void
@@ -486,6 +492,28 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->isSubscribedToNewsletter = $isSubscribedToNewsletter;
 
+        return $this;
+    }
+
+    public function getAvatarPath(): ?string
+    {
+        return $this->avatarPath;
+    }
+
+    public function setAvatarPath(?string $avatarPath): self
+    {
+        $this->avatarPath = $avatarPath;
+        return $this;
+    }
+
+    public function getCoverPath(): ?string
+    {
+        return $this->coverPath;
+    }
+
+    public function setCoverPath(?string $coverPath): self
+    {
+        $this->coverPath = $coverPath;
         return $this;
     }
 }

@@ -5,8 +5,9 @@ namespace App\Controller\DashboardUser;
 use App\Entity\Friend;
 use App\Entity\Post;
 use App\Entity\User;
-use App\Form\ProfileType;
 use App\Form\ChangePasswordType;
+use App\Form\ProfileType;
+use App\Service\FileUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -43,9 +44,11 @@ class UserProfileController extends AbstractController
 
     #[Route('/profile/edit', name: 'dashboard_user_profile_edit', methods: ['GET', 'POST'])]
     public function editProfile(
-        Request $request,
-        EntityManagerInterface $em
-    ): Response {
+        Request                $request,
+        EntityManagerInterface $em,
+        FileUploader           $fileUploader
+    ): Response
+    {
         /** @var User $user */
         $user = $this->getUser();
         if (!$user) {
@@ -56,23 +59,40 @@ class UserProfileController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Gestion de l'avatar
+            $avatarFile = $form->get('avatarFile')->getData();
+            if ($avatarFile) {
+                $avatarFileName = $fileUploader->upload($avatarFile, 'avatars');
+                $user->setAvatarPath('uploads/avatars/' . $avatarFileName);
+            }
+
+            // Gestion de la photo de couverture
+            $coverFile = $form->get('coverFile')->getData();
+            if ($coverFile) {
+                $coverFileName = $fileUploader->upload($coverFile, 'covers');
+                $user->setCoverPath('uploads/covers/' . $coverFileName);
+            }
+
+            $user->setUpdatedAt(new \DateTimeImmutable());
             $em->persist($user);
             $em->flush();
 
             $this->addFlash('success', 'Profil mis à jour avec succès !');
-            return $this->redirectToRoute('dashboard-user-profile');
+            return $this->redirectToRoute('dashboard_user_profile');
         }
 
         return $this->render('dashboard_user/edit_profile.html.twig', [
             'form' => $form->createView(),
         ]);
     }
+
     #[Route('/profile/change-password', name: 'dashboard_user_profile_change_password', methods: ['GET', 'POST'])]
     public function changePassword(
-        Request $request,
+        Request                     $request,
         UserPasswordHasherInterface $passwordHasher,
-        EntityManagerInterface $em
-    ): Response {
+        EntityManagerInterface      $em
+    ): Response
+    {
         /** @var User $user */
         $user = $this->getUser();
         if (!$user) {
@@ -84,7 +104,7 @@ class UserProfileController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $data       = $form->getData();
+            $data = $form->getData();
             $oldPassword = $data['oldPassword'];
             $newPassword = $data['newPassword'];
 
@@ -108,6 +128,7 @@ class UserProfileController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
     #[Route('/profile/{id}/friends', name: 'app_profile_friends', methods: ['GET'])]
     public function friends(User $user, EntityManagerInterface $em): Response
     {
@@ -129,6 +150,7 @@ class UserProfileController extends AbstractController
             'friends' => $friends,
         ]);
     }
+
     #[Route('/utilisateur/{username}', name: 'dashboard_user_profile_other')]
     public function userProfileOther(string $username, EntityManagerInterface $em): Response
     {
@@ -149,5 +171,67 @@ class UserProfileController extends AbstractController
             'user' => $user,
             'posts' => $user->getPosts(),
         ]);
+    }
+
+    // src/Controller/DashboardUser/UserProfileController.php
+
+    #[Route('/profile/avatar-upload', name: 'dashboard_user_avatar_upload', methods: ['POST'])]
+    public function uploadAvatar(
+        Request                $request,
+        EntityManagerInterface $em,
+        FileUploader           $fileUploader
+    ): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        $avatarFile = $request->files->get('avatarFile');
+        if ($avatarFile) {
+            $avatarFileName = $fileUploader->upload($avatarFile, 'avatars');
+            $user->setAvatarPath('uploads/avatars/' . $avatarFileName);
+            $user->setUpdatedAt(new \DateTimeImmutable());
+
+            $em->persist($user);
+            $em->flush();
+
+            $this->addFlash('success', 'Photo de profil mise à jour avec succès !');
+        } else {
+            $this->addFlash('error', 'Veuillez sélectionner une image.');
+        }
+
+        return $this->redirectToRoute('dashboard_user_profile');
+    }
+
+    #[Route('/profile/cover-upload', name: 'dashboard_user_cover_upload', methods: ['POST'])]
+    public function uploadCover(
+        Request                $request,
+        EntityManagerInterface $em,
+        FileUploader           $fileUploader
+    ): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        $coverFile = $request->files->get('coverFile');
+        if ($coverFile) {
+            $coverFileName = $fileUploader->upload($coverFile, 'covers');
+            $user->setCoverPath('uploads/covers/' . $coverFileName);
+            $user->setUpdatedAt(new \DateTimeImmutable());
+
+            $em->persist($user);
+            $em->flush();
+
+            $this->addFlash('success', 'Photo de couverture mise à jour avec succès !');
+        } else {
+            $this->addFlash('error', 'Veuillez sélectionner une image.');
+        }
+
+        return $this->redirectToRoute('dashboard_user_profile');
     }
 }

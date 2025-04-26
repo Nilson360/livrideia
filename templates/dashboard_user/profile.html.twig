@@ -5,32 +5,118 @@
 {% block body %}
     <div class="max-w-5xl mx-auto mt-8 mb-16 px-4 font-serif text-ink">
         <!-- Image de couverture -->
-        <div class="hidden sm:block h-56 bg-bookmark rounded-t-xl relative"></div>
+        <div class="hidden sm:block h-56 bg-bookmark rounded-t-xl relative">
+            {% if user.coverPath is defined and user.coverPath %}
+                <img src="{{ asset(user.coverPath) }}" alt="Couverture de {{ user.username }}"
+                     class="w-full h-full object-cover">
+            {% endif %}
+
+            <!-- Bouton pour modifier la couverture (visible seulement pour le propriétaire) -->
+            {% if app.user and app.user.id == user.id %}
+                <form id="cover-form" action="{{ path('dashboard_user_cover_upload') }}" method="post" enctype="multipart/form-data" class="absolute bottom-4 right-4">
+                    <input type="file" id="cover-file-input" name="coverFile" accept="image/png, image/jpeg, image/jpg" class="hidden" onchange="validateAndSubmitImage(this, 'cover-form')">
+                    <label for="cover-file-input" class="cursor-pointer bg-white bg-opacity-80 text-leather hover:bg-opacity-100 rounded-full p-2 shadow-md transition inline-block">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </label>
+                </form>
+            {% endif %}
+        </div>
 
         <!-- Section Profil -->
         <div class="bg-parchment rounded-b-xl shadow border border-bookmark p-6">
             <div class="flex flex-col sm:flex-row items-center">
-                <div class="w-32 h-32 rounded-full border-4 border-white bg-[#f3efe5] overflow-hidden shadow">
+                <div class="w-32 h-32 rounded-full border-4 border-white bg-[#f3efe5] overflow-hidden shadow relative group">
                     {% if user.avatarPath is defined and user.avatarPath %}
                         <img src="{{ asset(user.avatarPath) }}" alt="Photo de profil de {{ user.username }}"
                              class="object-cover w-full h-full">
                     {% else %}
-                        <img src="{{ asset('/images/default-profile.png') }}" alt="Photo de profil par défaut"
+                        <img src="{{ asset('images/default-profile.png') }}" alt="Photo de profil par défaut"
                              class="object-cover w-full h-full">
+                    {% endif %}
+
+                    <!-- Bouton pour modifier l'avatar (visible seulement pour le propriétaire) -->
+                    {% if app.user and app.user.id == user.id %}
+                        <form id="avatar-form" action="{{ path('dashboard_user_avatar_upload') }}" method="post" enctype="multipart/form-data" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300">
+                            <input type="file" id="avatar-file-input" name="avatarFile" accept="image/png, image/jpeg, image/jpg" class="hidden" onchange="validateAndSubmitImage(this, 'avatar-form')">
+                            <label for="avatar-file-input" class="cursor-pointer text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                <span class="text-xs mt-1">Changer</span>
+                            </label>
+                        </form>
                     {% endif %}
                 </div>
                 <div class="mt-4 sm:mt-0 sm:ml-6 text-center sm:text-left">
                     <h1 class="text-3xl font-bold text-leather italic">{{ user.username }}</h1>
                     <p class="text-bookmark">{{ user.fullName }}</p>
                     <div class="mt-4 flex flex-col sm:flex-row gap-2 sm:gap-4 justify-center sm:justify-start">
-                        <a href="{{ path('dashboard_user_profile_edit') }}"
-                           class="bg-leather text-white px-4 py-2 rounded hover:bg-[#6f442a] text-sm shadow">
-                            Modifier le profil
-                        </a>
-                        <a href="{{ path('dashboard_user_profile_change_password') }}"
-                           class="bg-bookmark text-white px-4 py-2 rounded hover:bg-leather text-sm shadow">
-                            Changer de mot de passe
-                        </a>
+                        {% if app.user and app.user.id == user.id %}
+                            <a href="{{ path('dashboard_user_profile_edit') }}"
+                               class="bg-leather text-white px-4 py-2 rounded hover:bg-[#6f442a] text-sm shadow">
+                                Modifier le profil
+                            </a>
+                            <a href="{{ path('dashboard_user_profile_change_password') }}"
+                               class="bg-bookmark text-white px-4 py-2 rounded hover:bg-leather text-sm shadow">
+                                Changer de mot de passe
+                            </a>
+                        {% else %}
+                            {% set isFriend = false %}
+                            {% set pendingRequest = false %}
+
+                            {# Vérifier dans les demandes envoyées #}
+                            {% for friendship in app.user.sentFriendRequests %}
+                                {% if friendship.receiver.id == user.id and friendship.status == 'accepted' %}
+                                    {% set isFriend = true %}
+                                {% endif %}
+                            {% endfor %}
+
+                            {# Vérifier dans les demandes reçues #}
+                            {% for friendship in app.user.receivedFriendRequests %}
+                                {% if friendship.sender.id == user.id and friendship.status == 'accepted' %}
+                                    {% set isFriend = true %}
+                                {% endif %}
+                            {% endfor %}
+
+                            {# Vérifier s'il y a une demande d'amitié en attente #}
+                            {% for request in app.user.sentFriendRequests %}
+                                {% if request.receiver.id == user.id and request.status == 'pending' %}
+                                    {% set pendingRequest = true %}
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if isFriend %}
+                                {# Si déjà ami #}
+                                <form action="{{ path('app_friend_remove', {'friendUserId': user.id}) }}" method="post">
+                                    <button type="submit"
+                                            class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 text-sm shadow">
+                                        Retirer de mes amis
+                                    </button>
+                                </form>
+                                <a href="{{ path('app_chat') }}?user={{ user.id }}"
+                                   class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 text-sm shadow">
+                                    Envoyer un message
+                                </a>
+                            {% elseif pendingRequest %}
+                                {# Si demande en attente #}
+                                <button disabled
+                                        class="bg-gray-400 text-white px-4 py-2 rounded text-sm shadow cursor-not-allowed">
+                                    Demande envoyée
+                                </button>
+                            {% else %}
+                                {# Si pas encore ami #}
+                                <form action="{{ path('app_friend_add', {'id': user.id}) }}" method="post">
+                                    <button type="submit"
+                                            class="bg-leather text-white px-4 py-2 rounded hover:bg-[#6f442a] text-sm shadow">
+                                        Ajouter comme ami
+                                    </button>
+                                </form>
+                            {% endif %}
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -51,7 +137,7 @@
                     </li>
                     <li>
                         <a href="#" class="tab-link pb-2 text-bookmark hover:text-leather text-sm" data-tab="friends">
-                            Mes amis
+                            {% if app.user and app.user.id == user.id %}Mes amis{% else %}Amis{% endif %}
                         </a>
                     </li>
                 </ul>
@@ -69,12 +155,18 @@
             <div id="photos-content" class="hidden"></div>
         </div>
     </div>
+
+    <!-- Alerte pour les erreurs de type de fichier -->
+    <div id="error-alert" class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded shadow-lg hidden z-50">
+        <p>Seules les images (JPG, JPEG, PNG) sont acceptées.</p>
+    </div>
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Gestion des onglets
             document.querySelectorAll('.tab-link').forEach(link => {
                 link.addEventListener('click', function (event) {
                     event.preventDefault();
@@ -142,5 +234,30 @@
                     .catch(error => console.error("Erreur lors de la suppression de l'amitié:", error));
             }
         });
+
+        // Fonction pour valider le type de fichier et soumettre le formulaire
+        function validateAndSubmitImage(input, formId) {
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+            const errorAlert = document.getElementById('error-alert');
+
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+
+                if (allowedTypes.includes(file.type)) {
+                    // Le fichier est une image valide, soumettre le formulaire
+                    document.getElementById(formId).classList.add('uploading');
+                    document.getElementById(formId).submit();
+                } else {
+                    // Afficher une alerte d'erreur
+                    errorAlert.classList.remove('hidden');
+                    setTimeout(() => {
+                        errorAlert.classList.add('hidden');
+                    }, 3000);
+
+                    // Réinitialiser l'input file
+                    input.value = '';
+                }
+            }
+        }
     </script>
 {% endblock %}
