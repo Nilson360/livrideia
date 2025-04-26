@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Form;
 
 use App\Entity\User;
@@ -71,6 +72,11 @@ class RegistrationFormType extends AbstractType
                         'message' => 'You should agree to our terms.',
                     ]),
                 ],
+            ])
+            ->add('isSubscribedToNewsletter', CheckboxType::class, [
+                'mapped' => true,
+                'required' => false,
+                'label' => 'Je souhaite recevoir la newsletter',
             ]);
     }
 

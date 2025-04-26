@@ -83,6 +83,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'sender')]
     private Collection $messages;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $isSubscribedToNewsletter = false;
 
     /**
      * @return void
@@ -369,7 +371,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function isFriendsWith(User $user): bool {
+    public function isFriendsWith(User $user): bool
+    {
         foreach ($this->sentFriendRequests as $friendRequest) {
             if ($friendRequest->getReceiver() === $user && $friendRequest->getStatus() === 'accepted') {
                 return true;
@@ -474,4 +477,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function isSubscribedToNewsletter(): bool
+    {
+        return $this->isSubscribedToNewsletter;
+    }
+
+    public function setIsSubscribedToNewsletter(bool $isSubscribedToNewsletter): self
+    {
+        $this->isSubscribedToNewsletter = $isSubscribedToNewsletter;
+
+        return $this;
+    }
 }
