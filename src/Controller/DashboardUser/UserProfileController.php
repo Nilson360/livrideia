@@ -130,8 +130,15 @@ class UserProfileController extends AbstractController
         ]);
     }
     #[Route('/utilisateur/{username}', name: 'dashboard_user_profile_other')]
-    public function userProfileOther(User $user): Response
+    public function userProfileOther(string $username, EntityManagerInterface $em): Response
     {
+        // Trouver l'utilisateur par son nom d'utilisateur
+        $user = $em->getRepository(User::class)->findOneBy(['username' => $username]);
+
+        if (!$user) {
+            throw $this->createNotFoundException('Utilisateur non trouvé');
+        }
+
         // Vérifier si l'utilisateur connecté consulte son propre profil
         $currentUser = $this->getUser();
         if ($currentUser && $currentUser->getId() === $user->getId()) {
