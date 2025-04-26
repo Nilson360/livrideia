@@ -52,7 +52,7 @@
             <div class="post-container bg-[#fdf9f3] border border-bookmark rounded-xl shadow p-6 space-y-4">
                 <!-- En-tête du post -->
                 <div class="flex flex-wrap items-center gap-2 text-sm text-ink">
-                    <a href="{{ path('dashboard_user_profile_other', { id: post.user.id }) }}"
+                    <a href="{{ path('dashboard_user_profile_other', { 'username': post.user.username }) }}"
                        class="text-leather font-bold hover:underline italic">
                         {{ post.user.fullName }}
                     </a>
@@ -126,7 +126,7 @@
                         <div class="border-t pt-2 text-sm text-ink">
                             <div class="flex justify-between items-start">
                                 <div>
-                                    <a href="{{ path('dashboard_user_profile_other', { id: comment.user.id }) }}"
+                                    <a href="{{ path('dashboard_user_profile_other', { 'username': comment.user.username }) }}"
                                        class="text-leather font-semibold hover:underline italic">
                                         {{ comment.user.fullName }}
                                     </a>

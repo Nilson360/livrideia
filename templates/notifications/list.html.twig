@@ -23,9 +23,10 @@
                                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M16 14c-1.333 0-2.333.667-3 2-0.667-1.333-1.667-2-3-2s-2.333.667-3 2V20h12v-4c0-1.333-.667-2-2-2zM8 12a2 2 0 110-4 2 2 0 010 4zm8 0a2 2 0 110-4 2 2 0 010 4z"/>
                                             </svg>
-                                            Demande d'amitié :</span> {{ notification.message }}
+                                            Demande d\'amitié :</span> {{ notification.message }}
                                         {% if notification.sender %}
-                                            <a href="{{ linkGenerator.toProfile(notification.sender) }}" class="text-green-600 hover:underline ml-1">Voir le profil</a>
+                                            {# Modifié pour utiliser l'ID utilisateur directement en attendant la correction du service linkGenerator #}
+                                            <a href="{{ path('app_user_profile', {'id': notification.sender.id}) }}" class="text-green-600 hover:underline ml-1">Voir le profil</a>
                                         {% endif %}
 
                                     {% elseif notification.type == 'friend_accept' %}
@@ -35,7 +36,8 @@
                                             </svg>
                                             Amitié acceptée :</span> {{ notification.message }}
                                         {% if notification.sender %}
-                                            <a href="{{ linkGenerator.toChat(notification.sender) }}" class="text-blue-600 hover:underline ml-1">Ouvrir le chat</a>
+                                            {# Modifié pour utiliser l'ID utilisateur directement en attendant la correction du service linkGenerator #}
+                                            <a href="{{ path('app_chat', {'userId': notification.sender.id}) }}" class="text-blue-600 hover:underline ml-1">Ouvrir le chat</a>
                                         {% endif %}
 
                                     {% elseif notification.type == 'new_post' %}
@@ -45,7 +47,8 @@
                                             </svg>
                                             Nouveau post :</span> {{ notification.message }}
                                         {% if notification.post %}
-                                            <a href="{{ linkGenerator.toPost(notification.post) }}" class="text-indigo-600 hover:underline ml-1">Voir le post</a>
+                                            {# Modifié pour utiliser l'ID du post directement en attendant la correction du service linkGenerator #}
+                                            <a href="{{ path('app_post_view', {'id': notification.post.id}) }}" class="text-indigo-600 hover:underline ml-1">Voir le post</a>
                                         {% endif %}
 
                                     {% elseif notification.type == 'post_like' %}
@@ -55,7 +58,8 @@
                                             </svg>
                                             Like :</span> {{ notification.message }}
                                         {% if notification.post %}
-                                            <a href="{{ linkGenerator.toPost(notification.post) }}" class="text-indigo-600 hover:underline ml-1">Voir le post</a>
+                                            {# Modifié pour utiliser l'ID du post directement en attendant la correction du service linkGenerator #}
+                                            <a href="{{ path('app_post_view', {'id': notification.post.id}) }}" class="text-indigo-600 hover:underline ml-1">Voir le post</a>
                                         {% endif %}
 
                                     {% elseif notification.type == 'post_comment' %}
@@ -65,7 +69,8 @@
                                             </svg>
                                             Commentaire :</span> {{ notification.message }}
                                         {% if notification.post %}
-                                            <a href="{{ linkGenerator.toPost(notification.post) }}" class="text-indigo-600 hover:underline ml-1">Voir le post</a>
+                                            {# Modifié pour utiliser l'ID du post directement en attendant la correction du service linkGenerator #}
+                                            <a href="{{ path('app_post_view', {'id': notification.post.id}) }}" class="text-indigo-600 hover:underline ml-1">Voir le post</a>
                                         {% endif %}
 
                                     {% else %}

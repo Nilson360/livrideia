@@ -17,7 +17,7 @@ class LinkGenerator
 
     public function toProfile(User $user): string
     {
-        return $this->router->generate('dashboard-user-profile-other', ['id' => $user->getId()]);
+        return $this->router->generate('dashboard_user_profile_other', ['id' => $user->getId()]);
     }
 
     public function toChat(User $user): string

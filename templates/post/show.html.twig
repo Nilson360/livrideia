@@ -12,7 +12,7 @@
                     <h1 class="text-2xl font-bold text-leather mb-1">Publication</h1>
                     <p class="text-sm text-ink italic">
                         Par
-                        <a href="{{ path('dashboard_user_profile_other', {id: post.user.id}) }}"
+                        <a href="{{ path('dashboard_user_profile_other', {'username': post.user.username}) }}"
                            class="text-leather hover:underline font-semibold">
                             {{ post.user.fullName }}
                         </a>
@@ -62,7 +62,7 @@
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p>
-                                        <a href="{{ path('dashboard_user_profile_other', {id: comment.user.id}) }}"
+                                        <a href="{{ path('dashboard_user_profile_other', {'username': comment.user.username}) }}"
                                            class="text-leather font-semibold italic hover:underline">
                                             {{ comment.user.fullName }}
                                         </a>

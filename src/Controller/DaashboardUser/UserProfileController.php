@@ -17,7 +17,7 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/dashboard-user')]
 class UserProfileController extends AbstractController
 {
-    #[Route('/profile', name: 'dashboard-user-profile', methods: ['GET'])]
+    #[Route('/profile', name: 'dashboard_user_profile', methods: ['GET'])]
     public function profile(EntityManagerInterface $em): Response
     {
         /** @var User $user */
@@ -41,7 +41,7 @@ class UserProfileController extends AbstractController
         ]);
     }
 
-    #[Route('/profile/edit', name: 'dashboard-user-profile-edit', methods: ['GET', 'POST'])]
+    #[Route('/profile/edit', name: 'dashboard_user_profile_edit', methods: ['GET', 'POST'])]
     public function editProfile(
         Request $request,
         EntityManagerInterface $em
@@ -67,7 +67,7 @@ class UserProfileController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
-    #[Route('/profile/change-password', name: 'dashboard-user-profile-change-password', methods: ['GET', 'POST'])]
+    #[Route('/profile/change-password', name: 'dashboard_user_profile_change_password', methods: ['GET', 'POST'])]
     public function changePassword(
         Request $request,
         UserPasswordHasherInterface $passwordHasher,
@@ -129,10 +129,16 @@ class UserProfileController extends AbstractController
             'friends' => $friends,
         ]);
     }
-    #[Route('/utilisateur/{id}', name: 'dashboard_user_profile_other')]
-    public function userProfile(User $user): Response
+    #[Route('/utilisateur/{username}', name: 'dashboard_user_profile_other')]
+    public function userProfileOther(User $user): Response
     {
-        return $this->render('dashboard_user/profile.html.twig', [
+        // Vérifier si l'utilisateur connecté consulte son propre profil
+        $currentUser = $this->getUser();
+        if ($currentUser && $currentUser->getId() === $user->getId()) {
+            return $this->redirectToRoute('dashboard_user_profile');
+        }
+
+        return $this->render('dashboard_user/profile_other.html.twig', [
             'user' => $user,
             'posts' => $user->getPosts(),
         ]);

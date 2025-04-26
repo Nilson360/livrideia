@@ -23,7 +23,7 @@
                                  alt="Avatar de {{ suggested.username }}"
                                  class="w-10 h-10 rounded-full border border-bookmark shadow-sm">
                             <div>
-                                <a href="{{ path('dashboard_user_profile_other', {'id': suggested.id}) }}"
+                                <a href="{{ path('dashboard_user_profile_other', {'username': suggested.username}) }}"
                                    class="text-leather font-semibold hover:underline text-sm italic">
                                     {{ suggested.username }}
                                 </a>
@@ -53,7 +53,7 @@
                     {% for request in pendingRequests %}
                         <li class="flex flex-col gap-2">
                             <div>
-                                <a href="{{ path('dashboard_user_profile_other', {'id': request.sender.id}) }}"
+                                <a href="{{ path('dashboard_user_profile_other', {'username': request.sender.username}) }}"
                                    class="text-leather font-semibold hover:underline text-sm italic">
                                     {{ request.sender.username }}
                                 </a>

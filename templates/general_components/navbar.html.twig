@@ -24,7 +24,7 @@
                 <a href="#" class="text-gray-700 hover:text-green-500 text-sm">Notifications</a>
                 <a href="#" class="text-gray-700 hover:text-green-500 text-sm">Messages</a>
                 {% if app.user %}
-                    <a href="{{ path('dashboard-user-profile') }}" class="text-gray-700 hover:text-green-500 text-sm">Profil</a>
+                    <a href="{{ path('dashboard_user_profile') }}" class="text-gray-700 hover:text-green-500 text-sm">Profil</a>
                 {% endif %}
             </div>
             <div class="hidden md:flex md:items-center md:space-x-4">
@@ -54,7 +54,7 @@
             <a href="#" class="block text-gray-700 hover:text-green-500 text-base">Notifications</a>
             <a href="#" class="block text-gray-700 hover:text-green-500 text-base">Messages</a>
             {% if app.user %}
-                <a href="{{ path('dashboard-user-profile') }}" class="block text-gray-700 hover:text-green-500 text-base">Profil</a>
+                <a href="{{ path('dashboard_user_profile') }}" class="block text-gray-700 hover:text-green-500 text-base">Profil</a>
             {% endif %}
         </div>
         <div class="border-t border-gray-200 pt-4 pb-3">
