@@ -98,6 +98,13 @@ class HomeController extends AbstractController
             'books' => []
         ]);
     }
+    #[Route('/livres/semaine', name: 'app_newslatter_history')]
+    public function newsletterHistory(): Response
+    {
+        return $this->render('books/newsletter_history.html.twig', [
+            'books' => []
+        ]);
+    }
 
     #[Route('/livres/suggestions', name: 'app_books_suggestions')]
     public function suggestedBooks(): Response

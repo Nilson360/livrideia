@@ -9,7 +9,7 @@
             <!-- En-tête -->
             <div class="flex items-center space-x-2 text-sm text-ink">
                 <span class="font-bold text-leather italic">{{ post.user.fullName }}</span>
-                <span class="text-gray-500">· {{ post.createdAt|date('d/m/Y H:i') }}</span>
+                <span class="text-sm text-gray-500">· {{ post.createdAt|date('d/m/Y') }}</span>
             </div>
 
             <!-- Contenu -->
