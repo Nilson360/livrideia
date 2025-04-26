@@ -83,8 +83,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'sender')]
     private Collection $messages;
 
-    #[ORM\Column(type: 'boolean', options: ['default' => false])]
-    private bool $isSubscribedToNewsletter = false;
+    #[ORM\Column( type: 'boolean', nullable: true)]
+    private ?bool $isSubscribedToNewsletter = null;
 
     /**
      * @return void
