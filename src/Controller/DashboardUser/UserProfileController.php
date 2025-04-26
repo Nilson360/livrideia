@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\DaashboardUser;
+namespace App\Controller\DashboardUser;
 
 use App\Entity\Friend;
 use App\Entity\Post;

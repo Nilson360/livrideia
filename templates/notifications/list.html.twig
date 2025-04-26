@@ -48,7 +48,7 @@
                                             Nouveau post :</span> {{ notification.message }}
                                         {% if notification.post %}
                                             {# Modifié pour utiliser l'ID du post directement en attendant la correction du service linkGenerator #}
-                                            <a href="{{ path('app_post_view', {'id': notification.post.id}) }}" class="text-indigo-600 hover:underline ml-1">Voir le post</a>
+                                            <a href="{{ path('app_post_show', {'id': notification.post.id}) }}" class="text-indigo-600 hover:underline ml-1">Voir le post</a>
                                         {% endif %}
 
                                     {% elseif notification.type == 'post_like' %}
@@ -59,7 +59,7 @@
                                             Like :</span> {{ notification.message }}
                                         {% if notification.post %}
                                             {# Modifié pour utiliser l'ID du post directement en attendant la correction du service linkGenerator #}
-                                            <a href="{{ path('app_post_view', {'id': notification.post.id}) }}" class="text-indigo-600 hover:underline ml-1">Voir le post</a>
+                                            <a href="{{ path('app_post_show', {'id': notification.post.id}) }}" class="text-indigo-600 hover:underline ml-1">Voir le post</a>
                                         {% endif %}
 
                                     {% elseif notification.type == 'post_comment' %}
@@ -70,7 +70,7 @@
                                             Commentaire :</span> {{ notification.message }}
                                         {% if notification.post %}
                                             {# Modifié pour utiliser l'ID du post directement en attendant la correction du service linkGenerator #}
-                                            <a href="{{ path('app_post_view', {'id': notification.post.id}) }}" class="text-indigo-600 hover:underline ml-1">Voir le post</a>
+                                            <a href="{{ path('app_post_show', {'id': notification.post.id}) }}" class="text-indigo-600 hover:underline ml-1">Voir le post</a>
                                         {% endif %}
 
                                     {% else %}
