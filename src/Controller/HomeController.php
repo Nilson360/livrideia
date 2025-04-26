@@ -129,7 +129,7 @@ class HomeController extends AbstractController
         $users = $em->getRepository(User::class)->searchByNameOrUsername($query);
         $posts = $em->getRepository(Post::class)->searchByContent($query);
 
-        return $this->render('search/results.html.twig', [
+        return $this->render('results.html.twig', [
             'query' => $query,
             'users' => $users,
             'posts' => $posts,
