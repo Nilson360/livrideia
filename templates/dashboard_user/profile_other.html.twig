@@ -25,11 +25,11 @@
                     <div class="mt-4 flex flex-col sm:flex-row gap-2 sm:gap-4 justify-center sm:justify-start">
                         {% if app.user and app.user.id == user.id %}
                             {# Options pour le propriétaire du profil #}
-                            <a href="{{ path('dashboard-user-profile-edit') }}"
+                            <a href="{{ path('dashboard_user_profile_edit') }}"
                                class="bg-leather text-white px-4 py-2 rounded hover:bg-[#6f442a] text-sm shadow">
                                 Modifier le profil
                             </a>
-                            <a href="{{ path('dashboard-user-profile-change-password') }}"
+                            <a href="{{ path('dashboard_user_profile_change_password') }}"
                                class="bg-bookmark text-white px-4 py-2 rounded hover:bg-leather text-sm shadow">
                                 Changer de mot de passe
                             </a>
@@ -40,15 +40,23 @@
 
                             {# Vérifier si l'utilisateur courant a une amitié avec l'utilisateur du profil #}
                             {% if app.user %}
-                                {% for friendship in app.user.friendships %}
-                                    {% if friendship.friend.id == user.id %}
+                                {# Vérifier dans les demandes envoyées #}
+                                {% for friendship in app.user.sentFriendRequests %}
+                                    {% if friendship.receiver.id == user.id and friendship.status == 'accepted' %}
+                                        {% set isFriend = true %}
+                                    {% endif %}
+                                {% endfor %}
+
+                                {# Vérifier dans les demandes reçues #}
+                                {% for friendship in app.user.receivedFriendRequests %}
+                                    {% if friendship.sender.id == user.id and friendship.status == 'accepted' %}
                                         {% set isFriend = true %}
                                     {% endif %}
                                 {% endfor %}
 
                                 {# Vérifier s'il y a une demande d'amitié en attente #}
                                 {% for request in app.user.sentFriendRequests %}
-                                    {% if request.recipient.id == user.id and request.status == 'pending' %}
+                                    {% if request.receiver.id == user.id and request.status == 'pending' %}
                                         {% set pendingRequest = true %}
                                     {% endif %}
                                 {% endfor %}
