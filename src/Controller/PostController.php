@@ -13,15 +13,18 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+
 class PostController extends AbstractController
 {
     private NotificationService $notificationService;
     private EntityManagerInterface $entityManager;
+
     public function __construct(NotificationService $notificationService, EntityManagerInterface $entityManager)
     {
         $this->notificationService = $notificationService;
         $this->entityManager = $entityManager;
     }
+
     #[Route('/post/{id}/like', name: 'app_post_like', methods: ['POST'])]
     public function likePost(Post $post, EntityManagerInterface $em, Request $request): Response
     {
@@ -51,13 +54,17 @@ class PostController extends AbstractController
             $em->flush();
             $status = 'liked';
         }
-        $this->notificationService->sendNotification($post->getUser(), 'post_like', $user, $post);
-        // Retourne le nouveau nombre de likes
+        try {
+            $this->notificationService->sendNotification($post->getUser(), 'post_like', $user, $post);
+        } catch (\Exception $exception) {
+            error_log('Erreur lors de l\'envoi de notification: ' . $exception->getMessage());
+        }
         return $this->json([
             'status' => $status,
             'likesCount' => count($post->getLikes())
         ]);
     }
+
     #[Route('/post/{id}', name: 'app_post_show', methods: ['GET'])]
     public function show(Post $post): Response
     {
@@ -65,6 +72,7 @@ class PostController extends AbstractController
             'post' => $post,
         ]);
     }
+
     #[Route('/post/{id}/comment', name: 'app_post_comment', methods: ['POST'])]
     public function commentPost(Post $post, Request $request, EntityManagerInterface $em): Response
     {
@@ -87,10 +95,14 @@ class PostController extends AbstractController
 
         $em->persist($comment);
         $em->flush();
-        $this->notificationService->sendNotification($post->getUser(), 'post_comment', $user, $post);
+        try {
+            $this->notificationService->sendNotification($post->getUser(), 'post_comment', $user, $post);
+        } catch (\Exception $exception) {
+            error_log('Erreur lors de l\'envoi de notification: ' . $exception->getMessage());
+        }
 
         return $this->json([
-            'status'  => 'commented',
+            'status' => 'commented',
             'comment' => [
                 'id' => $comment->getId(),
                 'user' => $user->getFullName(),
@@ -100,6 +112,7 @@ class PostController extends AbstractController
             ]
         ]);
     }
+
     #[Route('/comment/{id}/edit', name: 'app_comment_edit', methods: ['POST'])]
     public function editComment(Comment $comment, Request $request, EntityManagerInterface $em): Response
     {
@@ -119,14 +132,15 @@ class PostController extends AbstractController
         $em->flush();
 
         return $this->json([
-            'status'  => 'updated',
+            'status' => 'updated',
             'comment' => [
-                'id'        => $comment->getId(),
-                'content'   => $comment->getContent(),
+                'id' => $comment->getId(),
+                'content' => $comment->getContent(),
                 'updatedAt' => $comment->getUpdatedAt()->format('d/m/Y H:i')
             ]
         ]);
     }
+
     #[Route('/comment/{id}/delete', name: 'app_comment_delete', methods: ['POST'])]
     public function deleteComment(Comment $comment, EntityManagerInterface $em): Response
     {
