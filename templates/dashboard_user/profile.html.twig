@@ -13,12 +13,18 @@
 
             <!-- Bouton pour modifier la couverture (visible seulement pour le propriétaire) -->
             {% if app.user and app.user.id == user.id %}
-                <form id="cover-form" action="{{ path('dashboard_user_cover_upload') }}" method="post" enctype="multipart/form-data" class="absolute bottom-4 right-4">
-                    <input type="file" id="cover-file-input" name="coverFile" accept="image/png, image/jpeg, image/jpg" class="hidden" onchange="validateAndSubmitImage(this, 'cover-form')">
-                    <label for="cover-file-input" class="cursor-pointer bg-white bg-opacity-80 text-leather hover:bg-opacity-100 rounded-full p-2 shadow-md transition inline-block">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                <form id="cover-form" action="{{ path('dashboard_user_cover_upload') }}" method="post"
+                      enctype="multipart/form-data" class="absolute bottom-4 right-4">
+                    <input type="file" id="cover-file-input" name="coverFile" accept="image/png, image/jpeg, image/jpg"
+                           class="hidden" onchange="validateAndSubmitImage(this, 'cover-form')">
+                    <label for="cover-file-input"
+                           class="cursor-pointer bg-white bg-opacity-80 text-leather hover:bg-opacity-100 rounded-full p-2 shadow-md transition inline-block">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                             stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
                         </svg>
                     </label>
                 </form>
@@ -39,12 +45,20 @@
 
                     <!-- Bouton pour modifier l'avatar (visible seulement pour le propriétaire) -->
                     {% if app.user and app.user.id == user.id %}
-                        <form id="avatar-form" action="{{ path('dashboard_user_avatar_upload') }}" method="post" enctype="multipart/form-data" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300">
-                            <input type="file" id="avatar-file-input" name="avatarFile" accept="image/png, image/jpeg, image/jpg" class="hidden" onchange="validateAndSubmitImage(this, 'avatar-form')">
-                            <label for="avatar-file-input" class="cursor-pointer text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <form id="avatar-form" action="{{ path('dashboard_user_avatar_upload') }}" method="post"
+                              enctype="multipart/form-data"
+                              class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300">
+                            <input type="file" id="avatar-file-input" name="avatarFile"
+                                   accept="image/png, image/jpeg, image/jpg" class="hidden"
+                                   onchange="validateAndSubmitImage(this, 'avatar-form')">
+                            <label for="avatar-file-input"
+                                   class="cursor-pointer text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
+                                     stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
                                 </svg>
                                 <span class="text-xs mt-1">Changer</span>
                             </label>
@@ -157,7 +171,8 @@
     </div>
 
     <!-- Alerte pour les erreurs de type de fichier -->
-    <div id="error-alert" class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded shadow-lg hidden z-50">
+    <div id="error-alert"
+         class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded shadow-lg hidden z-50">
         <p>Seules les images (JPG, JPEG, PNG) sont acceptées.</p>
     </div>
 {% endblock %}
