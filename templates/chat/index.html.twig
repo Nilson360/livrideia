@@ -164,7 +164,7 @@
             });
 
             // Réception Mercure
-            const eventSource = new EventSource(`http://localhost:8080/.well-known/mercure?topic=chat_user_${currentUserId}`);
+            const eventSource = new EventSource(`https://test.livridea.com:8080/.well-known/mercure?topic=chat_user_${currentUserId}`);
             eventSource.onmessage = function (event) {
                 const data = JSON.parse(event.data);
                 if (selectedFriendId === data.senderId) {
