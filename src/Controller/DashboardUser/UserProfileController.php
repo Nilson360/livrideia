@@ -7,6 +7,7 @@ use App\Entity\Post;
 use App\Entity\User;
 use App\Form\ChangePasswordType;
 use App\Form\ProfileType;
+use App\Service\DeviceDetectorService;
 use App\Service\FileUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,6 +19,13 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/dashboard-user')]
 class UserProfileController extends AbstractController
 {
+    private DeviceDetectorService $deviceDetector;
+
+    public function __construct(DeviceDetectorService $deviceDetector)
+    {
+        $this->deviceDetector = $deviceDetector;
+    }
+
     #[Route('/profile', name: 'dashboard_user_profile', methods: ['GET'])]
     public function profile(EntityManagerInterface $em): Response
     {
@@ -35,11 +43,20 @@ class UserProfileController extends AbstractController
 
         // Fusionner les relations
         $friendRelationships = array_merge($sentFriends, $receivedFriends);
-        return $this->render('dashboard_user/profile.html.twig', [
+
+        $templateData = [
             'user' => $user,
             'posts' => $posts,
             'friends' => $friendRelationships,
-        ]);
+        ];
+
+        // Détection de l'appareil et choix du template approprié
+        if ($this->deviceDetector->isMobile()) {
+            return $this->render('dashboard_user/mobile/profile/index.html.twig', $templateData);
+        }
+
+        // Version desktop par défaut
+        return $this->render('dashboard_user/profile.html.twig', $templateData);
     }
 
     #[Route('/profile/edit', name: 'dashboard_user_profile_edit', methods: ['GET', 'POST'])]
@@ -81,9 +98,17 @@ class UserProfileController extends AbstractController
             return $this->redirectToRoute('dashboard_user_profile');
         }
 
-        return $this->render('dashboard_user/edit_profile.html.twig', [
+        $templateData = [
             'form' => $form->createView(),
-        ]);
+        ];
+
+        // Détection de l'appareil et choix du template approprié
+        if ($this->deviceDetector->isMobile()) {
+            return $this->render('dashboard_user/mobile/profile/edit_profile.html.twig', $templateData);
+        }
+
+        // Version desktop par défaut
+        return $this->render('dashboard_user/edit_profile.html.twig', $templateData);
     }
 
     #[Route('/profile/change-password', name: 'dashboard_user_profile_change_password', methods: ['GET', 'POST'])]
@@ -118,15 +143,23 @@ class UserProfileController extends AbstractController
                 $em->flush();
 
                 $this->addFlash('success', 'Mot de passe mis à jour avec succès !');
-                return $this->redirectToRoute('dashboard-user-profile');
+                return $this->redirectToRoute('dashboard_user_profile');
             } else {
                 $this->addFlash('error', 'Ancien mot de passe incorrect.');
             }
         }
 
-        return $this->render('dashboard_user/change_password.html.twig', [
+        $templateData = [
             'form' => $form->createView(),
-        ]);
+        ];
+
+        // Détection de l'appareil et choix du template approprié
+        if ($this->deviceDetector->isMobile()) {
+            return $this->render('dashboard_user/mobile/profile/change_password.html.twig', $templateData);
+        }
+
+        // Version desktop par défaut
+        return $this->render('dashboard_user/change_password.html.twig', $templateData);
     }
 
     #[Route('/profile/{id}/friends', name: 'app_profile_friends', methods: ['GET'])]
@@ -146,9 +179,19 @@ class UserProfileController extends AbstractController
             $friends[] = $friend->getSender();
         }
 
-        return $this->render('dashboard_user/friends.html.twig', [
+        $templateData = [
             'friends' => $friends,
-        ]);
+        ];
+
+        // Détection de l'appareil et choix du template approprié
+        if ($this->deviceDetector->isMobile() && $this->getRequest()->isXmlHttpRequest()) {
+            return $this->render('mobile/profile/friends_list.html.twig', $templateData);
+        } elseif ($this->deviceDetector->isMobile()) {
+            return $this->render('dashboard_user/mobile/profile/friends.html.twig', $templateData);
+        }
+
+        // Version desktop par défaut
+        return $this->render('dashboard_user/friends.html.twig', $templateData);
     }
 
     #[Route('/utilisateur/{username}', name: 'dashboard_user_profile_other')]
@@ -167,13 +210,19 @@ class UserProfileController extends AbstractController
             return $this->redirectToRoute('dashboard_user_profile');
         }
 
-        return $this->render('dashboard_user/profile_other.html.twig', [
+        $templateData = [
             'user' => $user,
             'posts' => $user->getPosts(),
-        ]);
-    }
+        ];
 
-    // src/Controller/DashboardUser/UserProfileController.php
+        // Détection de l'appareil et choix du template approprié
+        if ($this->deviceDetector->isMobile()) {
+            return $this->render('dashboard_user/mobile/profile/profile_other.html.twig', $templateData);
+        }
+
+        // Version desktop par défaut
+        return $this->render('dashboard_user/profile_other.html.twig', $templateData);
+    }
 
     #[Route('/profile/avatar-upload', name: 'dashboard_user_avatar_upload', methods: ['POST'])]
     public function uploadAvatar(
@@ -233,5 +282,10 @@ class UserProfileController extends AbstractController
         }
 
         return $this->redirectToRoute('dashboard_user_profile');
+    }
+
+    private function getRequest()
+    {
+        return $this->container->get('request_stack')->getCurrentRequest();
     }
 }

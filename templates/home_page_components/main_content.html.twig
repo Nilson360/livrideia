@@ -1,10 +1,10 @@
 {% block main_content %}
     <div class="w-full md:w-2/3 lg:w-1/2 p-4 space-y-6">
 
-        <!-- Zone de création de publication -->
-        <div class="bg-[#fdf9f3] border border-bookmark rounded-xl shadow p-6">
-            <h2 class="text-leather text-lg font-bold italic mb-4 flex items-center gap-2">
-                <svg fill="#000000" viewBox="0 -0.11 33.736 33.736" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
+        <!-- Zone de création de publication avec nouveaux styles -->
+        <div class="bg-[#f7f9f4] border border-[#2E7D32] rounded-xl shadow-md p-6">
+            <h2 class="text-[#2E7D32] text-lg font-bold italic mb-4 flex items-center gap-2">
+                <svg fill="#2E7D32" viewBox="0 -0.11 33.736 33.736" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
                     <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                     <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
                     <g id="SVGRepo_iconCarrier">
@@ -20,7 +20,7 @@
             {{ form_start(postForm, {'attr': {'class': 'space-y-4'}}) }}
             {{ form_widget(postForm.content, {
                 'attr': {
-                    'class': 'w-full border border-bookmark rounded-lg p-3 bg-parchment text-ink placeholder-gray-500 text-sm',
+                    'class': 'w-full border border-[#2E7D32] rounded-lg p-3 bg-white text-[#333333] placeholder-gray-500 text-sm focus:ring-2 focus:ring-[#FF8A00] focus:border-[#FF8A00]',
                     'rows': 4,
                     'placeholder': 'Partagez une citation, un extrait ou une pensée...'
                 }
@@ -29,56 +29,63 @@
                 <div>
                     {{ form_widget(postForm.imageFile, {
                         'attr': {
-                            'class': 'text-bookmark hover:underline text-sm',
+                            'class': 'text-[#2E7D32] hover:text-[#FF8A00] hover:underline text-sm',
                             'accept': 'image/*'
                         }
                     }) }}
                 </div>
                 <button type="submit"
-                        class="bg-leather text-white px-5 py-2 rounded-lg shadow hover:bg-[#6f442a] text-sm font-semibold">
+                        class="bg-[#FF8A00] text-white px-5 py-2 rounded-lg shadow hover:bg-[#e67e00] text-sm font-semibold transition-colors duration-200">
                     Publier
                 </button>
             </div>
             {{ form_end(postForm) }}
         </div>
 
-        <!-- 📜 Liste des publications -->
+        <!-- 📜 Liste des publications avec hauteur d'image fixe -->
         {% for post in posts %}
             {% set userHasLiked = app.user and post.likes|filter(like => like.user.id == app.user.id)|length > 0 %}
             {% set likeCount = post.likes|length %}
             {% set commentCount = post.comments|length %}
             {% set shareCount = post.shares|length %}
 
-            <div class="post-container bg-[#fdf9f3] border border-bookmark rounded-xl shadow p-6 space-y-4">
+            <div class="post-container bg-[#f7f9f4] border border-[#2E7D32] rounded-xl shadow-md p-6 space-y-4 transition-shadow hover:shadow-lg">
                 <!-- En-tête du post -->
-                <div class="flex flex-wrap items-center gap-2 text-sm text-ink">
+                <div class="flex flex-wrap items-center gap-2 text-sm text-[#333333]">
                     <a href="{{ path('dashboard_user_profile_other', { 'username': post.user.username }) }}"
-                       class="text-leather font-bold hover:underline italic">
+                       class="text-[#2E7D32] font-bold hover:text-[#FF8A00] hover:underline italic transition-colors">
                         {{ post.user.fullName }}
                     </a>
                     <span class="text-sm text-gray-500">· {{ post.createdAt|date('d/m/Y') }}</span>
                 </div>
 
-                <p class="text-ink text-sm whitespace-pre-line">{{ post.content }}</p>
+                <p class="text-[#333333] text-sm whitespace-pre-line">{{ post.content }}</p>
 
                 {% if post.imagePath %}
-                    <div>
-                        <img src="{{ asset('uploads/' ~ post.imagePath) }}"
-                             alt="Image de publication"
-                             class="block mx-auto rounded-lg border border-bookmark w-full max-h-[500px] object-cover">
+                    <div class="flex justify-center">
+                        <div class="w-full h-64 overflow-hidden rounded-lg border border-[#2E7D32] shadow">
+                            <img src="{{ asset('uploads/' ~ post.imagePath) }}"
+                                 alt="Image de publication"
+                                 class="w-full h-full object-cover">
+                        </div>
                     </div>
                 {% endif %}
 
                 {% if likeCount > 0 or commentCount > 0 or shareCount > 0 %}
-                    <div class="stats-container flex flex-wrap justify-between items-center text-xs text-gray-600 border-t pt-2">
+                    <div class="stats-container flex flex-wrap justify-between items-center text-xs text-gray-600 border-t border-[#2E7D32]/20 pt-2">
                         <div class="flex items-center gap-2">
                             {% if likeCount > 0 %}
-                                <span class="like-count">📖 {{ likeCount }}</span>
+                                <span class="like-count flex items-center gap-1">
+                                    <svg class="w-4 h-4 text-[#2E7D32]" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M15.9 4.5C15.9 3 14.418 2 13.26 2c-.806 0-.869.612-.993 1.82-.055.53-.121 1.174-.267 1.93-.386 2.002-1.72 4.56-2.996 5.325V17C9 19.25 9.75 20 13 20h3.773c2.176 0 2.703-1.433 2.899-1.964l.013-.036c.114-.306.358-.547.638-.82.31-.306.664-.653.927-1.18.311-.623.27-1.177.233-1.67-.023-.299-.044-.575.017-.83.064-.27.146-.475.225-.671.143-.356.275-.686.275-1.329 0-1.5-.748-2.498-2.315-2.498H15.5S15.9 6 15.9 4.5zM5.5 10A1.5 1.5 0 0 0 4 11.5v7a1.5 1.5 0 0 0 3 0v-7A1.5 1.5 0 0 0 5.5 10z"/>
+                                    </svg>
+                                    {{ likeCount }}
+                                </span>
                             {% endif %}
                         </div>
                         <div class="flex items-center gap-4">
                             {% if commentCount > 0 %}
-                                <button class="toggle-comments hover:text-ink comment-count-btn"
+                                <button class="toggle-comments hover:text-[#2E7D32] comment-count-btn transition-colors"
                                         data-count="{{ commentCount }}">
                                     💬 {{ commentCount }} commentaire{{ commentCount > 1 ? 's' : '' }}
                                 </button>
@@ -91,8 +98,8 @@
                 {% endif %}
 
                 <!-- Barre d'actions -->
-                <div class="flex justify-around items-center text-sm border-t pt-2 text-bookmark">
-                    <button class="like-button flex items-center gap-1 {{ userHasLiked ? 'text-leather' : 'text-bookmark' }} hover:text-leather"
+                <div class="flex justify-around items-center text-sm border-t border-[#2E7D32]/20 pt-2 text-[#2E7D32]">
+                    <button class="like-button flex items-center gap-1 {{ userHasLiked ? 'text-[#FF8A00]' : 'text-[#2E7D32]' }} hover:text-[#FF8A00] transition-colors"
                             data-id="{{ post.id }}">
                         {% if userHasLiked %}
                             <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"
@@ -107,10 +114,10 @@
                                       stroke-linejoin="round"/>
                             </svg>
                         {% endif %}
-                        J’aime
+                        J'aime
                     </button>
 
-                    <button class="toggle-comments hover:text-leather flex items-center gap-1">
+                    <button class="toggle-comments hover:text-[#FF8A00] flex items-center gap-1 transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
                              stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -123,11 +130,11 @@
                 <!-- Zone des commentaires -->
                 <div class="comments-section mt-4 hidden space-y-3">
                     {% for comment in post.comments %}
-                        <div class="border-t pt-2 text-sm text-ink">
+                        <div class="border-t border-[#2E7D32]/20 pt-2 text-sm text-[#333333]">
                             <div class="flex justify-between items-start">
                                 <div>
                                     <a href="{{ path('dashboard_user_profile_other', { 'username': comment.user.username }) }}"
-                                       class="text-leather font-semibold hover:underline italic">
+                                       class="text-[#2E7D32] font-semibold hover:text-[#FF8A00] hover:underline italic transition-colors">
                                         {{ comment.user.fullName }}
                                     </a>
                                     <p class="text-xs text-gray-500">{{ comment.createdAt|date('d/m/Y H:i') }}</p>
@@ -135,10 +142,10 @@
                                 </div>
                                 {% if app.user and app.user.id == comment.user.id %}
                                     <div class="ml-2 flex gap-2">
-                                        <button class="edit-comment text-leather hover:underline text-xs"
+                                        <button class="edit-comment text-[#2E7D32] hover:text-[#FF8A00] hover:underline text-xs transition-colors"
                                                 data-comment-id="{{ comment.id }}">✏️ Modifier
                                         </button>
-                                        <button class="delete-comment text-red-600 hover:underline text-xs"
+                                        <button class="delete-comment text-red-600 hover:text-red-800 hover:underline text-xs transition-colors"
                                                 data-comment-id="{{ comment.id }}">🗑️ Supprimer
                                         </button>
                                     </div>
@@ -147,12 +154,12 @@
                         </div>
                     {% endfor %}
 
-                    <!-- Formulaire d’ajout de commentaire -->
+                    <!-- Formulaire d'ajout de commentaire -->
                     <div class="add-comment flex flex-col sm:flex-row gap-2">
                         <input type="text" placeholder="Exprimez-vous..."
-                               class="comment-input w-full border border-bookmark rounded p-2 text-sm bg-parchment"
+                               class="comment-input w-full border border-[#2E7D32] rounded p-2 text-sm bg-white focus:ring-2 focus:ring-[#FF8A00] focus:border-[#FF8A00]"
                                data-post-id="{{ post.id }}">
-                        <button class="send-comment bg-leather text-white px-4 py-2 rounded hover:bg-[#6f442a] text-sm"
+                        <button class="send-comment bg-[#FF8A00] text-white px-4 py-2 rounded hover:bg-[#e67e00] text-sm transition-colors"
                                 data-post-id="{{ post.id }}">
                             Publier
                         </button>
@@ -169,6 +176,7 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        // Le script reste le même que celui que vous avez
         // === 1. Toggle des commentaires ===
         document.querySelectorAll('.toggle-comments').forEach(button => {
             button.addEventListener('click', function () {
@@ -201,8 +209,8 @@
                             likeCountEl.classList.toggle('hidden', data.likesCount === 0);
                         }
 
-                        this.classList.toggle('text-leather', data.status === 'liked');
-                        this.classList.toggle('text-bookmark', data.status !== 'liked');
+                        this.classList.toggle('text-[#FF8A00]', data.status === 'liked');
+                        this.classList.toggle('text-[#2E7D32]', data.status !== 'liked');
 
                         if (statsContainer) {
                             const hasStats = data.likesCount > 0 || parseInt(statsContainer.querySelector('.comment-count-btn')?.dataset.count || 0) > 0;
@@ -235,17 +243,17 @@
                     if (data.status === 'commented') {
                         const commentsSection = container.querySelector('.comments-section');
                         const newComment = document.createElement('div');
-                        newComment.className = 'border-t pt-2 text-sm text-ink';
+                        newComment.className = 'border-t border-[#2E7D32]/20 pt-2 text-sm text-[#333333]';
                         newComment.innerHTML = `
                         <div class="flex justify-between items-start">
                             <div>
-                                <span class="text-leather font-semibold italic">${data.comment.user}</span>
+                                <span class="text-[#2E7D32] font-semibold italic">${data.comment.user}</span>
                                 <p class="text-xs text-gray-500">${data.comment.createdAt}</p>
                                 <p class="mt-1">${data.comment.content}</p>
                             </div>
                             <div class="ml-2 flex gap-2">
-                                <button class="edit-comment text-leather hover:underline text-xs" data-comment-id="${data.comment.id}">✏️ Modifier</button>
-                                <button class="delete-comment text-red-600 hover:underline text-xs" data-comment-id="${data.comment.id}">🗑️ Supprimer</button>
+                                <button class="edit-comment text-[#2E7D32] hover:text-[#FF8A00] hover:underline text-xs transition-colors" data-comment-id="${data.comment.id}">✏️ Modifier</button>
+                                <button class="delete-comment text-red-600 hover:text-red-800 hover:underline text-xs transition-colors" data-comment-id="${data.comment.id}">🗑️ Supprimer</button>
                             </div>
                         </div>
                     `;
@@ -324,16 +332,16 @@
 
                 const input = document.createElement('input');
                 input.value = oldText;
-                input.className = 'border rounded w-full p-2 mt-2 text-sm';
+                input.className = 'border border-[#2E7D32] rounded w-full p-2 mt-2 text-sm focus:ring-2 focus:ring-[#FF8A00]';
                 commentBlock.appendChild(input);
 
                 const valider = document.createElement('button');
-                valider.className = 'bg-green-600 text-white px-3 py-1 rounded text-sm ml-2';
+                valider.className = 'bg-[#2E7D32] text-white px-3 py-1 rounded text-sm ml-2 hover:bg-[#1b5e20] transition-colors';
                 valider.textContent = 'Valider';
                 commentBlock.appendChild(valider);
 
                 const annuler = document.createElement('button');
-                annuler.className = 'bg-gray-400 text-white px-3 py-1 rounded text-sm ml-2';
+                annuler.className = 'bg-gray-400 text-white px-3 py-1 rounded text-sm ml-2 hover:bg-gray-500 transition-colors';
                 annuler.textContent = 'Annuler';
                 commentBlock.appendChild(annuler);
 
@@ -375,7 +383,3 @@
         });
     });
 </script>
-
-
-
-

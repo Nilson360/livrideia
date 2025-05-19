@@ -24,7 +24,16 @@ class PostController extends AbstractController
         $this->notificationService = $notificationService;
         $this->entityManager = $entityManager;
     }
-
+    #[Route('/post/add', name: 'app_post_create', methods: ['POST'])]
+    public function addPost(Request $request, EntityManagerInterface $em): Response
+    {
+        return $this->json(['error' => 'Not implemented yet.']);
+    }
+    #[Route('/post/story', name: 'app_create_story', methods: ['POST'])]
+    public function postStory(Request $request, EntityManagerInterface $em): Response
+    {
+        return $this->json(['error' => 'Not implemented yet.']);
+    }
     #[Route('/post/{id}/like', name: 'app_post_like', methods: ['POST'])]
     public function likePost(Post $post, EntityManagerInterface $em, Request $request): Response
     {

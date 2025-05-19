@@ -1,10 +1,10 @@
 {% block sidebar_right %}
     <div class="w-1/4 p-4 hidden lg:block space-y-6">
 
-        <!-- Suggestions d’amitié -->
-        <div class="bg-[#fdf9f3] border border-bookmark rounded-xl shadow-sm p-4">
-            <h3 class="text-leather font-bold text-lg mb-4 italic flex items-center gap-2">
-                <svg fill="#000000" class="w-5 h-5 text-bookmark" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <!-- Suggestions d'amitié -->
+        <div class="bg-[#f7f9f4] border border-[#2E7D32] rounded-xl shadow-sm p-4">
+            <h3 class="text-[#2E7D32] font-bold text-lg mb-4 italic flex items-center gap-2">
+                <svg fill="#2E7D32" class="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <g id="read">
                         <g>
                             <path d="M12,18.883a10.8,10.8,0,0,1-9.675-5.728,2.6,2.6,0,0,1,0-2.31A10.8,10.8,0,0,1,12,5.117a10.8,10.8,0,0,1,9.675,5.728h0a2.6,2.6,0,0,1,0,2.31A10.8,10.8,0,0,1,12,18.883ZM12,6.117a9.787,9.787,0,0,0-8.78,5.176,1.586,1.586,0,0,0,0,1.415A9.788,9.788,0,0,0,12,17.883a9.787,9.787,0,0,0,8.78-5.176,1.584,1.584,0,0,0,0-1.414h0A9.787,9.787,0,0,0,12,6.117Z"/>
@@ -19,42 +19,52 @@
                 {% for suggested in suggestedUsers %}
                     <li class="flex justify-between items-center gap-2">
                         <div class="flex items-center gap-3">
-                            <img src="{{ asset(suggested.avatarPath|default('/images/default-profile.png')) }}"
-                                 alt="Avatar de {{ suggested.username }}"
-                                 class="w-10 h-10 rounded-full border border-bookmark shadow-sm">
+                            <div class="w-10 h-10 rounded-full border border-[#2E7D32] shadow-sm overflow-hidden">
+                                <img src="{{ asset(suggested.avatarPath|default('/images/default-profile.png')) }}"
+                                     alt="Avatar de {{ suggested.username }}"
+                                     class="w-full h-full object-cover">
+                            </div>
                             <div>
                                 <a href="{{ path('dashboard_user_profile_other', {'username': suggested.username}) }}"
-                                   class="text-leather font-semibold hover:underline text-sm italic">
+                                   class="text-[#2E7D32] font-semibold hover:text-[#FF8A00] hover:underline text-sm italic transition-colors">
                                     {{ suggested.username }}
                                 </a>
                                 <p class="text-xs text-gray-500">@{{ suggested.pseudo|default(suggested.username) }}</p>
                             </div>
                         </div>
-                        <button class="friend-request-btn bg-leather text-white px-3 py-1 rounded shadow hover:bg-[#6f442a] text-xs"
+                        <button class="friend-request-btn bg-[#FF8A00] text-white px-3 py-1 rounded shadow hover:bg-[#e67e00] text-xs transition-colors"
                                 data-user-id="{{ suggested.id }}">
                             Se lier
                         </button>
                     </li>
                 {% else %}
-                    <li class="text-gray-500 text-sm italic">Aucune suggestion pour le moment.</li>
+                    <li class="text-gray-500 text-sm italic flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        Aucune suggestion pour le moment.
+                    </li>
                 {% endfor %}
             </ul>
         </div>
 
         {% set pendingRequests = friendRequests|filter(r => r.status == 'pending') %}
 
-        <!-- Demandes d’amitié reçues -->
+        <!-- Demandes d'amitié reçues -->
         {% if pendingRequests|length >= 1 %}
-            <div class="bg-[#fdf9f3] border border-bookmark rounded-xl shadow-sm p-4">
-                <h3 class="text-leather font-bold text-lg mb-4 italic flex items-center gap-2">
-                    📬 Demandes reçues
+            <div class="bg-[#f7f9f4] border border-[#2E7D32] rounded-xl shadow-sm p-4">
+                <h3 class="text-[#2E7D32] font-bold text-lg mb-4 italic flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="#2E7D32">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21.75 9v-.906c0-1.19-.972-2.152-2.165-2.152H4.415c-1.193 0-2.165.961-2.165 2.152V9h19.5zM19.585 9h-15.17l3.938-3.94a2.25 2.25 0 013.15 0l3.938 3.94zm-15.17 6h15.17M6.75 12h.008v.008H6.75V12zm2.25 0h.008v.008H9V12zm2.25 0h.008v.008H11.25V12z" />
+                    </svg>
+                    Demandes reçues
                 </h3>
                 <ul class="space-y-4">
                     {% for request in pendingRequests %}
                         <li class="flex flex-col gap-2">
                             <div>
                                 <a href="{{ path('dashboard_user_profile_other', {'username': request.sender.username}) }}"
-                                   class="text-leather font-semibold hover:underline text-sm italic">
+                                   class="text-[#2E7D32] font-semibold hover:text-[#FF8A00] hover:underline text-sm italic transition-colors">
                                     {{ request.sender.username }}
                                 </a>
                                 <p class="text-xs text-gray-500">
@@ -62,19 +72,30 @@
                                 </p>
                             </div>
                             <div class="flex gap-2">
-                                <button class="accept-friend-btn bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-xs"
+                                <button class="accept-friend-btn bg-[#2E7D32] text-white px-3 py-1 rounded hover:bg-[#1b5e20] text-xs transition-colors flex items-center gap-1"
                                         data-friend-id="{{ request.id }}">
+                                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                    </svg>
                                     Accepter
                                 </button>
-                                <button class="decline-friend-btn bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-xs"
+                                <button class="decline-friend-btn bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-xs transition-colors flex items-center gap-1"
                                         data-friend-id="{{ request.id }}">
+                                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
                                     Refuser
                                 </button>
                             </div>
-                            <hr class="h-px bg-bookmark/30 border-0">
+                            <hr class="h-px bg-[#2E7D32]/20 border-0">
                         </li>
                     {% else %}
-                        <li class="text-gray-500 text-sm italic">Aucune demande pour l’instant.</li>
+                        <li class="text-gray-500 text-sm italic flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Aucune demande pour l'instant.
+                        </li>
                     {% endfor %}
                 </ul>
             </div>
@@ -120,9 +141,14 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === "pending") {
-                        button.textContent = "Demande envoyée";
-                        button.classList.remove("bg-leather", "hover:bg-[#6f442a]");
-                        button.classList.add("bg-bookmark", "cursor-not-allowed", "opacity-80");
+                        button.innerHTML = `
+                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Demande envoyée
+                        `;
+                        button.classList.remove("bg-[#FF8A00]", "hover:bg-[#e67e00]");
+                        button.classList.add("bg-gray-400", "cursor-not-allowed", "opacity-80");
                         button.disabled = true;
                     } else {
                         alert(data.error);
@@ -142,7 +168,14 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === "accepted") {
-                        button.closest("li").innerHTML = `<p class="text-green-500 font-bold">Ami(e) ajouté(e) !</p>`;
+                        button.closest("li").innerHTML = `
+                            <p class="text-[#2E7D32] font-bold flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                Ami(e) ajouté(e) !
+                            </p>
+                        `;
                     } else {
                         alert(data.error);
                     }
@@ -161,7 +194,14 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === "declined") {
-                        button.closest("li").innerHTML = `<p class="text-red-500 font-bold">Demande refusée.</p>`;
+                        button.closest("li").innerHTML = `
+                            <p class="text-red-500 font-bold flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                                Demande refusée.
+                            </p>
+                        `;
                     } else {
                         alert(data.error);
                     }

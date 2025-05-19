@@ -10,26 +10,30 @@
         {{ encore_entry_link_tags('app') }}
     {% endblock %}
 </head>
-<body class="bg-parchment font-serif text-ink min-h-screen flex flex-col" data-user-id="{{ app.user ? app.user.id : '' }}">
+<body class="bg-[#f7f9f4] font-serif text-[#333333] min-h-screen flex flex-col" data-user-id="{{ app.user ? app.user.id : '' }}">
 
-<!-- Navigation principale -->
-<nav class="bg-[#fdf8f3] border-b border-bookmark shadow-sm fixed w-full z-10 top-0">
+<!-- Navigation principale avec couleurs vert et orange -->
+<nav class="bg-[#f7f9f4] border-b border-[#2E7D32] shadow-sm fixed w-full z-10 top-0">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
 
             <!-- Logo + Recherche -->
             <div class="flex items-center gap-4 w-full md:w-auto">
-                <a href="{{ path('app_home') }}" class="text-2xl font-bold italic text-leather tracking-wide">
+                <a href="{{ path('app_home') }}" class="text-2xl font-bold italic text-[#2E7D32] tracking-wide flex items-center">
+                    <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21 4H3a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1zm-1 14H4V6h16v12z"/>
+                        <path d="M12 7.5a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-9zM17 7.5a.5.5 0 0 0-.5-.5h-2a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h2a.5.5 0 0 0 .5-.5v-9z"/>
+                    </svg>
                     {% block site_name %}Livridea{% endblock %}
                 </a>
 
                 <!-- Barre de recherche -->
                 <form method="get" action="{{ path('app_search') }}"
-                      class="hidden sm:flex items-center w-full md:w-72 lg:w-96 bg-[#f3efe5] border border-bookmark rounded-full px-4 py-1">
+                      class="hidden sm:flex items-center w-full md:w-72 lg:w-96 bg-white border border-[#2E7D32] rounded-full px-4 py-1">
                     <input type="text" name="q"
-                           class="bg-transparent focus:outline-none w-full text-sm text-ink placeholder-gray-500"
+                           class="bg-transparent focus:outline-none focus:ring-2 focus:ring-[#FF8A00] w-full text-sm text-[#333333] placeholder-gray-500"
                            placeholder="Rechercher un lecteur, une citation, un roman...">
-                    <button type="submit" class="text-leather hover:text-bookmark">
+                    <button type="submit" class="text-[#2E7D32] hover:text-[#FF8A00] transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
                              stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -41,25 +45,25 @@
 
             <!-- Liens principaux -->
             <div class="hidden md:flex md:items-center md:justify-center md:space-x-8 flex-1">
-                <a href="{{ path('app_home') }}" class="flex items-center gap-1 hover:text-leather text-ink text-sm">
-                    <svg class="w-5 h-5" fill="none" stroke="#1C274C" viewBox="0 0 24 24" stroke-width="1.5">
+                <a href="{{ path('app_home') }}" class="flex items-center gap-1 text-[#2E7D32] hover:text-[#FF8A00] text-sm transition-colors">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                         <path stroke-linecap="round" d="M22 12.2V13.7C22 17.6 22 19.6 20.8 20.8C19.7 22 17.8 22 14 22H10C6.2 22 4.3 22 3.2 20.8C2 19.6 2 17.6 2 13.7V12.2C2 9.9 2 8.8 2.5 7.8C3 6.9 4 6.3 5.9 5.1L7.9 3.87C9.9 2.62 10.9 2 12 2C13.1 2 14.1 2.62 16.1 3.87L18.1 5.1C20 6.3 21 6.9 21.5 7.8"/>
                         <path stroke-linecap="round" d="M15 18H9"/>
                     </svg>
                     Accueil
                 </a>
 
-                <a href="{{ path('notifications_list') }}" class="flex items-center gap-1 hover:text-leather text-ink text-sm relative">
-                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#000000" xmlns="http://www.w3.org/2000/svg">
+                <a href="{{ path('notifications_list') }}" class="flex items-center gap-1 text-[#2E7D32] hover:text-[#FF8A00] text-sm relative transition-colors">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                         <path d="M9.5 19H14.5M9.5 19C8.9 19 7 19 5.6 19C4.9 19 4.4 18.2 4.7 17.6L5.6 15.8C5.8 15.3 6 14.7 6 14.1C6 13.3 6 12.1 6 11C6 9 7 5 12 5C17 5 18 9 18 11C18 12.1 18 13.3 18 14.1C18 14.7 18.1 15.3 18.4 15.8L19.3 17.6C19.6 18.2 19.1 19 18.4 19H9.5ZM12 5V3"/>
                     </svg>
                     Notifications
                     <span id="notif-badge"
-                          class="absolute -top-2 -right-3 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full hidden">3</span>
+                          class="absolute -top-2 -right-3 bg-[#FF8A00] text-white text-xs px-2 py-0.5 rounded-full hidden">3</span>
                 </a>
 
-                <a href="{{ path('app_chat') }}" class="flex items-center gap-1 hover:text-leather text-ink text-sm">
-                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#1C274C" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg">
+                <a href="{{ path('app_chat') }}" class="flex items-center gap-1 text-[#2E7D32] hover:text-[#FF8A00] text-sm transition-colors">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                         <path stroke-linecap="round" d="M17 3.34C15.5 2.49 13.8 2 12 2C6.5 2 2 6.5 2 12C2 13.6 2.4 15.1 3 16.5C3.2 16.8 3.3 17.2 3.2 17.6L2.6 19.83C2.3 20.8 3.2 21.7 4.2 21.42L6.4 20.83C6.8 20.7 7.2 20.8 7.5 21C8.9 21.6 10.4 22 12 22C17.5 22 22 17.5 22 12C22 10.2 21.5 8.5 20.66 7"/>
                         <path d="M8 12H8.01M12 12H12.01M16 12H16.01" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
                     </svg>
@@ -67,14 +71,67 @@
                 </a>
 
                 {% if app.user %}
-                    <a href="{{ path('dashboard_user_profile') }}" class="flex items-center gap-1 hover:text-leather text-ink text-sm">
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#000000" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M5 21C5 17.1 8.1 14 12 14C15.9 14 19 17.1 19 21M16 7C16 9.2 14.2 11 12 11C9.8 11 8 9.2 8 7C8 4.8 9.8 3 12 3C14.2 3 16 4.8 16 7Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <a href="{{ path('dashboard_user_profile') }}" class="flex items-center gap-1 text-[#2E7D32] hover:text-[#FF8A00] text-sm transition-colors">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M5 21C5 17.1 8.1 14 12 14C15.9 14 19 17.1 19 21M16 7C16 9.2 14.2 11 12 11C9.8 11 8 9.2 8 7C8 4.8 9.8 3 12 3C14.2 3 16 4.8 16 7Z" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                         Profil
                     </a>
                 {% endif %}
             </div>
+
+            <!-- Menu mobile -->
+            <div class="md:hidden flex items-center">
+                <button type="button" class="mobile-menu-button text-[#2E7D32] hover:text-[#FF8A00] transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu mobile déroulant -->
+    <div class="md:hidden hidden mobile-menu bg-white shadow-lg border-b border-[#2E7D32]">
+        <div class="px-2 pt-2 pb-3 space-y-1">
+            <a href="{{ path('app_home') }}" class="flex items-center gap-2 block px-3 py-2 rounded-md text-[#2E7D32] hover:bg-[#f7f9f4] hover:text-[#FF8A00] transition-colors">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" d="M22 12.2V13.7C22 17.6 22 19.6 20.8 20.8C19.7 22 17.8 22 14 22H10C6.2 22 4.3 22 3.2 20.8C2 19.6 2 17.6 2 13.7V12.2C2 9.9 2 8.8 2.5 7.8C3 6.9 4 6.3 5.9 5.1L7.9 3.87C9.9 2.62 10.9 2 12 2C13.1 2 14.1 2.62 16.1 3.87L18.1 5.1C20 6.3 21 6.9 21.5 7.8"/>
+                    <path stroke-linecap="round" d="M15 18H9"/>
+                </svg>
+                Accueil
+            </a>
+            <a href="{{ path('notifications_list') }}" class="flex items-center gap-2 block px-3 py-2 rounded-md text-[#2E7D32] hover:bg-[#f7f9f4] hover:text-[#FF8A00] transition-colors">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M9.5 19H14.5M9.5 19C8.9 19 7 19 5.6 19C4.9 19 4.4 18.2 4.7 17.6L5.6 15.8C5.8 15.3 6 14.7 6 14.1C6 13.3 6 12.1 6 11C6 9 7 5 12 5C17 5 18 9 18 11C18 12.1 18 13.3 18 14.1C18 14.7 18.1 15.3 18.4 15.8L19.3 17.6C19.6 18.2 19.1 19 18.4 19H9.5ZM12 5V3"/>
+                </svg>
+                Notifications
+            </a>
+            <a href="{{ path('app_chat') }}" class="flex items-center gap-2 block px-3 py-2 rounded-md text-[#2E7D32] hover:bg-[#f7f9f4] hover:text-[#FF8A00] transition-colors">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" d="M17 3.34C15.5 2.49 13.8 2 12 2C6.5 2 2 6.5 2 12C2 13.6 2.4 15.1 3 16.5C3.2 16.8 3.3 17.2 3.2 17.6L2.6 19.83C2.3 20.8 3.2 21.7 4.2 21.42L6.4 20.83C6.8 20.7 7.2 20.8 7.5 21C8.9 21.6 10.4 22 12 22C17.5 22 22 17.5 22 12C22 10.2 21.5 8.5 20.66 7"/>
+                    <path d="M8 12H8.01M12 12H12.01M16 12H16.01" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                </svg>
+                Messages
+            </a>
+            {% if app.user %}
+                <a href="{{ path('dashboard_user_profile') }}" class="flex items-center gap-2 block px-3 py-2 rounded-md text-[#2E7D32] hover:bg-[#f7f9f4] hover:text-[#FF8A00] transition-colors">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M5 21C5 17.1 8.1 14 12 14C15.9 14 19 17.1 19 21M16 7C16 9.2 14.2 11 12 11C9.8 11 8 9.2 8 7C8 4.8 9.8 3 12 3C14.2 3 16 4.8 16 7Z" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Profil
+                </a>
+            {% endif %}
+            <form method="get" action="{{ path('app_search') }}" class="px-3 py-2">
+                <div class="flex items-center space-x-2 bg-white border border-[#2E7D32] rounded-lg px-3 py-1">
+                    <input type="text" name="q" class="w-full bg-transparent focus:outline-none text-sm" placeholder="Rechercher...">
+                    <button type="submit" class="text-[#2E7D32]">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M16.65 16.65A7.5 7.5 0 1 0 6.5 6.5a7.5 7.5 0 0 0 10.15 10.15z"/>
+                        </svg>
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </nav>
@@ -90,18 +147,24 @@
 </div>
 
 <!-- Pied de page -->
-<footer class="bg-leather text-parchment py-8 mt-8 ">
+<footer class="bg-[#2E7D32] text-white py-8 mt-8">
     <div class="max-w-7xl mx-auto px-4">
         <div class="flex flex-col sm:flex-row justify-between items-center">
             <div>
-                <p class="text-xl font-bold">Livridea</p>
+                <p class="text-xl font-bold flex items-center">
+                    <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21 4H3a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1zm-1 14H4V6h16v12z"/>
+                        <path d="M12 7.5a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-9zM17 7.5a.5.5 0 0 0-.5-.5h-2a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h2a.5.5 0 0 0 .5-.5v-9z"/>
+                    </svg>
+                    Livridea
+                </p>
                 <p class="text-sm">© {{ "now"|date("Y") }} Livridea. Tous droits réservés.</p>
             </div>
             <div class="flex flex-wrap gap-4 mt-4 sm:mt-0 text-sm">
-                <a href="{{ path('app_terms_of_service') }}" class="hover:text-bookmark">Conditions d'utilisation</a>
-                <a href="{{ path('app_privacy_policy') }}" class="hover:text-bookmark">Confidentialité</a>
-                <a href="{{ path('app_contact') }}" class="hover:text-bookmark">Contact</a>
-                <a href="{{ path('app_about') }}" class="hover:text-bookmark">À propos</a>
+                <a href="{{ path('app_terms_of_service') }}" class="hover:text-[#FF8A00] transition-colors">Conditions d'utilisation</a>
+                <a href="{{ path('app_privacy_policy') }}" class="hover:text-[#FF8A00] transition-colors">Confidentialité</a>
+                <a href="{{ path('app_contact') }}" class="hover:text-[#FF8A00] transition-colors">Contact</a>
+                <a href="{{ path('app_about') }}" class="hover:text-[#FF8A00] transition-colors">À propos</a>
             </div>
         </div>
     </div>
@@ -110,5 +173,19 @@
 {% block javascripts %}
     {{ encore_entry_script_tags('app') }}
 {% endblock %}
+
+<script>
+    // Script pour le menu mobile
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuButton = document.querySelector('.mobile-menu-button');
+        const mobileMenu = document.querySelector('.mobile-menu');
+
+        if (menuButton && mobileMenu) {
+            menuButton.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+    });
+</script>
 </body>
 </html>

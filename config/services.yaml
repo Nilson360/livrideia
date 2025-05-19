@@ -10,6 +10,13 @@ services:
     App\Service\LinkGenerator:
         public: true
     App\Service\FileUploader: ~
+
+    Detection\MobileDetect:
+        class: Detection\MobileDetect
+
+    App\Service\DeviceDetectorService:
+        arguments:
+            $mobileDetect: '@Detection\MobileDetect'
     App\:
         resource: '../src/'
         exclude:

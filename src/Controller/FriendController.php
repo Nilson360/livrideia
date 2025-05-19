@@ -157,4 +157,9 @@ class FriendController extends AbstractController
         ]);
     }
 
+    #[Route('/friends/', name: 'app_friends', methods: ['POST'])]
+    public function friends($friendUserId, EntityManagerInterface $em): Response
+    {
+       return $this->json(['error' => 'Not implemented yet.']);
+    }
 }

@@ -1,0 +1,100 @@
+{% extends 'auth/mobile/base_auth_mobile.html.twig' %}
+
+{% block title %}Inscription - Livridea{% endblock %}
+
+{% block content %}
+    <div class="w-full max-w-md mx-auto">
+        <h2 class="text-xl font-bold mb-6 text-center">Créer un compte</h2>
+
+        <form method="post" class="space-y-4">
+            {# Erreurs globales #}
+            {% for error in registrationForm.vars.errors %}
+                <div class="bg-red-500 text-white text-sm p-3 rounded-lg">{{ error.message }}</div>
+            {% endfor %}
+
+            <div>
+                {{ form_label(registrationForm.username, 'Nom d\'utilisateur', {'label_attr': {'class': 'block text-gray-700 font-medium mb-1'}}) }}
+                {{ form_widget(registrationForm.username, {
+                    'attr': {'class': 'w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#FF8A00]'}
+                }) }}
+                {{ form_errors(registrationForm.username) }}
+            </div>
+
+            <div>
+                {{ form_label(registrationForm.email, 'Adresse email', {'label_attr': {'class': 'block text-gray-700 font-medium mb-1'}}) }}
+                {{ form_widget(registrationForm.email, {
+                    'attr': {'class': 'w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#FF8A00]'}
+                }) }}
+                {{ form_errors(registrationForm.email) }}
+            </div>
+
+            <div>
+                {{ form_label(registrationForm.fullName, 'Nom complet', {'label_attr': {'class': 'block text-gray-700 font-medium mb-1'}}) }}
+                {{ form_widget(registrationForm.fullName, {
+                    'attr': {'class': 'w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#FF8A00]'}
+                }) }}
+                {{ form_errors(registrationForm.fullName) }}
+            </div>
+
+            <div>
+                {{ form_label(registrationForm.birthday, 'Date de naissance', {'label_attr': {'class': 'block text-gray-700 font-medium mb-1'}}) }}
+                {{ form_widget(registrationForm.birthday, {
+                    'attr': {'class': 'w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#FF8A00]'}
+                }) }}
+                {{ form_errors(registrationForm.birthday) }}
+            </div>
+
+            <div>
+                {{ form_label(registrationForm.plainPassword, 'Mot de passe', {'label_attr': {'class': 'block text-gray-700 font-medium mb-1'}}) }}
+                {{ form_widget(registrationForm.plainPassword, {
+                    'attr': {'class': 'w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#FF8A00]'}
+                }) }}
+                <p class="text-xs text-gray-500 mt-1">Minimum 6 caractères</p>
+                {{ form_errors(registrationForm.plainPassword) }}
+            </div>
+
+            <div class="flex items-start gap-2 py-2">
+                {{ form_widget(registrationForm.agreeTerms, {'attr': {'class': 'h-5 w-5 text-[#FF8A00] border-gray-300 rounded mt-0.5'}}) }}
+                <label for="{{ registrationForm.agreeTerms.vars.id }}" class="text-gray-700">
+                    J'accepte les
+                    <button type="button" onclick="toggleTerms()" class="text-[#FF8A00] underline">
+                        conditions d'utilisation
+                    </button>
+                    .
+                </label>
+            </div>
+
+            <div id="termsContent" class="hidden bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm mt-2">
+                <p class="mb-2">Voici les conditions d'utilisation de notre service...</p>
+                <p>Veuillez les lire attentivement avant de continuer.</p>
+            </div>
+
+            {# Option Newsletter #}
+            <div class="flex items-start gap-2 pt-2">
+                {{ form_widget(registrationForm.isSubscribedToNewsletter, {'attr': {'class': 'h-5 w-5 text-[#FF8A00] border-gray-300 rounded mt-0.5'}}) }}
+                <label for="{{ registrationForm.isSubscribedToNewsletter.vars.id }}" class="text-gray-700">
+                    Je souhaite recevoir la newsletter
+                </label>
+            </div>
+
+            {{ form_rest(registrationForm) }}
+
+            <button type="submit" class="w-full bg-[#FF8A00] text-white py-3 rounded-lg font-semibold mt-4">
+                S'inscrire
+            </button>
+        </form>
+
+        <div class="text-center mt-6">
+            <p class="text-gray-600 mb-2">Déjà un compte ?</p>
+            <a href="{{ path('app_login') }}" class="text-[#FF8A00] font-medium">
+                Se connecter
+            </a>
+        </div>
+    </div>
+
+    <script>
+        function toggleTerms() {
+            document.getElementById('termsContent').classList.toggle('hidden');
+        }
+    </script>
+{% endblock %}

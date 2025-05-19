@@ -1,0 +1,77 @@
+{% extends 'home/mobile/base.mobile.html.twig' %}
+
+{% block title %}Modifier mon profil{% endblock %}
+
+{% block content %}
+    <div class="p-4">
+        <div class="flex items-center mb-4">
+            <a href="{{ path('dashboard_user_profile') }}" class="mr-2">
+                <svg class="w-6 h-6 text-[#FF8A00]" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+                </svg>
+            </a>
+            <h1 class="text-xl font-bold">Modifier mon profil</h1>
+        </div>
+
+        {{ form_start(form, {'attr': {'class': 'space-y-4'}}) }}
+
+        <div>
+            {{ form_label(form.fullName, 'Nom complet', {'label_attr': {'class': 'block text-gray-700 font-medium text-sm mb-1'}}) }}
+            {{ form_widget(form.fullName, {
+                'attr': {
+                    'class': 'w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-[#FF8A00] focus:border-[#FF8A00]'
+                }
+            }) }}
+            {{ form_errors(form.fullName) }}
+        </div>
+
+        <div>
+            {{ form_label(form.email, 'Adresse email', {'label_attr': {'class': 'block text-gray-700 font-medium text-sm mb-1'}}) }}
+            {{ form_widget(form.email, {
+                'attr': {
+                    'class': 'w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-[#FF8A00] focus:border-[#FF8A00]'
+                }
+            }) }}
+            {{ form_errors(form.email) }}
+        </div>
+
+        <div>
+            {{ form_label(form.birthday, 'Date de naissance', {'label_attr': {'class': 'block text-gray-700 font-medium text-sm mb-1'}}) }}
+            {{ form_widget(form.birthday, {
+                'attr': {
+                    'class': 'w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-[#FF8A00] focus:border-[#FF8A00]'
+                }
+            }) }}
+            {{ form_errors(form.birthday) }}
+        </div>
+
+        <div>
+            {{ form_label(form.avatarFile, 'Photo de profil', {'label_attr': {'class': 'block text-gray-700 font-medium text-sm mb-1'}}) }}
+            {{ form_widget(form.avatarFile, {
+                'attr': {
+                    'class': 'w-full text-sm text-gray-500'
+                }
+            }) }}
+            {{ form_errors(form.avatarFile) }}
+        </div>
+
+        <div>
+            {{ form_label(form.coverFile, 'Photo de couverture', {'label_attr': {'class': 'block text-gray-700 font-medium text-sm mb-1'}}) }}
+            {{ form_widget(form.coverFile, {
+                'attr': {
+                    'class': 'w-full text-sm text-gray-500'
+                }
+            }) }}
+            {{ form_errors(form.coverFile) }}
+        </div>
+
+        <div class="pt-2">
+            <button type="submit" class="w-full bg-[#FF8A00] text-white py-3 rounded-lg font-semibold">
+                Enregistrer
+            </button>
+        </div>
+
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

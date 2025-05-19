@@ -1,0 +1,208 @@
+{% extends 'home/mobile/base.mobile.html.twig' %}
+
+{% block title %}{{ user.username }} - Profil{% endblock %}
+
+{% block content %}
+    <div class="px-4 pt-2 pb-10">
+        {# Section avatar et info utilisateur #}
+        <div class="flex flex-col items-center py-4">
+            <div class="w-24 h-24 rounded-full border-2 border-[#FF8A00] overflow-hidden mb-2">
+                {% if user.avatarPath is defined and user.avatarPath %}
+                    <img src="{{ asset(user.avatarPath) }}" alt="Photo de profil" class="w-full h-full object-cover">
+                {% else %}
+                    <img src="{{ asset('/images/default-profile.png') }}" alt="Photo de profil"
+                         class="w-full h-full object-cover">
+                {% endif %}
+            </div>
+
+            <h1 class="text-xl font-bold mt-2">{{ user.username }}</h1>
+            <p class="text-gray-500 text-sm">{{ user.fullName }}</p>
+
+            {# Boutons d'action #}
+            <div class="flex gap-2 mt-4">
+                {% set isFriend = false %}
+                {% set pendingRequest = false %}
+
+                {# Vérifier dans les demandes envoyées #}
+                {% for friendship in app.user.sentFriendRequests %}
+                    {% if friendship.receiver.id == user.id and friendship.status == 'accepted' %}
+                        {% set isFriend = true %}
+                    {% endif %}
+                {% endfor %}
+
+                {# Vérifier dans les demandes reçues #}
+                {% for friendship in app.user.receivedFriendRequests %}
+                    {% if friendship.sender.id == user.id and friendship.status == 'accepted' %}
+                        {% set isFriend = true %}
+                    {% endif %}
+                {% endfor %}
+
+                {# Vérifier s'il y a une demande d'amitié en attente #}
+                {% for request in app.user.sentFriendRequests %}
+                    {% if request.receiver.id == user.id and request.status == 'pending' %}
+                        {% set pendingRequest = true %}
+                    {% endif %}
+                {% endfor %}
+
+                {% if isFriend %}
+                    <form action="{{ path('app_friend_remove', {'friendUserId': user.id}) }}" method="post">
+                        <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-lg text-sm">
+                            Retirer
+                        </button>
+                    </form>
+                    <a href="{{ path('app_chat') }}?user={{ user.id }}"
+                       class="bg-green-500 text-white px-4 py-2 rounded-lg text-sm">
+                        Message
+                    </a>
+                {% elseif pendingRequest %}
+                    <button disabled class="bg-gray-300 text-gray-500 px-4 py-2 rounded-lg text-sm">
+                        Demande envoyée
+                    </button>
+                {% else %}
+                    <form action="{{ path('app_friend_add', {'id': user.id}) }}" method="post">
+                        <button type="submit" class="bg-[#FF8A00] text-white px-4 py-2 rounded-lg text-sm">
+                            Ajouter comme ami
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+
+        {# Onglets #}
+        <div class="border-b border-gray-200 mt-4">
+            <div class="flex">
+                <button class="tab-button flex-1 py-2 text-center text-[#FF8A00] border-b-2 border-[#FF8A00] font-medium"
+                        data-tab="posts">
+                    Publications
+                </button>
+                <button class="tab-button flex-1 py-2 text-center text-gray-500" data-tab="friends">
+                    Amis
+                </button>
+                <button class="tab-button flex-1 py-2 text-center text-gray-500" data-tab="photos">
+                    Photos
+                </button>
+            </div>
+        </div>
+
+        {# Contenu des onglets #}
+        <div class="mt-4">
+            {# Publications #}
+            <div id="posts-tab" class="tab-content">
+                {% if posts|length > 0 %}
+                    <div class="space-y-4">
+                        {% for post in posts %}
+                            <div class="border-b border-gray-200 pb-4">
+                                {# En-tête du post #}
+                                <div class="flex items-start mb-2">
+                                    <img src="{{ asset(post.user.avatarPath|default('/images/default-profile.png')) }}"
+                                         alt="{{ post.user.username }}"
+                                         class="w-10 h-10 rounded-full mr-3">
+                                    <div>
+                                        <p class="font-bold">{{ post.user.fullName }}</p>
+                                        <p class="text-gray-500 text-xs">{{ post.createdAt|date('d/m/Y') }}
+                                            - {{ post.createdAt|date('H:i') }}</p>
+                                    </div>
+                                </div>
+
+                                {# Contenu du post #}
+                                <p class="mb-3">{{ post.content }}</p>
+
+                                {# Image du post si présente #}
+                                {% if post.imagePath %}
+                                    <div class="mb-3 rounded-lg overflow-hidden bg-amber-50 p-2 flex justify-center">
+                                        <img src="{{ asset('uploads/' ~ post.imagePath) }}"
+                                             alt="Image de publication"
+                                             class="max-h-48 object-contain">
+                                    </div>
+                                {% endif %}
+
+                                {# Actions sur le post #}
+                                <div class="flex justify-between mt-2 text-gray-500 text-xs">
+                                    <div class="flex items-center">
+                                        <svg class="w-4 h-4 mr-1 text-[#FF8A00]" viewBox="0 0 24 24"
+                                             fill="currentColor">
+                                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                        </svg>
+                                        <span>{{ post.likes|length }}</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <svg class="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
+                                        </svg>
+                                        <span>{{ post.comments|length }} commentaires</span>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="flex flex-col items-center justify-center py-10 text-center">
+                        <p class="text-gray-500">Aucune publication pour le moment</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            {# Amis #}
+            <div id="friends-tab" class="tab-content hidden">
+                <div id="friends-list-container">
+                    <div class="text-center py-4">
+                        <div class="w-8 h-8 mx-auto border-2 border-t-[#FF8A00] border-gray-200 rounded-full animate-spin"></div>
+                        <p class="text-sm text-gray-500 mt-2">Chargement des amis...</p>
+                    </div>
+                </div>
+            </div>
+
+            {# Photos #}
+            <div id="photos-tab" class="tab-content hidden">
+                <div class="flex flex-col items-center justify-center py-10 text-center">
+                    <p class="text-gray-500">Aucune photo pour le moment</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Gestion des onglets
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    // Réinitialiser tous les onglets
+                    tabButtons.forEach(btn => {
+                        btn.classList.remove('text-[#FF8A00]', 'border-b-2', 'border-[#FF8A00]', 'font-medium');
+                        btn.classList.add('text-gray-500');
+                    });
+
+                    tabContents.forEach(content => {
+                        content.classList.add('hidden');
+                    });
+
+                    // Activer l'onglet cliqué
+                    this.classList.remove('text-gray-500');
+                    this.classList.add('text-[#FF8A00]', 'border-b-2', 'border-[#FF8A00]', 'font-medium');
+
+                    const tabName = this.getAttribute('data-tab');
+                    document.getElementById(tabName + '-tab').classList.remove('hidden');
+
+                    // Charger le contenu des amis si nécessaire
+                    if (tabName === 'friends' && !document.querySelector('#friends-list-container .friend-item')) {
+                        fetch('{{ path("app_profile_friends", {"id": user.id}) }}', {
+                            headers: {'X-Requested-With': 'XMLHttpRequest'}
+                        })
+                            .then(response => response.text())
+                            .then(html => {
+                                document.getElementById('friends-list-container').innerHTML = html;
+                            })
+                            .catch(error => {
+                                console.error('Erreur lors du chargement des amis:', error);
+                                document.getElementById('friends-list-container').innerHTML =
+                                    '<p class="text-center text-gray-500 py-4">Erreur lors du chargement des amis.</p>';
+                            });
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}
