@@ -1,0 +1,74 @@
+{% extends 'home/mobile/base.mobile.html.twig' %}
+
+{% block title %}Messages{% endblock %}
+
+{% block content %}
+    <div class="flex flex-col h-full">
+        {# En-tête #}
+        <div class="p-4 border-b">
+            <div class="relative">
+                <input type="text" id="search-input" placeholder="Rechercher un lecteur..."
+                       class="w-full pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#FF8A00] text-sm">
+                <svg class="absolute left-3 top-2.5 w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+            </div>
+        </div>
+
+        {# Liste des conversations #}
+        {% if friends|length > 0 %}
+            <div class="flex-1 overflow-y-auto">
+                <ul id="friend-list">
+                    {% for friend in friends %}
+                        <li class="friend-item border-b">
+                            <a href="{{ path('app_chat_conversation', {'userId': friend.id}) }}"
+                               class="flex items-center p-4 space-x-3 hover:bg-gray-50">
+                                <div class="relative">
+                                    <img src="{{ asset(friend.avatarUrl|default('/images/default-profile.png')) }}"
+                                         alt="{{ friend.fullName }}"
+                                         class="w-12 h-12 rounded-full border border-gray-200">
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex justify-between">
+                                        <h3 class="font-medium text-gray-900 truncate">{{ friend.fullName }}</h3>
+                                        <span class="text-xs text-gray-500">{{ friend.lastActive }}</span>
+                                    </div>
+                                    <p class="text-sm text-gray-500 truncate">{{ friend.lastMessage }}</p>
+                                </div>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% else %}
+            <div class="flex-1 flex flex-col items-center justify-center p-4 text-center">
+                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                    <svg class="w-8 h-8 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 mb-1">Aucune conversation</h3>
+                <p class="text-gray-500 mb-4">Commencez à discuter avec vos amis</p>
+                <a href="{{ path('app_friends') }}" class="bg-[#FF8A00] text-white px-4 py-2 rounded-lg text-sm">
+                    Voir mes amis
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Recherche d'amis
+            const searchInput = document.getElementById('search-input');
+            const friendItems = document.querySelectorAll('.friend-item');
+
+            searchInput.addEventListener('input', function() {
+                const query = this.value.toLowerCase();
+                friendItems.forEach(item => {
+                    const name = item.querySelector('h3').textContent.toLowerCase();
+                    item.style.display = name.includes(query) ? 'block' : 'none';
+                });
+            });
+        });
+    </script>
+{% endblock %}

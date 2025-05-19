@@ -1,0 +1,22 @@
+<header class="fixed top-0 w-full bg-white z-10 px-4 py-2 border-b border-gray-200">
+    <div class="flex justify-between items-center">
+        {# Bouton chat à gauche #}
+        <a href="{{ path('app_chat') }}" class="w-10 h-10 flex items-center justify-center text-[#2E7D32]">
+            <svg class="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12,2C6.486,2,2,5.589,2,10c0,2.908,1.898,5.515,5,6.934V22l5.34-4.005C17.697,17.852,22,14.32,22,10 C22,5.589,17.514,2,12,2z M12,14h-1v-3h1V14z M12,10h-1V8h1V10z"></path>
+            </svg>
+        </a>
+
+        {# Logo au centre #}
+        <a href="{{ path('app_home') }}" class="text-3xl font-bold italic text-[#FF8A00]">
+            Livridea
+        </a>
+
+        {# Profil à droite #}
+        <a href="{{ path('dashboard_user_profile') }}" class="w-10 h-10 rounded-full overflow-hidden border-2 border-[#2E7D32]">
+            <img src="{{ asset(app.user.avatarPath|default('/images/default-profile.png')) }}"
+                 alt="Profile"
+                 class="w-full h-full object-cover">
+        </a>
+    </div>
+</header>

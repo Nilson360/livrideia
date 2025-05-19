@@ -2,6 +2,7 @@
 
 namespace App\Controller\Security;
 
+use App\Service\DeviceDetectorService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -9,6 +10,13 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class LoginController extends AbstractController
 {
+    private DeviceDetectorService $deviceDetector;
+
+    public function __construct(DeviceDetectorService $deviceDetector)
+    {
+        $this->deviceDetector = $deviceDetector;
+    }
+
     #[Route(path: '/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
@@ -18,10 +26,18 @@ class LoginController extends AbstractController
         // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
 
-        return $this->render('auth/login/login.html.twig', [
+        $templateData = [
             'last_username' => $lastUsername,
             'error' => $error,
-        ]);
+        ];
+
+        // Détection de l'appareil et choix du template approprié
+        if ($this->deviceDetector->isMobile()) {
+            return $this->render('auth/mobile/login.html.twig', $templateData);
+        }
+
+        // Version desktop par défaut
+        return $this->render('auth/login/login.html.twig', $templateData);
     }
 
     #[Route(path: '/logout', name: 'app_logout')]

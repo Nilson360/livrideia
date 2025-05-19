@@ -1,0 +1,67 @@
+{% if friends|length > 0 %}
+    <div class="grid grid-cols-2 gap-3">
+        {% for friend in friends %}
+            <div class="friend-item bg-white rounded-lg border border-gray-200 p-3 flex flex-col items-center"
+                 data-friend-id="{{ friend.id }}">
+                <img src="{{ asset(friend.avatarPath|default('/images/default-profile.png')) }}"
+                     alt="Avatar de {{ friend.username }}"
+                     class="w-16 h-16 rounded-full border border-gray-200 mb-2">
+
+                <a href="{{ path('dashboard_user_profile_other', {'username': friend.username}) }}"
+                   class="text-[#FF8A00] font-medium text-sm text-center mb-1">
+                    {{ friend.username }}
+                </a>
+
+                {% if app.user and app.user.id != friend.id %}
+                    <button class="remove-friend-btn bg-gray-100 hover:bg-gray-200 text-gray-600 px-2 py-1 rounded text-xs mt-1 w-full"
+                            data-friend-id="{{ friend.id }}">
+                        Retirer
+                    </button>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="text-center py-6">
+        <p class="text-gray-500">Aucun ami pour le moment</p>
+    </div>
+{% endif %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.remove-friend-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const friendId = this.getAttribute('data-friend-id');
+                removeFriend(friendId, this);
+            });
+        });
+
+        function removeFriend(friendId, button) {
+            fetch(`/friend/remove/${friendId}`, {
+                method: "POST",
+                headers: {"X-Requested-With": "XMLHttpRequest"}
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'removed') {
+                        const friendElement = button.closest('.friend-item');
+                        if (friendElement) {
+                            friendElement.remove();
+
+                            // Vérifier s'il reste des amis
+                            if (document.querySelectorAll('.friend-item').length === 0) {
+                                document.getElementById('friends-list-container').innerHTML =
+                                    '<div class="text-center py-6"><p class="text-gray-500">Aucun ami pour le moment</p></div>';
+                            }
+                        }
+                    } else {
+                        alert(data.error || 'Une erreur est survenue');
+                    }
+                })
+                .catch(error => {
+                    console.error("Erreur lors de la suppression de l'amitié:", error);
+                    alert("Une erreur est survenue lors de la suppression de l'ami");
+                });
+        }
+    });
+</script>

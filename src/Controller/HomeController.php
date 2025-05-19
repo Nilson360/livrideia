@@ -6,6 +6,7 @@ use App\Entity\Friend;
 use App\Entity\Post;
 use App\Entity\User;
 use App\Form\PostFormType;
+use App\Service\DeviceDetectorService;
 use App\Service\FileUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,6 +16,13 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class HomeController extends AbstractController
 {
+    public function __construct(
+        private readonly DeviceDetectorService $deviceDetector
+    )
+    {
+
+    }
+
     #[Route('/', name: 'app_home')]
     public function index(Request $request, EntityManagerInterface $em, FileUploader $uploader): Response
     {
@@ -49,24 +57,41 @@ class HomeController extends AbstractController
             return $this->redirectToRoute('app_home');
         }
 
-        // Récupération des posts triés par date de création décroissante (ajouter une méthode dans le repository)
+        // Récupération des posts triés par date de création décroissante
         $posts = $em->getRepository(Post::class)->findBy([], ['created_at' => 'DESC']);
+
         // Utilisation d'une méthode dédiée dans le repository pour les suggestions d'amis
         $suggestedUsers = $em->getRepository(User::class)->getSugeredUsers($user->getId());
+
         // Récupérer les demandes d'amitié en attente
         $friendRequests = $em->getRepository(Friend::class)->findBy([
             'receiver' => $user,
             'status' => 'pending'
         ]);
 
-        return $this->render('home/index.html.twig', [
+        // Données communes aux deux types de templates
+        $templateData = [
             'postForm' => $form->createView(),
             'posts' => $posts,
             'suggestedUsers' => $suggestedUsers,
             'friendRequests' => $friendRequests,
-        ]);
+        ];
+
+        // Détection de l'appareil et chargement du template correspondant
+        if ($this->deviceDetector->isMobile()) {
+            // Vous pouvez ici ajouter des données spécifiques à la version mobile si nécessaire
+            return $this->render('home/mobile/index.html.twig', $templateData);
+        }
+
+        // Version desktop (par défaut)
+        return $this->render('home/desktop/index.html.twig', $templateData);
     }
 
+    #[Route('/menu', name: 'app_menu')]
+    public function menu(Request $request, EntityManagerInterface $em): Response
+    {
+        return $this->json(['error' => 'Not implemented yet.']);
+    }
     #[Route('/conditions-utilisation', name: 'app_terms_of_service')]
     public function termsOfService(): Response
     {
