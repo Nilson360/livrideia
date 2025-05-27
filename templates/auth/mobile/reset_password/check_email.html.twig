@@ -1,0 +1,90 @@
+{% extends 'auth/mobile/base_auth_mobile.html.twig' %}
+
+{% block title %}Email envoyé - Livridea{% endblock %}
+
+{% block content %}
+    <div class="flex-1 flex flex-col justify-center items-center">
+        <div class="w-full max-w-md">
+            <!-- Card de confirmation premium -->
+            <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+                <div class="p-8 text-center">
+                    <!-- Icône de succès animée -->
+                    <div class="w-20 h-20 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg animate-pulse">
+                        <svg class="w-10 h-10 text-white" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                        </svg>
+                    </div>
+
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Email envoyé !</h2>
+
+                    <div class="mb-6">
+                        <p class="text-gray-600 leading-relaxed mb-4">
+                            Si un compte correspondant à votre adresse email existe, un email vient d'être envoyé avec un lien pour réinitialiser votre mot de passe.
+                        </p>
+
+                        <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-4">
+                            <div class="flex items-start">
+                                <svg class="w-5 h-5 text-amber-500 mr-3 mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                </svg>
+                                <div class="text-sm text-amber-700">
+                                    <p class="font-medium mb-1">Important :</p>
+                                    <p>Ce lien expirera dans <strong>{{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}</strong>.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p class="text-sm text-gray-500">
+                            Vous ne recevez pas l'email ? Vérifiez votre dossier spam ou courrier indésirable.
+                        </p>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="space-y-3">
+                        <a href="{{ path('app_forgot_password_request') }}" class="w-full bg-gradient-to-r from-[#FF8A00] to-[#e67300] text-white py-4 rounded-xl font-semibold shadow-lg active:scale-95 transition-all duration-200 flex items-center justify-center">
+                            <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
+                            </svg>
+                            Renvoyer l'email
+                        </a>
+
+                        <a href="{{ path('app_login') }}" class="w-full border-2 border-gray-200 text-gray-700 py-4 rounded-xl font-semibold active:scale-95 transition-all duration-200 flex items-center justify-center">
+                            <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                            </svg>
+                            Retour à la connexion
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Conseils de sécurité -->
+                <div class="bg-blue-50 px-8 py-6 border-t border-gray-100">
+                    <div class="text-center">
+                        <h3 class="font-semibold text-blue-800 mb-2">💡 Conseil de sécurité</h3>
+                        <p class="text-sm text-blue-700">
+                            Pour votre sécurité, n'utilisez le lien de réinitialisation que si vous avez demandé cette action.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aide supplémentaire -->
+            <div class="mt-6 text-center">
+                <p class="text-gray-500 text-sm mb-2">Besoin d'aide ?</p>
+                <a href="#" class="text-[#FF8A00] font-medium active:text-[#e67300] transition-colors">
+                    Contactez notre support
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+{% endblock %}

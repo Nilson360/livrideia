@@ -37,7 +37,7 @@ class LoginController extends AbstractController
         }
 
         // Version desktop par défaut
-        return $this->render('auth/login/login.html.twig', $templateData);
+        return $this->render('auth/desktop/login/login.html.twig', $templateData);
     }
 
     #[Route(path: '/logout', name: 'app_logout')]

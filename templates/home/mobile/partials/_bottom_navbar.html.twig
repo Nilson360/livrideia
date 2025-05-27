@@ -1,35 +1,126 @@
-<nav class="fixed bottom-0 w-full bg-white border-t border-gray-200 py-2 z-10">
-    <div class="flex justify-around items-center">
-        {# Home #}
-        <a href="{{ path('app_home') }}" class="flex flex-col items-center text-[#FF8A00]">
-            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M3 10.182V22h18V10.182L12 2z"/>
-            </svg>
-            <span class="text-xs">Accueil</span>
+<nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200 shadow-lg z-50">
+    <div class="flex justify-around items-center px-2 py-2 max-w-md mx-auto">
+        {# Accueil #}
+        <a href="{{ path('app_home') }}"
+           class="flex flex-col items-center p-2 rounded-xl transition-all duration-200 active:scale-95 min-w-[68px] relative
+                  {% if app.request.attributes.get('_route') == 'app_home' %}text-[#FF8A00] bg-gradient-to-br from-orange-50 to-orange-100/50 shadow-sm{% else %}text-gray-500 active:bg-gray-50{% endif %}">
+            <div class="relative">
+                <svg class="w-6 h-6 mb-1" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                </svg>
+                {% if app.request.attributes.get('_route') == 'app_home' %}
+                    <div class="absolute -top-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-[#FF8A00] rounded-full shadow-sm"></div>
+                {% endif %}
+            </div>
+            <span class="text-xs {% if app.request.attributes.get('_route') == 'app_home' %}font-semibold{% else %}font-medium{% endif %}">Accueil</span>
         </a>
 
-        {# Friends #}
-        <a href="{{ path('app_friends') }}" class="flex flex-col items-center text-gray-500">
-            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 12.75c1.63 0 3.07.39 4.24.9 1.08.48 1.76 1.56 1.76 2.73V18H6v-1.62c0-1.17.68-2.25 1.76-2.73 1.17-.51 2.61-.9 4.24-.9zM12 11c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"/>
-            </svg>
-            <span class="text-xs">Amis</span>
+        {# Profil avec Avatar #}
+        <a href="{{ path('dashboard_user_profile') }}"
+           class="flex flex-col items-center p-2 rounded-xl transition-all duration-200 active:scale-95 min-w-[68px] relative
+                  {% if app.request.attributes.get('_route') == 'dashboard_user_profile' %}text-[#FF8A00] bg-gradient-to-br from-orange-50 to-orange-100/50 shadow-sm{% else %}text-gray-500 active:bg-gray-50{% endif %}">
+            <div class="relative mb-1">
+                <div class="w-6 h-6 rounded-full overflow-hidden border border-gray-300">
+                    <img src="{{ asset(app.user.avatarPath|default('/images/default-profile.png')) }}"
+                         alt="Profile"
+                         class="w-full h-full object-cover">
+                </div>
+                <div class="absolute -bottom-0.5 -right-0.5 w-2 h-2 bg-emerald-500 border border-white rounded-full"></div>
+                {% if app.request.attributes.get('_route') == 'dashboard_user_profile' %}
+                    <div class="absolute -top-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-[#FF8A00] rounded-full shadow-sm"></div>
+                {% endif %}
+            </div>
+            <span class="text-xs {% if app.request.attributes.get('_route') == 'dashboard_user_profile' %}font-semibold{% else %}font-medium{% endif %}">Profil</span>
         </a>
 
-        {# Notifications #}
-        <a href="{{ path('notifications_list') }}" class="flex flex-col items-center text-gray-500">
-            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5H4v2h16v-2h-2zm-2 0H8v-5c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v5z"/>
+        {# Bouton Publier Central #}
+        <button onclick="openPublishModal()" class="bg-gradient-to-br from-[#FF8A00] to-[#e67300] text-white p-3 rounded-full shadow-lg active:scale-95 transition-all duration-200 relative overflow-hidden">
+            <svg class="w-7 h-7 relative z-10" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
             </svg>
-            <span class="text-xs">Alertes</span>
+            <div class="absolute inset-0 bg-white/20 rounded-full animate-pulse"></div>
+        </button>
+
+        {# Notifications avec Badge #}
+        <a href="{{ path('notifications_list') }}"
+           class="flex flex-col items-center p-2 rounded-xl transition-all duration-200 active:scale-95 relative min-w-[68px]
+                  {% if app.request.attributes.get('_route') == 'notifications_list' %}text-[#FF8A00] bg-gradient-to-br from-orange-50 to-orange-100/50 shadow-sm{% else %}text-gray-500 active:bg-gray-50{% endif %}">
+            <div class="relative">
+                <svg class="w-6 h-6 mb-1" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+                </svg>
+                {# Badge notification amélioré #}
+                <div class="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-semibold border-2 border-white shadow-sm">
+                    2
+                </div>
+                {% if app.request.attributes.get('_route') == 'notifications_list' %}
+                    <div class="absolute -top-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-[#FF8A00] rounded-full shadow-sm"></div>
+                {% endif %}
+            </div>
+            <span class="text-xs {% if app.request.attributes.get('_route') == 'notifications_list' %}font-semibold{% else %}font-medium{% endif %}">Notifications</span>
         </a>
 
-        {# Menu #}
-        <a href="{{ path('app_menu') }}" class="flex flex-col items-center text-gray-500">
-            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
-            </svg>
-            <span class="text-xs">Menu</span>
+        {# Découvrir #}
+        <a href="{{ path('app_menu') }}"
+           class="flex flex-col items-center p-2 rounded-xl transition-all duration-200 active:scale-95 min-w-[68px] relative
+                  {% if app.request.attributes.get('_route') == 'app_menu' %}text-[#FF8A00] bg-gradient-to-br from-orange-50 to-orange-100/50 shadow-sm{% else %}text-gray-500 active:bg-gray-50{% endif %}">
+            <div class="relative">
+                <svg class="w-6 h-6 mb-1" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+                {% if app.request.attributes.get('_route') == 'app_menu' %}
+                    <div class="absolute -top-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-[#FF8A00] rounded-full shadow-sm"></div>
+                {% endif %}
+            </div>
+            <span class="text-xs {% if app.request.attributes.get('_route') == 'app_menu' %}font-semibold{% else %}font-medium{% endif %}">Découvrir</span>
         </a>
     </div>
+
+    {# Indicateur de page active - Barre de progression en haut #}
+    <div class="absolute top-0 left-0 h-0.5 bg-gradient-to-r from-[#FF8A00] to-[#e67300] transition-all duration-300 nav-indicator"
+         style="width: 20%; margin-left: {% if app.request.attributes.get('_route') == 'app_home' %}0%{% elseif app.request.attributes.get('_route') == 'dashboard_user_profile' %}20%{% elseif app.request.attributes.get('_route') == 'notifications_list' %}60%{% elseif app.request.attributes.get('_route') == 'app_menu' %}80%{% else %}0%{% endif %};"></div>
 </nav>
+
+{# Script pour interactions et animations #}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Feedback tactile pour mobile
+        if (navigator.vibrate) {
+            document.querySelectorAll('nav a, nav button').forEach(element => {
+                element.addEventListener('click', () => {
+                    navigator.vibrate(30);
+                });
+            });
+        }
+
+        // Animation de l'indicateur lors du changement de page
+        const navLinks = document.querySelectorAll('nav a');
+        const indicator = document.querySelector('.nav-indicator');
+
+        navLinks.forEach((link, index) => {
+            // Ignorer le bouton central (index 2)
+            if (index === 2) return;
+
+            link.addEventListener('click', function() {
+                // Calculer la position en fonction de l'index (en excluant le bouton central)
+                let position = index;
+                if (index > 2) position--; // Ajuster pour le bouton central
+
+                const newPosition = position * 20;
+                indicator.style.marginLeft = `${newPosition}%`;
+            });
+        });
+    });
+
+    // Fonction pour ouvrir le modal de publication
+    function openPublishModal() {
+        // Ici vous pouvez ajouter votre logique pour ouvrir un modal ou rediriger
+        console.log('Ouverture du modal de publication');
+
+        // Exemple de redirection vers une page de création de post
+        // window.location.href = '{{ path("app_post_create") }}';
+
+        // Ou ouverture d'un modal
+        // document.getElementById('publish-modal').classList.remove('hidden');
+    }
+</script>

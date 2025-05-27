@@ -1,4 +1,4 @@
-{% extends 'home/base_home.html.twig' %}
+{% extends '../../home/base_home.html.twig' %}
 
 {% block title %}Profil de {{ user.username }}{% endblock %}
 
@@ -121,7 +121,7 @@
         <div class="mt-6">
             <div id="posts-content">
                 {% block posts %}
-                    {% include 'home_page_components/posts.html.twig' %}
+                    {% include '../../home_page_components/posts.html.twig' %}
                 {% endblock %}
             </div>
             <div id="friends-content" class="hidden"></div>

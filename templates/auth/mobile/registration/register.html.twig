@@ -1,0 +1,132 @@
+{% extends 'auth/mobile/base_auth_mobile.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block content %}
+    <div class="flex-1 flex flex-col justify-center items-center">
+        <div class="w-full max-w-md">
+            <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+                <div class="p-8">
+                    <div class="text-center mb-8">
+                        <div class="w-16 h-16 bg-gradient-to-br from-[#FF8A00] to-[#e67300] rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                            <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 3a2 2 0 110 4 2 2 0 010-4zm0 14c-2.5 0-4.71-1.28-6-3.22.03-2 4-3.1 6-3.1s5.97 1.1 6 3.1C16.71 17.72 14.5 19 12 19z"/>
+                            </svg>
+                        </div>
+                        <h1 class="text-2xl font-bold text-[#FF8A00] mb-2">Créer un compte</h1>
+                        <p class="text-gray-500">Inscrivez-vous pour rejoindre Livridea et accéder à toutes les fonctionnalités.</p>
+                    </div>
+
+                    <form method="post" class="space-y-5 text-sm" autocomplete="off">
+                        <!-- Erreurs globales -->
+                        {% for error in registrationForm.vars.errors %}
+                            <div class="bg-red-500 text-white text-sm p-2 rounded mb-2">{{ error.message }}</div>
+                        {% endfor %}
+
+                        <div>
+                            <label for="{{ registrationForm.username.vars.id }}" class="block text-[#FF8A00] font-semibold mb-2">Nom d'utilisateur</label>
+                            <div class="relative">
+                                {{ form_widget(registrationForm.username, {
+                                    'attr': {'class': 'w-full border-2 border-gray-200 rounded-xl p-4 text-gray-800 bg-parchment placeholder-gray-400 focus:outline-none focus:border-[#FF8A00] transition-colors'}
+                                }) }}
+                            </div>
+                            {{ form_errors(registrationForm.username) }}
+                        </div>
+
+                        <div>
+                            <label for="{{ registrationForm.email.vars.id }}" class="block text-[#FF8A00] font-semibold mb-2">Adresse email</label>
+                            <div class="relative">
+                                {{ form_widget(registrationForm.email, {
+                                    'attr': {'class': 'w-full border-2 border-gray-200 rounded-xl p-4 text-gray-800 bg-parchment placeholder-gray-400 focus:outline-none focus:border-[#FF8A00] transition-colors'}
+                                }) }}
+                            </div>
+                            {{ form_errors(registrationForm.email) }}
+                        </div>
+
+                        <div>
+                            <label for="{{ registrationForm.fullName.vars.id }}" class="block text-[#FF8A00] font-semibold mb-2">Nom complet</label>
+                            <div class="relative">
+                                {{ form_widget(registrationForm.fullName, {
+                                    'attr': {'class': 'w-full border-2 border-gray-200 rounded-xl p-4 text-gray-800 bg-parchment placeholder-gray-400 focus:outline-none focus:border-[#FF8A00] transition-colors'}
+                                }) }}
+                            </div>
+                            {{ form_errors(registrationForm.fullName) }}
+                        </div>
+
+                        <div>
+                            <label for="{{ registrationForm.birthday.vars.id }}" class="block text-[#FF8A00] font-semibold mb-2">Date de naissance</label>
+                            <div class="relative">
+                                {{ form_widget(registrationForm.birthday, {
+                                    'attr': {'class': 'w-full border-2 border-gray-200 rounded-xl p-4 text-gray-800 bg-parchment placeholder-gray-400 focus:outline-none focus:border-[#FF8A00] transition-colors'}
+                                }) }}
+                            </div>
+                            {{ form_errors(registrationForm.birthday) }}
+                        </div>
+
+                        <div>
+                            <label for="{{ registrationForm.plainPassword.vars.id }}" class="block text-[#FF8A00] font-semibold mb-2">Mot de passe</label>
+                            <div class="relative">
+                                {{ form_widget(registrationForm.plainPassword, {
+                                    'attr': {'class': 'w-full border-2 border-gray-200 rounded-xl p-4 text-gray-800 bg-parchment placeholder-gray-400 focus:outline-none focus:border-[#FF8A00] transition-colors'}
+                                }) }}
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">Minimum 6 caractères</p>
+                            {{ form_errors(registrationForm.plainPassword) }}
+                        </div>
+
+                        <div class="flex items-start gap-2">
+                            {{ form_widget(registrationForm.agreeTerms, {'attr': {'class': 'h-4 w-4 text-[#FF8A00]'}}) }}
+                            <label for="{{ registrationForm.agreeTerms.vars.id }}" class="text-gray-800">
+                                J'accepte les
+                                <button type="button" onclick="toggleTerms()" class="text-[#FF8A00] underline hover:text-[#e67300]">
+                                    conditions d'utilisation
+                                </button>.
+                            </label>
+                            {{ form_errors(registrationForm.agreeTerms) }}
+                        </div>
+
+                        <div id="termsContent" class="hidden bg-parchment border border-gray-200 rounded-lg p-4 text-sm text-gray-800 mb-2">
+                            <p>Voici les conditions d'utilisation de notre service...</p>
+                            <p>Veuillez les lire attentivement avant de continuer.</p>
+                        </div>
+
+                        <!-- Option Newsletter -->
+                        <div class="flex items-start gap-2">
+                            {{ form_widget(registrationForm.isSubscribedToNewsletter, {'attr': {'class': 'h-4 w-4 text-[#FF8A00]'}}) }}
+                            <label for="{{ registrationForm.isSubscribedToNewsletter.vars.id }}" class="text-gray-800">
+                                Je souhaite recevoir la newsletter
+                            </label>
+                            {{ form_errors(registrationForm.isSubscribedToNewsletter) }}
+                        </div>
+
+                        {{ form_rest(registrationForm) }}
+
+                        <button type="submit" class="w-full bg-gradient-to-r from-[#FF8A00] to-[#e67300] hover:from-[#e67300] hover:to-[#FF8A00] text-white py-4 rounded-xl font-semibold shadow-lg transition-all duration-200 flex items-center justify-center">
+                            <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 3a2 2 0 110 4 2 2 0 010-4zm0 14c-2.5 0-4.71-1.28-6-3.22.03-2 4-3.1 6-3.1s5.97 1.1 6 3.1C16.71 17.72 14.5 19 12 19z"/>
+                            </svg>
+                            S'inscrire
+                        </button>
+                    </form>
+                </div>
+                <div class="bg-gray-50 px-8 py-6 border-t border-gray-100">
+                    <div class="text-center">
+                        <p class="text-gray-600 mb-3">Déjà un compte&nbsp;?</p>
+                        <a href="{{ path('app_login') }}" class="text-[#FF8A00] font-semibold active:text-[#e67300] transition-colors text-lg flex items-center justify-center">
+                            <svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                            </svg>
+                            Se connecter
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleTerms() {
+            document.getElementById('termsContent').classList.toggle('hidden');
+        }
+    </script>
+{% endblock %}

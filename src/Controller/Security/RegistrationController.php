@@ -53,10 +53,10 @@ class RegistrationController extends AbstractController
 
         // Détection de l'appareil et choix du template approprié
         if ($this->deviceDetector->isMobile()) {
-            return $this->render('auth/mobile/register.html.twig', $templateData);
+            return $this->render('auth/mobile/registration/register.html.twig', $templateData);
         }
 
         // Version desktop par défaut
-        return $this->render('auth/registration/register.html.twig', $templateData);
+        return $this->render('auth/desktop/registration/register.html.twig', $templateData);
     }
 }

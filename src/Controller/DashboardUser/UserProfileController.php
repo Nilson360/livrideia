@@ -56,7 +56,7 @@ class UserProfileController extends AbstractController
         }
 
         // Version desktop par défaut
-        return $this->render('dashboard_user/profile.html.twig', $templateData);
+        return $this->render('dashboard_user/desktop/profile.html.twig', $templateData);
     }
 
     #[Route('/profile/edit', name: 'dashboard_user_profile_edit', methods: ['GET', 'POST'])]
@@ -108,7 +108,7 @@ class UserProfileController extends AbstractController
         }
 
         // Version desktop par défaut
-        return $this->render('dashboard_user/edit_profile.html.twig', $templateData);
+        return $this->render('dashboard_user/desktop/edit_profile.html.twig', $templateData);
     }
 
     #[Route('/profile/change-password', name: 'dashboard_user_profile_change_password', methods: ['GET', 'POST'])]
@@ -159,7 +159,7 @@ class UserProfileController extends AbstractController
         }
 
         // Version desktop par défaut
-        return $this->render('dashboard_user/change_password.html.twig', $templateData);
+        return $this->render('dashboard_user/desktop/change_password.html.twig', $templateData);
     }
 
     #[Route('/profile/{id}/friends', name: 'app_profile_friends', methods: ['GET'])]
@@ -185,7 +185,7 @@ class UserProfileController extends AbstractController
 
         // Détection de l'appareil et choix du template approprié
         if ($this->deviceDetector->isMobile() && $this->getRequest()->isXmlHttpRequest()) {
-            return $this->render('mobile/profile/friends_list.html.twig', $templateData);
+            return $this->render('dashboard_user/mobile/profile/friends_list.html.twig', $templateData);
         } elseif ($this->deviceDetector->isMobile()) {
             return $this->render('dashboard_user/mobile/profile/friends.html.twig', $templateData);
         }
@@ -221,7 +221,7 @@ class UserProfileController extends AbstractController
         }
 
         // Version desktop par défaut
-        return $this->render('dashboard_user/profile_other.html.twig', $templateData);
+        return $this->render('dashboard_user/desktop/profile_other.html.twig', $templateData);
     }
 
     #[Route('/profile/avatar-upload', name: 'dashboard_user_avatar_upload', methods: ['POST'])]

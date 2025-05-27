@@ -1,0 +1,106 @@
+{% extends 'auth/mobile/base_auth_mobile.html.twig' %}
+
+{% block title %}Réinitialiser votre mot de passe{% endblock %}
+
+{% block content %}
+    <div class="flex-1 flex flex-col justify-center items-center">
+        <div class="w-full max-w-md">
+            <!-- Card de reset password -->
+            <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+                <div class="p-8">
+                    <div class="text-center mb-8">
+                        <div class="w-16 h-16 bg-gradient-to-br from-[#FF8A00] to-[#e67300] rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                            <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+                            </svg>
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-800 mb-2">Mot de passe oublié&nbsp;?</h2>
+                        <p class="text-gray-500">Pas de panique&nbsp;! Entrez votre adresse email et nous vous enverrons un lien de réinitialisation.</p>
+                    </div>
+
+                    {% for flash_error in app.flashes('reset_password_error') %}
+                        <div class="mb-6 p-4 rounded-xl bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg">
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 mr-3 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                                </svg>
+                                <span class="font-medium">{{ flash_error }}</span>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                    {{ form_start(requestForm, {'attr': {'class': 'space-y-6', 'id': 'reset-form'}}) }}
+                    <!-- Email -->
+                    <div>
+                        <label for="{{ requestForm.email.vars.id }}" class="block text-gray-700 font-semibold mb-2">Adresse email</label>
+                        <div class="relative">
+                            {{ form_widget(requestForm.email, {
+                                'attr': {
+                                    'class': 'w-full border-2 border-gray-200 rounded-xl p-4 focus:outline-none focus:border-[#FF8A00] transition-colors duration-200 pl-12',
+                                    'placeholder': 'votre@email.com'
+                                }
+                            }) }}
+                            <svg class="w-5 h-5 text-gray-400 absolute left-4 top-1/2 transform -translate-y-1/2" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                            </svg>
+                        </div>
+                        {{ form_errors(requestForm.email) }}
+                    </div>
+
+                    <!-- Information -->
+                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                        <div class="flex items-start">
+                            <svg class="w-5 h-5 text-blue-500 mr-3 mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                            </svg>
+                            <div class="text-sm text-blue-700">
+                                <p class="font-medium mb-1">Comment ça fonctionne&nbsp;:</p>
+                                <p>Nous vous enverrons un email sécurisé avec un lien pour créer un nouveau mot de passe. Ce lien expirera automatiquement pour votre sécurité.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Send button -->
+                    <button type="submit" class="w-full bg-gradient-to-r from-[#FF8A00] to-[#e67300] text-white py-4 rounded-xl font-semibold shadow-lg active:scale-95 transition-all duration-200 flex items-center justify-center">
+                        <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                        </svg>
+                        Envoyer
+                    </button>
+                    {{ form_end(requestForm) }}
+                </div>
+
+                <!-- Footer -->
+                <div class="bg-gray-50 px-8 py-6 border-t border-gray-100">
+                    <div class="text-center">
+                        <p class="text-gray-600 mb-3">Vous vous souvenez de votre mot de passe&nbsp;?</p>
+                        <a href="{{ path('app_login') }}" class="text-[#FF8A00] font-semibold active:text-[#e67300] transition-colors text-lg flex items-center justify-center">
+                            <svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                            </svg>
+                            Retour à la connexion
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Animation de chargement au submit
+        document.getElementById('reset-form').addEventListener('submit', function(e) {
+            const button = this.querySelector('button[type="submit"]');
+            const originalHTML = button.innerHTML;
+
+            // Affiche le spinner de chargement
+            button.innerHTML = `
+                <svg class="animate-spin w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="12" cy="12" r="2"/>
+                    <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1m15.36-6.36L19 4m-14 0L1.64 7.64m12.72 8.72L19 20m-14 0l-2.64-2.64"/>
+                </svg>
+                Envoi en cours...
+            `;
+            button.disabled = true;
+        });
+    </script>
+{% endblock %}
