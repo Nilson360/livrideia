@@ -85,4 +85,47 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * Récupère les suggestions d'utilisateurs avec pagination (pour la page dédiée)
+     */
+    public function getSuggestedUsersWithPagination($userId, int $limit, int $offset): array
+    {
+        return $this->createQueryBuilder('u')
+            ->where('u.id != :userId')
+            ->setParameter('userId', $userId)
+            ->andWhere('u.id NOT IN (
+                SELECT IDENTITY(fr.sender) FROM App\Entity\Friend fr WHERE fr.receiver = :userId AND fr.status IN (:statuses)
+            )')
+            ->andWhere('u.id NOT IN (
+                SELECT IDENTITY(fs.receiver) FROM App\Entity\Friend fs WHERE fs.sender = :userId AND fs.status IN (:statuses)
+            )')
+            ->setParameter('statuses', ['pending', 'accepted'])
+
+            ->setFirstResult($offset)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Compte le total de suggestions disponibles
+     */
+    public function countSuggestedUsers($userId): int
+    {
+        return (int)$this->createQueryBuilder('u')
+            ->select('COUNT(u.id)')
+            ->where('u.id != :userId')
+            ->setParameter('userId', $userId)
+            ->andWhere('u.id NOT IN (
+                SELECT IDENTITY(fr.sender) FROM App\Entity\Friend fr WHERE fr.receiver = :userId AND fr.status IN (:statuses)
+            )')
+            ->andWhere('u.id NOT IN (
+                SELECT IDENTITY(fs.receiver) FROM App\Entity\Friend fs WHERE fs.sender = :userId AND fs.status IN (:statuses)
+            )')
+            ->setParameter('statuses', ['pending', 'accepted'])
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
 }

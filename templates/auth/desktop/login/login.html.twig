@@ -1,55 +1,206 @@
 {% extends 'auth/desktop/base_auth.html.twig' %}
 
-{% block title %}Connexion{% endblock %}
+{% block title %}Connexion - Livridea{% endblock %}
 
 {% block body %}
-    <h1 class="text-2xl font-bold text-leather mb-6 italic text-center">Connexion</h1>
+    <div class="text-center mb-8">
+        <h2 class="text-2xl font-bold text-gray-800 mb-2">Bon retour !</h2>
+        <p class="text-gray-500">Connectez-vous à votre espace littéraire</p>
+    </div>
 
-    <form method="post" class="space-y-4">
+    <form method="post" class="space-y-6">
+        <!-- Messages d'erreur spécifiques -->
         {% if error %}
-            <div class="bg-red-500 text-white text-sm p-2 rounded shadow">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-        {% endif %}
-
-        {% if app.user %}
-            <div class="mb-4 text-center text-sm text-green-700">
-                Connecté en tant que <strong>{{ app.user.userIdentifier }}</strong>.
-                <a href="{{ path('app_logout') }}" class="text-green-600 underline hover:text-green-800">Déconnexion</a>
+            <div class="bg-red-50 border border-red-200 text-red-800 text-sm p-4 rounded-xl flex items-start">
+                <svg class="w-5 h-5 mr-3 flex-shrink-0 mt-0.5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                </svg>
+                <div>
+                    <div class="font-medium">Erreur de connexion</div>
+                    <div class="mt-1">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                </div>
             </div>
         {% endif %}
 
+        {% if app.user %}
+            <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm p-4 rounded-xl">
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 mr-3 text-emerald-500" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    <div>
+                        <div class="font-medium">Déjà connecté</div>
+                        <div class="mt-1">
+                            Connecté en tant que <strong>{{ app.user.userIdentifier }}</strong>.
+                            <a href="{{ path('app_logout') }}" class="text-emerald-600 hover:text-emerald-800 underline ml-2">Se déconnecter</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- Nom d'utilisateur -->
         <div>
-            <label for="username" class="block text-bookmark font-semibold mb-1">Nom d'utilisateur</label>
-            <input type="text" value="{{ last_username }}" name="_username" id="username"
-                   class="w-full border border-bookmark rounded-lg p-2 text-ink bg-parchment placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-leather"
-                   autocomplete="username" required autofocus>
+            <label for="username" class="block text-gray-700 font-semibold mb-2">
+                Nom d'utilisateur
+            </label>
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="w-5 h-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/>
+                    </svg>
+                </div>
+                <input type="text"
+                       value="{{ last_username }}"
+                       name="_username"
+                       id="username"
+                       class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl bg-gray-50 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#FF8A00] focus:border-[#FF8A00] focus:bg-white transition-all duration-200"
+                       placeholder="Votre nom d'utilisateur"
+                       autocomplete="username"
+                       required
+                       autofocus>
+            </div>
         </div>
 
+        <!-- Mot de passe -->
         <div>
-            <label for="password" class="block text-bookmark font-semibold mb-1">Mot de passe</label>
-            <input type="password" name="_password" id="password"
-                   class="w-full border border-bookmark rounded-lg p-2 text-ink bg-parchment placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-leather"
-                   autocomplete="current-password" required>
+            <label for="password" class="block text-gray-700 font-semibold mb-2">
+                Mot de passe
+            </label>
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="w-5 h-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+                <input type="password"
+                       name="_password"
+                       id="password"
+                       class="w-full pl-10 pr-12 py-3 border border-gray-200 rounded-xl bg-gray-50 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#FF8A00] focus:border-[#FF8A00] focus:bg-white transition-all duration-200"
+                       placeholder="Votre mot de passe"
+                       autocomplete="current-password"
+                       required>
+                <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center toggle-password">
+                    <svg class="w-5 h-5 text-gray-400 hover:text-gray-600 cursor-pointer eye-open" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                        <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+                    </svg>
+                    <svg class="w-5 h-5 text-gray-400 hover:text-gray-600 cursor-pointer eye-closed hidden" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clip-rule="evenodd"/>
+                        <path d="M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.741L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.065 7 9.542 7 .847 0 1.669-.105 2.454-.303z"/>
+                    </svg>
+                </button>
+            </div>
         </div>
 
+        <!-- Options et mot de passe oublié -->
+        <div class="flex items-center justify-between">
+            <div class="flex items-center">
+                <input type="checkbox"
+                       name="_remember_me"
+                       id="_remember_me"
+                       class="h-4 w-4 text-[#FF8A00] border-gray-300 rounded focus:ring-[#FF8A00] focus:ring-2">
+                <label for="_remember_me" class="ml-2 text-sm text-gray-600">
+                    Se souvenir de moi
+                </label>
+            </div>
+
+            <a href="{{ path('app_forgot_password_request') }}"
+               class="text-sm text-[#FF8A00] hover:text-[#e67300] font-medium transition-colors">
+                Mot de passe oublié ?
+            </a>
+        </div>
+
+        <!-- Token CSRF -->
         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-        <div class="flex items-center">
-            <input type="checkbox" name="_remember_me" id="_remember_me"
-                   class="h-4 w-4 text-leather border-gray-300 rounded">
-            <label for="_remember_me" class="ml-2 text-sm text-ink">Se souvenir de moi</label>
-        </div>
-
+        <!-- Bouton de connexion -->
         <button type="submit"
-                class="w-full bg-leather text-white py-2 rounded-lg font-semibold hover:bg-[#6f442a] transition duration-200 shadow">
+                class="w-full bg-gradient-to-r from-[#FF8A00] to-[#e67300] text-white py-3 px-4 rounded-xl font-semibold hover:shadow-lg transition-all duration-200 hover:scale-105 flex items-center justify-center">
+            <svg class="w-5 h-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
             Se connecter
         </button>
     </form>
 
-    <div class="text-center mt-6 text-sm">
-        <p class="text-ink">Pas encore de compte ?</p>
+    <!-- Séparateur et inscription -->
+    <div class="mt-8 pt-6 border-t border-gray-100 text-center">
+        <p class="text-gray-600 mb-4">Nouveau sur Livridea ?</p>
         <a href="{{ path('app_register') }}"
-           class="inline-block mt-2 bg-bookmark text-white py-2 px-4 rounded-lg hover:bg-leather transition duration-200 shadow">
-            Créer un compte
+           class="inline-flex items-center justify-center w-full px-4 py-3 border border-gray-200 text-gray-700 bg-gray-50 rounded-xl hover:bg-gray-100 font-medium transition-all duration-200 hover:scale-105">
+            <svg class="w-5 h-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"/>
+            </svg>
+            Créer un compte gratuitement
         </a>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gestion de l'affichage/masquage du mot de passe
+            const togglePassword = document.querySelector('.toggle-password');
+            const passwordInput = document.getElementById('password');
+            const eyeOpen = document.querySelector('.eye-open');
+            const eyeClosed = document.querySelector('.eye-closed');
+
+            if (togglePassword && passwordInput) {
+                togglePassword.addEventListener('click', function() {
+                    if (passwordInput.type === 'password') {
+                        passwordInput.type = 'text';
+                        eyeOpen.classList.add('hidden');
+                        eyeClosed.classList.remove('hidden');
+                    } else {
+                        passwordInput.type = 'password';
+                        eyeOpen.classList.remove('hidden');
+                        eyeClosed.classList.add('hidden');
+                    }
+                });
+            }
+
+            // Animation des icônes au focus
+            const inputs = document.querySelectorAll('input[type="text"], input[type="password"]');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    const icon = this.parentElement.querySelector('svg');
+                    if (icon) {
+                        icon.classList.remove('text-gray-400');
+                        icon.classList.add('text-[#FF8A00]');
+                    }
+                });
+
+                input.addEventListener('blur', function() {
+                    if (!this.value) {
+                        const icon = this.parentElement.querySelector('svg');
+                        if (icon) {
+                            icon.classList.remove('text-[#FF8A00]');
+                            icon.classList.add('text-gray-400');
+                        }
+                    }
+                });
+            });
+
+            // Animation du bouton pendant la soumission
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function(e) {
+                const submitButton = this.querySelector('button[type="submit"]');
+
+                submitButton.innerHTML = `
+                    <svg class="animate-spin w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                        <circle cx="12" cy="12" r="2"/>
+                        <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1m15.36-6.36L19 4m-14 0L1.64 7.64m12.72 8.72L19 20m-14 0l-2.64-2.64"/>
+                    </svg>
+                    Connexion en cours...
+                `;
+                submitButton.disabled = true;
+            });
+
+            // Nettoyage des erreurs lors de la saisie
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    this.classList.remove('border-red-500');
+                });
+            });
+        });
+    </script>
 {% endblock %}

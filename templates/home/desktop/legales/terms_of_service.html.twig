@@ -1,0 +1,225 @@
+{% extends 'home/desktop/base_desktop.html.twig' %}
+
+{% block title %}Conditions d'utilisation - Livridea{% endblock %}
+
+{% block content %}
+    <div class="min-h-screen bg-gray-50">
+        <!-- En-tête de la page -->
+        <div class="bg-gradient-to-br from-[#FF8A00] to-[#e67300] text-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div class="text-center">
+                    <div class="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-2xl mb-6">
+                        <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                  d="M16 3H8C5.79086 3 4 4.79086 4 7V17C4 19.2091 5.79086 21 8 21H16C18.2091 21 20 19.2091 20 17V7C20 4.79086 18.2091 3 16 3Z"/>
+                            <path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                  d="M9 7H15M9 11H15M9 15H15"/>
+                        </svg>
+                    </div>
+                    <h1 class="text-4xl md:text-5xl font-bold mb-4">Conditions d'utilisation</h1>
+                    <p class="text-xl text-orange-100 mb-2">Règles et conditions de notre plateforme</p>
+                    <p class="text-orange-200 max-w-2xl mx-auto">
+                        Les termes et conditions qui régissent votre utilisation de Livridea
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenu principal -->
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+            <!-- Introduction -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8">
+                <div class="flex items-start gap-4 mb-6">
+                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Bienvenue sur Livridea</h2>
+                        <p class="text-gray-700 leading-relaxed text-lg">
+                            Bienvenue sur <strong class="text-[#FF8A00]">Livridea</strong>, plateforme dédiée aux passionnés de lecture. En accédant à notre site, vous acceptez les conditions suivantes qui garantissent une expérience sûre et agréable pour tous.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1. Compte Utilisateur -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-[#FF8A00] to-[#e67300] rounded-xl flex items-center justify-center flex-shrink-0">
+                        <span class="text-white font-bold text-lg">1</span>
+                    </div>
+                    <div class="flex-1">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Compte Utilisateur</h2>
+                        <p class="text-gray-700 leading-relaxed mb-4">
+                            La création d'un compte nécessite des informations exactes et à jour. Vous êtes seul responsable de la confidentialité de vos identifiants et des activités associées à votre compte.
+                        </p>
+                        <div class="bg-orange-50 border border-orange-200 rounded-xl p-4">
+                            <h3 class="font-semibold text-orange-800 mb-2 flex items-center gap-2">
+                                <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6z"/>
+                                </svg>
+                                Responsabilités utilisateur :
+                            </h3>
+                            <ul class="text-orange-700 text-sm space-y-1">
+                                <li>• Fournir des informations exactes lors de l'inscription</li>
+                                <li>• Maintenir la sécurité de vos identifiants de connexion</li>
+                                <li>• Signaler toute utilisation non autorisée de votre compte</li>
+                                <li>• Mettre à jour vos informations si nécessaire</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Utilisation Acceptable -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <span class="text-white font-bold text-lg">2</span>
+                    </div>
+                    <div class="flex-1">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Utilisation Acceptable</h2>
+                        <p class="text-gray-700 leading-relaxed mb-4">
+                            L'usage de Livridea doit se faire dans le respect des lois et des autres utilisateurs. Il est interdit de publier tout contenu diffamatoire, offensant ou illicite.
+                        </p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-green-50 border border-green-200 rounded-xl p-4">
+                                <h3 class="font-semibold text-green-800 mb-2 flex items-center gap-2">
+                                    <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    Autorisé
+                                </h3>
+                                <ul class="text-green-700 text-sm space-y-1">
+                                    <li>• Partager des avis constructifs</li>
+                                    <li>• Recommander des livres</li>
+                                    <li>• Discuter respectueusement</li>
+                                    <li>• Créer des listes de lecture</li>
+                                </ul>
+                            </div>
+                            <div class="bg-red-50 border border-red-200 rounded-xl p-4">
+                                <h3 class="font-semibold text-red-800 mb-2 flex items-center gap-2">
+                                    <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                    </svg>
+                                    Interdit
+                                </h3>
+                                <ul class="text-red-700 text-sm space-y-1">
+                                    <li>• Contenu diffamatoire</li>
+                                    <li>• Harcèlement d'autres utilisateurs</li>
+                                    <li>• Contenu illégal ou offensant</li>
+                                    <li>• Spam ou publicité non autorisée</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Droits de Propriété Intellectuelle -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <span class="text-white font-bold text-lg">3</span>
+                    </div>
+                    <div class="flex-1">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Droits de Propriété Intellectuelle</h2>
+                        <p class="text-gray-700 leading-relaxed mb-4">
+                            Tous les contenus (textes, images, logos) présents sur Livridea sont protégés par les droits d'auteur. Toute reproduction sans autorisation est strictement interdite.
+                        </p>
+                        <div class="bg-purple-50 border border-purple-200 rounded-xl p-6">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-white" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 2L3 7v11c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V7l-7-5z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                                <h3 class="font-semibold text-purple-800">Éléments protégés</h3>
+                            </div>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
+                                <div class="bg-white rounded-lg p-3">
+                                    <div class="text-purple-600 font-semibold text-xs">Logo</div>
+                                </div>
+                                <div class="bg-white rounded-lg p-3">
+                                    <div class="text-purple-600 font-semibold text-xs">Design</div>
+                                </div>
+                                <div class="bg-white rounded-lg p-3">
+                                    <div class="text-purple-600 font-semibold text-xs">Contenus</div>
+                                </div>
+                                <div class="bg-white rounded-lg p-3">
+                                    <div class="text-purple-600 font-semibold text-xs">Code source</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Modifications des Conditions -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <span class="text-white font-bold text-lg">4</span>
+                    </div>
+                    <div class="flex-1">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Modifications des Conditions</h2>
+                        <p class="text-gray-700 leading-relaxed mb-4">
+                            Nous nous réservons le droit de modifier les présentes conditions à tout moment. Vous serez informé des changements, et l'utilisation continue du site implique leur acceptation.
+                        </p>
+                        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4">
+                            <h3 class="font-semibold text-indigo-800 mb-2 flex items-center gap-2">
+                                <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                                </svg>
+                                Processus de modification :
+                            </h3>
+                            <ul class="text-indigo-700 text-sm space-y-1">
+                                <li>• Notification par email des changements majeurs</li>
+                                <li>• Publication des nouvelles conditions sur le site</li>
+                                <li>• Période de grâce pour accepter les nouvelles conditions</li>
+                                <li>• Acceptation implicite par usage continué</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Acceptation et contact -->
+            <div class="bg-gradient-to-br from-[#FF8A00] to-[#e67300] rounded-2xl shadow-lg p-8 text-white text-center">
+                <div class="max-w-2xl mx-auto">
+                    <h2 class="text-2xl font-bold mb-4">Acceptation des conditions</h2>
+                    <p class="text-orange-100 mb-6 leading-relaxed">
+                        En utilisant Livridea, vous confirmez avoir pris connaissance et accepté nos conditions d'utilisation. Ces termes garantissent une expérience équitable pour tous les membres de notre communauté.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="{{ path('app_register') }}"
+                           class="inline-flex items-center justify-center px-8 py-4 bg-white text-[#FF8A00] rounded-xl font-semibold hover:shadow-lg transition-all duration-200 hover:scale-105">
+                            <svg class="w-5 h-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"/>
+                            </svg>
+                            Créer mon compte
+                        </a>
+                        <a href="{{ path('app_contact') }}"
+                           class="inline-flex items-center justify-center px-8 py-4 bg-white/20 text-white border-2 border-white/30 rounded-xl font-semibold hover:bg-white/30 transition-all duration-200">
+                            <svg class="w-5 h-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+                            </svg>
+                            Nous contacter
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dernière mise à jour -->
+            <div class="text-center mt-8">
+                <p class="text-gray-500 text-sm">
+                    Dernière mise à jour : {{ 'now'|date('d/m/Y') }}
+                </p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

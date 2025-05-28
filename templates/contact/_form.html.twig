@@ -1,0 +1,102 @@
+{{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+
+<!-- Nom complet -->
+<div>
+    {{ form_label(form.fullName, 'Nom complet', {
+        'label_attr': {'class': 'block text-sm font-semibold text-gray-700 mb-2'}
+    }) }}
+    <div class="relative">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <svg class="w-5 h-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/>
+            </svg>
+        </div>
+        {{ form_widget(form.fullName, {
+            'attr': {
+                'class': 'w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl bg-gray-50 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#FF8A00] focus:border-[#FF8A00] focus:bg-white transition-all duration-200',
+                'placeholder': 'Votre nom et prénom'
+            }
+        }) }}
+    </div>
+    {{ form_errors(form.fullName) }}
+</div>
+
+<!-- Email -->
+<div>
+    {{ form_label(form.email, 'Adresse email', {
+        'label_attr': {'class': 'block text-sm font-semibold text-gray-700 mb-2'}
+    }) }}
+    <div class="relative">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <svg class="w-5 h-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+            </svg>
+        </div>
+        {{ form_widget(form.email, {
+            'attr': {
+                'class': 'w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl bg-gray-50 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#FF8A00] focus:border-[#FF8A00] focus:bg-white transition-all duration-200',
+                'placeholder': 'votre@email.com'
+            }
+        }) }}
+    </div>
+    {{ form_errors(form.email) }}
+</div>
+
+<!-- Sujet -->
+<div>
+    {{ form_label(form.subject, 'Sujet', {
+        'label_attr': {'class': 'block text-sm font-semibold text-gray-700 mb-2'}
+    }) }}
+    <div class="relative">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <svg class="w-5 h-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+            </svg>
+        </div>
+        {{ form_widget(form.subject, {
+            'attr': {
+                'class': 'w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl bg-gray-50 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#FF8A00] focus:border-[#FF8A00] focus:bg-white transition-all duration-200',
+                'placeholder': 'De quoi souhaitez-vous nous parler ?'
+            }
+        }) }}
+    </div>
+    {{ form_errors(form.subject) }}
+</div>
+
+<!-- Message -->
+<div>
+    {{ form_label(form.content, 'Message', {
+        'label_attr': {'class': 'block text-sm font-semibold text-gray-700 mb-2'}
+    }) }}
+    <div class="relative">
+        <div class="absolute top-3 left-3 pointer-events-none">
+            <svg class="w-5 h-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"/>
+            </svg>
+        </div>
+        {{ form_widget(form.content, {
+            'attr': {
+                'class': 'w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl bg-gray-50 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#FF8A00] focus:border-[#FF8A00] focus:bg-white transition-all duration-200 resize-none',
+                'placeholder': 'Écrivez votre message ici...',
+                'rows': 6
+            }
+        }) }}
+    </div>
+    {{ form_errors(form.content) }}
+</div>
+
+<!-- Bouton d'envoi -->
+<div class="pt-4 text-center">
+    <button type="submit"
+            class="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-[#FF8A00] to-[#e67300] text-white rounded-xl font-semibold hover:shadow-lg transition-all duration-200 hover:scale-105 gap-2">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10.3009 13.6949L20.102 3.89742M10.5795 14.1355L12.8019 18.5804C13.339 19.6545 13.6075 20.1916 13.9458 20.3356C14.2394 20.4606 14.575 20.4379 14.8492 20.2747C15.1651 20.0866 15.3591 19.5183 15.7472 18.3818L19.9463 6.08434C20.2845 5.09409 20.4535 4.59896 20.3378 4.27142C20.2371 3.98648 20.013 3.76234 19.7281 3.66167C19.4005 3.54595 18.9054 3.71502 17.9151 4.05315L5.61763 8.2523C4.48114 8.64037 3.91289 8.83441 3.72478 9.15032C3.56153 9.42447 3.53891 9.76007 3.66389 10.0536C3.80791 10.3919 4.34498 10.6605 5.41912 11.1975L9.86397 13.42C10.041 13.5085 10.1295 13.5527 10.2061 13.6118C10.2742 13.6643 10.3352 13.7253 10.3876 13.7933C10.4468 13.87 10.491 13.9585 10.5795 14.1355Z"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Envoyer le message
+    </button>
+</div>
+
+{{ form_rest(form) }}
+{{ form_end(form) }}

@@ -191,7 +191,7 @@ class UserProfileController extends AbstractController
         }
 
         // Version desktop par défaut
-        return $this->render('dashboard_user/friends.html.twig', $templateData);
+        return $this->render('dashboard_user/desktop/friends.html.twig', $templateData);
     }
 
     #[Route('/utilisateur/{username}', name: 'dashboard_user_profile_other')]

@@ -1,20 +1,110 @@
-<ul class="bg-parchment border border-bookmark rounded-xl shadow-sm divide-y divide-bookmark">
-    {% for friend in friends %}
-        <li class="friend-item flex justify-between items-center px-4 py-3" data-friend-id="{{ friend.id }}">
-            <a href="{{ path('dashboard_user_profile_other', {'username': friend.username}) }}"
-               class="flex items-center gap-3 group">
-                <img src="{{ asset(friend.avatarPath|default('/images/default-profile.png')) }}"
-                     alt="Avatar de {{ friend.username }}"
-                     class="w-10 h-10 rounded-full border border-bookmark shadow">
-                <span class="text-leather font-semibold group-hover:underline">{{ friend.username }}</span>
-            </a>
-            <button class="remove-friend-btn bg-leather hover:bg-[#6f442a] text-white px-3 py-1 rounded-lg text-sm shadow transition"
-                    data-friend-id="{{ friend.id }}"
-                    aria-label="Supprimer l'amitié de {{ friend.username }}">
-                Supprimer
-            </button>
-        </li>
-    {% else %}
-        <li class="text-center text-bookmark italic py-4 text-sm">Aucun ami pour le moment.</li>
-    {% endfor %}
-</ul>
+{% if friends|length > 0 %}
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <ul class="divide-y divide-gray-100">
+            {% for friend in friends %}
+                <li class="friend-item group hover:bg-gray-50 transition-colors duration-200" data-friend-id="{{ friend.id }}">
+                    <div class="flex justify-between items-center px-6 py-4">
+                        <!-- Informations de l'ami -->
+                        <a href="{{ path('dashboard_user_profile_other', {'username': friend.username}) }}"
+                           class="flex items-center gap-4 flex-1 min-w-0">
+                            <!-- Avatar -->
+                            <div class="relative flex-shrink-0">
+                                <img src="{{ asset(friend.avatarPath|default('/images/user_default.png')) }}"
+                                     alt="Avatar de {{ friend.username }}"
+                                     class="w-12 h-12 rounded-full border-2 border-gray-200 group-hover:border-[#FF8A00] transition-colors duration-200 shadow-sm">
+                                <div class="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full shadow-sm"></div>
+                            </div>
+
+                            <!-- Informations utilisateur -->
+                            <div class="min-w-0 flex-1">
+                                <h4 class="font-semibold text-gray-800 group-hover:text-[#FF8A00] transition-colors duration-200 truncate">
+                                    {{ friend.fullName }}
+                                </h4>
+                                <p class="text-sm text-gray-500 truncate">@{{ friend.username }}</p>
+                            </div>
+
+                            <!-- Flèche -->
+                            <div class="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                <svg class="w-5 h-5 text-[#FF8A00]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </div>
+                        </a>
+
+                        <!-- Actions -->
+                        <div class="flex items-center gap-2 ml-4">
+                            <!-- Bouton Message -->
+                            <a href="{{ path('app_chat') }}?user={{ friend.id }}"
+                               class="p-2 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-all duration-200 hover:scale-105"
+                               title="Envoyer un message">
+                                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                                </svg>
+                            </a>
+
+                            <!-- Bouton Supprimer -->
+                            <button class="remove-friend-btn p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-all duration-200 hover:scale-105"
+                                    data-friend-id="{{ friend.id }}"
+                                    title="Retirer de mes amis">
+                                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% else %}
+    <!-- État vide -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="p-12 text-center">
+            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zm4 18v-6h2.5l-2.54-7.63A2.996 2.996 0 0 0 17.13 7H16c-.8 0-1.54.34-2.05.89L12 11l-1.95-3.11C9.54 7.34 8.8 7 8 7H6.87c-1.31 0-2.41.83-2.83 2.06L1.5 16H4v6h4v-6h2v6h4v-6h2v6h4z"/>
+                </svg>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">Aucun ami pour le moment</h3>
+            <p class="text-gray-500">Les amis apparaîtront ici une fois connectés.</p>
+        </div>
+    </div>
+{% endif %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.remove-friend-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const friendId = this.getAttribute('data-friend-id');
+                const friendItem = this.closest('.friend-item');
+                const friendName = friendItem.querySelector('h4').textContent.trim();
+
+                if (confirm(`Êtes-vous sûr de vouloir retirer ${friendName} de vos amis ?`)) {
+                    removeFriend(friendId, friendItem);
+                }
+            });
+        });
+
+        function removeFriend(friendId, friendElement) {
+            fetch(`/friend/remove/${friendId}`, {
+                method: "POST",
+                headers: {"X-Requested-With": "XMLHttpRequest"}
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'removed') {
+                        friendElement.remove();
+                    } else {
+                        alert(data.error || 'Erreur lors de la suppression');
+                    }
+                })
+                .catch(error => {
+                    console.error("Erreur:", error);
+                    alert('Erreur de connexion');
+                });
+        }
+    });
+</script>

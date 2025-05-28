@@ -1,0 +1,202 @@
+{% extends 'home/desktop/base_desktop.html.twig' %}
+
+{% block title %}Politique de confidentialité - Livridea{% endblock %}
+
+{% block content %}
+    <div class="min-h-screen bg-gray-50">
+        <!-- En-tête de la page -->
+        <div class="bg-gradient-to-br from-[#FF8A00] to-[#e67300] text-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div class="text-center">
+                    <div class="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-2xl mb-6">
+                        <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2ZM12 20C7.6 20 4 16.4 4 12C4 7.6 7.6 4 12 4C16.4 4 20 7.6 20 12C20 16.4 16.4 20 12 20ZM11 7H13V13H11V7ZM11 15H13V17H11V15Z"/>
+                        </svg>
+                    </div>
+                    <h1 class="text-4xl md:text-5xl font-bold mb-4">Politique de confidentialité</h1>
+                    <p class="text-xl text-orange-100 mb-2">Protection de vos données personnelles</p>
+                    <p class="text-orange-200 max-w-2xl mx-auto">
+                        Découvrez comment nous collectons, utilisons et protégeons vos informations sur Livridea
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenu principal -->
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+            <!-- Introduction -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8">
+                <div class="flex items-start gap-4 mb-6">
+                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Notre engagement</h2>
+                        <p class="text-gray-700 leading-relaxed text-lg">
+                            Chez <strong class="text-[#FF8A00]">Livridea</strong>, nous attachons une grande importance à la confidentialité de vos données. Cette page explique comment nous collectons, utilisons et protégeons vos informations personnelles.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1. Collecte des Données -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-[#FF8A00] to-[#e67300] rounded-xl flex items-center justify-center flex-shrink-0">
+                        <span class="text-white font-bold text-lg">1</span>
+                    </div>
+                    <div class="flex-1">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Collecte des Données</h2>
+                        <p class="text-gray-700 leading-relaxed mb-4">
+                            Lors de la création de votre compte, vous nous fournissez des informations telles que votre nom, votre adresse email et votre date de naissance. Ces données nous permettent de personnaliser votre expérience sur notre plateforme.
+                        </p>
+                        <div class="bg-orange-50 border border-orange-200 rounded-xl p-4">
+                            <h3 class="font-semibold text-orange-800 mb-2">Types de données collectées :</h3>
+                            <ul class="text-orange-700 text-sm space-y-1">
+                                <li>• Informations d'identification (nom, email)</li>
+                                <li>• Données de profil (date de naissance, préférences)</li>
+                                <li>• Activité sur la plateforme (lectures, avis, interactions)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Utilisation des Données -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <span class="text-white font-bold text-lg">2</span>
+                    </div>
+                    <div class="flex-1">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Utilisation des Données</h2>
+                        <p class="text-gray-700 leading-relaxed mb-4">
+                            Les données collectées sont utilisées pour améliorer votre expérience et nos services :
+                        </p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-center">
+                                <div class="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center mx-auto mb-2">
+                                    <svg class="w-4 h-4 text-white" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </div>
+                                <h3 class="font-semibold text-emerald-800 text-sm mb-1">Personnalisation</h3>
+                                <p class="text-emerald-700 text-xs">Adapter l'expérience à vos goûts</p>
+                            </div>
+                            <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 text-center">
+                                <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mx-auto mb-2">
+                                    <svg class="w-4 h-4 text-white" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"/>
+                                    </svg>
+                                </div>
+                                <h3 class="font-semibold text-blue-800 text-sm mb-1">Amélioration</h3>
+                                <p class="text-blue-700 text-xs">Optimiser nos services</p>
+                            </div>
+                            <div class="bg-purple-50 border border-purple-200 rounded-xl p-4 text-center">
+                                <div class="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center mx-auto mb-2">
+                                    <svg class="w-4 h-4 text-white" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                                <h3 class="font-semibold text-purple-800 text-sm mb-1">Sécurité</h3>
+                                <p class="text-purple-700 text-xs">Protéger votre compte</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Partage des Données -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <span class="text-white font-bold text-lg">3</span>
+                    </div>
+                    <div class="flex-1">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Partage des Données</h2>
+                        <div class="bg-red-50 border border-red-200 rounded-xl p-6">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-white" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                                <h3 class="font-semibold text-red-800">Engagement ferme</h3>
+                            </div>
+                            <p class="text-red-700 font-medium">
+                                Nous ne partageons jamais vos informations avec des tiers sans votre consentement explicite, sauf si la loi l'exige.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Sécurité des Données -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <span class="text-white font-bold text-lg">4</span>
+                    </div>
+                    <div class="flex-1">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Sécurité des Données</h2>
+                        <p class="text-gray-700 leading-relaxed mb-6">
+                            Des mesures techniques et organisationnelles sont mises en place pour protéger vos données contre tout accès non autorisé, perte ou altération.
+                        </p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="flex items-start gap-3 p-4 bg-green-50 rounded-xl">
+                                <div class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-4 h-4 text-white" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-green-800 mb-1">Chiffrement SSL</h3>
+                                    <p class="text-green-700 text-sm">Toutes les données sont chiffrées en transit</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3 p-4 bg-green-50 rounded-xl">
+                                <div class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-4 h-4 text-white" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-green-800 mb-1">Accès restreint</h3>
+                                    <p class="text-green-700 text-sm">Seul le personnel autorisé peut accéder aux données</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact et acceptation -->
+            <div class="bg-gradient-to-br from-[#FF8A00] to-[#e67300] rounded-2xl shadow-lg p-8 text-white text-center">
+                <div class="max-w-2xl mx-auto">
+                    <h2 class="text-2xl font-bold mb-4">Questions ou préoccupations ?</h2>
+                    <p class="text-orange-100 mb-6 leading-relaxed">
+                        En utilisant Livridea, vous acceptez les termes de cette politique de confidentialité. Pour toute question, n'hésitez pas à nous contacter.
+                    </p>
+                    <a href="{{ path('app_contact') }}"
+                       class="inline-flex items-center justify-center px-8 py-4 bg-white text-[#FF8A00] rounded-xl font-semibold hover:shadow-lg transition-all duration-200 hover:scale-105">
+                        <svg class="w-5 h-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                            <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+                        </svg>
+                        Nous contacter
+                    </a>
+                </div>
+            </div>
+
+            <!-- Dernière mise à jour -->
+            <div class="text-center mt-8">
+                <p class="text-gray-500 text-sm">
+                    Dernière mise à jour : {{ 'now'|date('d/m/Y') }}
+                </p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

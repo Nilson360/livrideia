@@ -1,53 +1,256 @@
-{% extends '../../home/base_home.html.twig' %}
+{% extends 'home/desktop/base_desktop.html.twig' %}
 
 {% block title %}Modifier mon profil{% endblock %}
 
-{% block body %}
-    <div class="max-w-4xl mx-auto mt-10 px-4 py-6 bg-parchment border border-bookmark shadow rounded-xl">
-        <h1 class="text-3xl font-bold text-leather italic mb-4">Modifier mon profil</h1>
-        <p class="text-ink mb-6 text-sm leading-relaxed">
-            Mettez à jour vos informations personnelles. Assurez-vous qu'elles sont exactes et à jour.
-        </p>
+{% block content %}
+    <div class="max-w-4xl mx-auto mt-8 mb-16 px-4">
+        <!-- Header -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6">
+            <div class="p-6 border-b border-gray-100">
+                <div class="flex items-center gap-4">
+                    <div class="p-3 bg-gradient-to-br from-[#FF8A00] to-[#e67300] rounded-xl">
+                        <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">Modifier mon profil</h1>
+                        <p class="text-gray-500 text-sm">Mettez à jour vos informations personnelles</p>
+                    </div>
+                </div>
+            </div>
 
-        {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
-
-        <div>
-            {{ form_label(form.fullName, 'Nom complet', {'label_attr': {'class': 'block text-leather font-semibold text-sm mb-1'}}) }}
-            {{ form_widget(form.fullName, {
-                'attr': {
-                    'class': 'w-full border border-bookmark rounded-lg bg-white text-ink p-3 text-sm'
-                }
-            }) }}
-            {{ form_errors(form.fullName) }}
+            <!-- Navigation de retour -->
+            <div class="px-6 py-3 bg-gray-50 border-b border-gray-100">
+                <a href="{{ path('dashboard_user_profile') }}"
+                   class="inline-flex items-center text-sm text-gray-600 hover:text-[#FF8A00] transition-colors">
+                    <svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    Retour au profil
+                </a>
+            </div>
         </div>
 
-        <div>
-            {{ form_label(form.email, 'Adresse email', {'label_attr': {'class': 'block text-leather font-semibold text-sm mb-1'}}) }}
-            {{ form_widget(form.email, {
-                'attr': {
-                    'class': 'w-full border border-bookmark rounded-lg bg-white text-ink p-3 text-sm'
-                }
-            }) }}
-            {{ form_errors(form.email) }}
-        </div>
+        <!-- Formulaire -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="p-6">
+                {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
 
-        <div>
-            {{ form_label(form.birthday, 'Date de naissance', {'label_attr': {'class': 'block text-leather font-semibold text-sm mb-1'}}) }}
-            {{ form_widget(form.birthday, {
-                'attr': {
-                    'class': 'w-full border border-bookmark rounded-lg bg-white text-ink p-3 text-sm'
-                }
-            }) }}
-            {{ form_errors(form.birthday) }}
-        </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Nom complet -->
+                    <div class="md:col-span-2">
+                        {{ form_label(form.fullName, 'Nom complet', {'label_attr': {'class': 'block text-gray-700 font-semibold text-sm mb-2 flex items-center'}}) }}
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="w-5 h-5 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                </svg>
+                            </div>
+                            {{ form_widget(form.fullName, {
+                                'attr': {
+                                    'class': 'w-full border border-gray-200 rounded-xl bg-gray-50 text-gray-700 pl-10 pr-4 py-3 text-sm focus:ring-2 focus:ring-[#FF8A00] focus:border-[#FF8A00] focus:bg-white transition-all duration-200',
+                                    'placeholder': 'Votre nom complet'
+                                }
+                            }) }}
+                        </div>
+                        {{ form_errors(form.fullName) }}
+                    </div>
 
-        <div class="pt-2">
-            <button type="submit"
-                    class="bg-leather hover:bg-[#6f442a] text-white px-6 py-2 rounded-lg shadow transition font-semibold text-sm">
-                Enregistrer
-            </button>
-        </div>
+                    <!-- Email -->
+                    <div class="md:col-span-2">
+                        {{ form_label(form.email, 'Adresse email', {'label_attr': {'class': 'block text-gray-700 font-semibold text-sm mb-2 flex items-center'}}) }}
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="w-5 h-5 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10h5v-2h-5c-4.34 0-8-3.66-8-8s3.66-8 8-8 8 3.66 8 8v1.43c0 .79-.71 1.57-1.5 1.57s-1.5-.78-1.5-1.57V12c0-2.76-2.24-5-5-5s-5 2.24-5 5 2.24 5 5 5c1.38 0 2.64-.56 3.54-1.47.65.89 1.77 1.47 2.96 1.47 1.97 0 3.5-1.53 3.5-3.57V12c0-5.52-4.48-10-10-10zm0 13c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"/>
+                                </svg>
+                            </div>
+                            {{ form_widget(form.email, {
+                                'attr': {
+                                    'class': 'w-full border border-gray-200 rounded-xl bg-gray-50 text-gray-700 pl-10 pr-4 py-3 text-sm focus:ring-2 focus:ring-[#FF8A00] focus:border-[#FF8A00] focus:bg-white transition-all duration-200',
+                                    'placeholder': 'votre@email.com'
+                                }
+                            }) }}
+                        </div>
+                        {{ form_errors(form.email) }}
+                    </div>
 
-        {{ form_end(form) }}
+                    <!-- Date de naissance -->
+                    <div class="md:col-span-2">
+                        {{ form_label(form.birthday, 'Date de naissance', {'label_attr': {'class': 'block text-gray-700 font-semibold text-sm mb-2 flex items-center'}}) }}
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="w-5 h-5 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.1 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/>
+                                </svg>
+                            </div>
+                            {{ form_widget(form.birthday, {
+                                'attr': {
+                                    'class': 'w-full border border-gray-200 rounded-xl bg-gray-50 text-gray-700 pl-10 pr-4 py-3 text-sm focus:ring-2 focus:ring-[#FF8A00] focus:border-[#FF8A00] focus:bg-white transition-all duration-200'
+                                }
+                            }) }}
+                        </div>
+                        {{ form_errors(form.birthday) }}
+                    </div>
+                </div>
+
+                <!-- Section Upload des images -->
+                <div class="border-t border-gray-100 pt-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-[#FF8A00]" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                        </svg>
+                        Photos de profil
+                    </h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Avatar -->
+                        <div>
+                            {{ form_label(form.avatarFile, 'Photo de profil', {'label_attr': {'class': 'block text-gray-700 font-medium text-sm mb-3'}}) }}
+                            <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-[#FF8A00] transition-colors duration-200">
+                                <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                                    <svg class="w-8 h-8 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                    </svg>
+                                </div>
+                                {{ form_widget(form.avatarFile, {
+                                    'attr': {
+                                        'class': 'hidden',
+                                        'accept': 'image/*',
+                                        'id': 'avatar-upload'
+                                    }
+                                }) }}
+                                <label for="avatar-upload" class="cursor-pointer">
+                                    <span class="text-sm text-gray-600">Cliquez pour choisir</span>
+                                    <p class="text-xs text-gray-400 mt-1">PNG, JPG jusqu'à 2MB</p>
+                                </label>
+                            </div>
+                            {{ form_errors(form.avatarFile) }}
+                        </div>
+
+                        <!-- Couverture -->
+                        <div>
+                            {{ form_label(form.coverFile, 'Photo de couverture', {'label_attr': {'class': 'block text-gray-700 font-medium text-sm mb-3'}}) }}
+                            <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-[#FF8A00] transition-colors duration-200">
+                                <div class="w-16 h-10 mx-auto mb-4 bg-gray-100 rounded-lg flex items-center justify-center">
+                                    <svg class="w-8 h-5 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                                    </svg>
+                                </div>
+                                {{ form_widget(form.coverFile, {
+                                    'attr': {
+                                        'class': 'hidden',
+                                        'accept': 'image/*',
+                                        'id': 'cover-upload'
+                                    }
+                                }) }}
+                                <label for="cover-upload" class="cursor-pointer">
+                                    <span class="text-sm text-gray-600">Cliquez pour choisir</span>
+                                    <p class="text-xs text-gray-400 mt-1">PNG, JPG jusqu'à 5MB</p>
+                                </label>
+                            </div>
+                            {{ form_errors(form.coverFile) }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Boutons d'action -->
+                <div class="border-t border-gray-100 pt-6 flex flex-col sm:flex-row gap-4 justify-between">
+                    <a href="{{ path('dashboard_user_profile') }}"
+                       class="inline-flex items-center justify-center px-6 py-3 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all duration-200 hover:scale-105">
+                        <svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                        Annuler
+                    </a>
+
+                    <button type="submit"
+                            class="inline-flex items-center justify-center bg-gradient-to-r from-[#FF8A00] to-[#e67300] text-white px-8 py-3 rounded-xl shadow-md hover:shadow-lg text-sm font-semibold transition-all duration-200 hover:scale-105">
+                        <svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        Enregistrer les modifications
+                    </button>
+                </div>
+
+                {{ form_end(form) }}
+            </div>
+        </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Prévisualisation des images
+            function setupImagePreview(inputId, previewContainer) {
+                const input = document.getElementById(inputId);
+                if (!input) return;
+
+                input.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            // Créer ou mettre à jour la prévisualisation
+                            let preview = previewContainer.querySelector('.preview-image');
+                            if (!preview) {
+                                preview = document.createElement('img');
+                                preview.className = 'preview-image w-full h-32 object-cover rounded-lg mt-3 border border-gray-200';
+                                previewContainer.appendChild(preview);
+                            }
+                            preview.src = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+
+            // Setup pour avatar et couverture
+            const avatarContainer = document.querySelector('#avatar-upload').closest('.border-dashed');
+            const coverContainer = document.querySelector('#cover-upload').closest('.border-dashed');
+
+            setupImagePreview('avatar-upload', avatarContainer);
+            setupImagePreview('cover-upload', coverContainer);
+
+            // Animation du formulaire
+            const inputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="date"]');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.querySelector('svg').classList.add('text-[#FF8A00]');
+                });
+
+                input.addEventListener('blur', function() {
+                    if (!this.value) {
+                        this.parentElement.querySelector('svg').classList.remove('text-[#FF8A00]');
+                    }
+                });
+            });
+
+            // Validation côté client
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function(e) {
+                const requiredFields = form.querySelectorAll('input[required]');
+                let isValid = true;
+
+                requiredFields.forEach(field => {
+                    if (!field.value.trim()) {
+                        field.classList.add('border-red-500');
+                        isValid = false;
+                    } else {
+                        field.classList.remove('border-red-500');
+                    }
+                });
+
+                if (!isValid) {
+                    e.preventDefault();
+                    // Scroll vers le premier champ invalide
+                    const firstInvalid = form.querySelector('.border-red-500');
+                    if (firstInvalid) {
+                        firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        firstInvalid.focus();
+                    }
+                }
+            });
+        });
+    </script>
 {% endblock %}

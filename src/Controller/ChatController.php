@@ -80,7 +80,7 @@ class ChatController extends AbstractController
         }
 
         // Version desktop par défaut
-        return $this->render('chat/index.html.twig', $templateData);
+        return $this->render('chat/desktop/index.html.twig', $templateData);
     }
 
     #[Route('/chat/messages/{userId}', name: 'app_chat_messages')]

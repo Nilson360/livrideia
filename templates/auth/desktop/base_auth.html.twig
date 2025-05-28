@@ -3,29 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Authentification{% endblock %}</title>
-    <link rel="icon" href="/images/book-icon.svg">
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <title>{% block title %}Authentification - Livridea{% endblock %}</title>
+    <link rel="icon" href="{{ asset('images/livrideia.svg') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     {% block stylesheets %}
         {{ encore_entry_link_tags('app') }}
     {% endblock %}
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .backdrop-blur {
+            backdrop-filter: blur(8px);
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .bg-pattern {
+            background-image: radial-gradient(circle at 25% 25%, rgba(255, 138, 0, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 75% 75%, rgba(255, 138, 0, 0.05) 0%, transparent 50%);
+        }
+    </style>
 </head>
-<body class="bg-parchment text-ink font-serif min-h-screen flex flex-col justify-center items-center px-4">
+<body class="bg-gradient-to-br from-gray-50 via-white to-orange-50/20 bg-pattern text-gray-900 min-h-screen flex flex-col justify-center items-center px-4">
 
-<div class="w-full max-w-md bg-white border border-bookmark shadow-xl rounded-xl p-8">
+<!-- Logo et header -->
+<div class="text-center mb-8 animate-fade-in">
+    <div class="flex items-center justify-center mb-4">
+        <div class="p-3 bg-gradient-to-br from-[#FF8A00] to-[#e67300] rounded-2xl shadow-xl">
+            <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 6.90909C10.8999 5.50893 9.20406 4.10877 5.00119 4.00602C4.72513 3.99928 4.5 4.22351 4.5 4.49965C4.5 6.54813 4.5 14.3034 4.5 16.597C4.5 16.8731 4.72515 17.09 5.00114 17.099C9.20405 17.2364 10.8999 19.0998 12 20.5M12 6.90909C13.1001 5.50893 14.7959 4.10877 18.9988 4.00602C19.2749 3.99928 19.5 4.21847 19.5 4.49461C19.5 6.78447 19.5 14.3064 19.5 16.5963C19.5 16.8724 19.2749 17.09 18.9989 17.099C14.796 17.2364 13.1001 19.0998 12 20.5M12 6.90909L12 20.5"/>
+            </svg>
+        </div>
+    </div>
+    <h1 class="text-3xl font-bold text-gray-800 mb-2">Livridea</h1>
+    <p class="text-gray-500 font-medium">Votre communauté littéraire</p>
+</div>
+
+<!-- Contenu principal -->
+<div class="w-full max-w-md bg-white border border-gray-100 shadow-2xl rounded-2xl overflow-hidden animate-fade-in">
+
+    <!-- Messages flash -->
     {% block flash_messages %}
-        {% for flash_error in app.flashes('verify_email_error') %}
-            <div class="bg-red-500 text-white text-sm p-3 rounded mb-4">
-                {{ flash_error }}
-            </div>
+        {% for type, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="mx-6 mt-6 p-4 rounded-xl shadow-sm animate-fade-in
+                        {% if type == 'error' or type == 'danger' or type == 'verify_email_error' or type == 'reset_password_error' %}
+                            bg-red-50 border border-red-200 text-red-800
+                        {% elseif type == 'success' %}
+                            bg-emerald-50 border border-emerald-200 text-emerald-800
+                        {% elseif type == 'warning' %}
+                            bg-amber-50 border border-amber-200 text-amber-800
+                        {% else %}
+                            bg-blue-50 border border-blue-200 text-blue-800
+                        {% endif %}">
+                    <div class="flex items-start">
+                        {% if type == 'error' or type == 'danger' or type == 'verify_email_error' or type == 'reset_password_error' %}
+                            <svg class="w-5 h-5 mr-3 flex-shrink-0 mt-0.5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                            </svg>
+                        {% elseif type == 'success' %}
+                            <svg class="w-5 h-5 mr-3 flex-shrink-0 mt-0.5 text-emerald-500" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                        {% elseif type == 'warning' %}
+                            <svg class="w-5 h-5 mr-3 flex-shrink-0 mt-0.5 text-amber-500" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                            </svg>
+                        {% else %}
+                            <svg class="w-5 h-5 mr-3 flex-shrink-0 mt-0.5 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                            </svg>
+                        {% endif %}
+                        <div class="text-sm font-medium">{{ message }}</div>
+                    </div>
+                </div>
+            {% endfor %}
         {% endfor %}
     {% endblock %}
 
-    {% block body %}{% endblock %}
+    <div class="p-8">
+        {% block body %}{% endblock %}
+    </div>
+</div>
+
+<!-- Footer -->
+<div class="text-center mt-8 animate-fade-in">
+    <p class="text-xs text-gray-400">
+        © 2024 Livridea. Tous droits réservés.
+    </p>
 </div>
 
 {% block javascripts %}
     {{ encore_entry_script_tags('app') }}
+    <script>
+        // Animation d'apparition progressive
+        document.addEventListener('DOMContentLoaded', function() {
+            const elements = document.querySelectorAll('.animate-fade-in');
+            elements.forEach((element, index) => {
+                element.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+
+        // Vibration tactile pour mobile
+        if (navigator.vibrate) {
+            document.addEventListener('click', function(e) {
+                if (e.target.matches('button, input[type="submit"], a[href]')) {
+                    navigator.vibrate(30);
+                }
+            });
+        }
+    </script>
 {% endblock %}
 </body>
 </html>

@@ -59,7 +59,7 @@ class ResetPasswordController extends AbstractController
         }
 
         // Version desktop par défaut
-        return $this->render('auth/desktop/login/reset_password/request.html.twig', [
+        return $this->render('auth/desktop/reset_password/request.html.twig', [
             'requestForm' => $form,
         ]);
     }
@@ -76,14 +76,7 @@ class ResetPasswordController extends AbstractController
             $resetToken = $this->resetPasswordHelper->generateFakeResetToken();
         }
 
-        if ($this->deviceDetector->isMobile()) {
-            return $this->render('auth/mobile/reset_password/check_email.html.twig', [
-                'resetToken' => $resetToken,
-            ]);
-        }
-
-        // Version desktop par défaut
-        return $this->render('auth/desktop/login/reset_password/check_email.html.twig', [
+        return $this->render('auth/emails/check_email.html.twig', [
             'resetToken' => $resetToken,
         ]);
     }
@@ -183,17 +176,11 @@ class ResetPasswordController extends AbstractController
         $email = (new TemplatedEmail())
             ->from(new Address('livridea@gmail.com', 'RMot de passe'))
             ->to((string)$user->getEmail())
-            ->subject('Your password reset request');
-        if ($this->deviceDetector->isMobile()) {
-            $email->htmlTemplate('auth/mobile/reset_password/email.html.twig');
-        } else {
-            $email->htmlTemplate('auth/desktop/reset_password/email.html.twig');
-        }
-
-        $email->context([
-            'resetToken' => $resetToken,
-        ]);
-
+            ->subject('Your password reset request')
+            ->htmlTemplate('auth/emails/email_reset_password.html.twig')
+            ->context([
+                'resetToken' => $resetToken,
+            ]);
 
         $mailer->send($email);
 

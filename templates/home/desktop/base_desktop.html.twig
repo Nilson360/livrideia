@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Bienvenue sur Livridea{% endblock %}</title>
+    <link rel="icon" href="/images/book-icon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('app') }}
+    {% endblock %}
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .backdrop-blur-md {
+            backdrop-filter: blur(12px);
+        }
+
+        .shadow-glow {
+            box-shadow: 0 0 20px rgba(255, 138, 0, 0.3);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800 min-h-screen" data-user-id="{{ app.user ? app.user.id : '' }}">
+
+{% include 'home/desktop/partials/_navbar.html.twig' %}
+
+<div class="min-h-screen pt-20 pb-6 lg:pb-8">
+    <div class="max-w-7xl mx-auto px-4 lg:px-8">
+        {% block content %}{% endblock %}
+    </div>
+</div>
+{% include 'home/desktop/partials/footer.html.twig' %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const navLinks = document.querySelectorAll('nav a');
+            const currentPath = window.location.pathname;
+
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.remove('text-gray-400');
+                    link.classList.add('text-[#FF8A00]');
+                }
+            });
+
+            if (navigator.vibrate) {
+                document.querySelectorAll('nav a, nav button').forEach(element => {
+                    element.addEventListener('click', () => {
+                        navigator.vibrate(30);
+                    });
+                });
+            }
+        });
+
+        function openPublishModal() {
+            console.log('Ouverture du modal de publication');
+        }
+    </script>
+{% endblock %}
+</body>
+</html>

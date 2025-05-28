@@ -1,5 +1,9 @@
 parameters:
     uploads_directory: '%kernel.project_dir%/public/uploads'
+    # Paramètres d'email
+    app.email.from: 'noreply@livridea.fr'
+    app.email.contact: 'contact@livridea.fr'
+    app.email.admin: 'admin@livridea.fr'
 
 services:
     _defaults:

@@ -1,182 +1,317 @@
 {% block main_content %}
-    <div class="w-full md:w-2/3 lg:w-1/2 p-4 space-y-6">
+    <div class="space-y-6">
 
-        <!-- Zone de création de publication avec nouveaux styles -->
-        <div class="bg-[#f7f9f4] border border-[#2E7D32] rounded-xl shadow-md p-6">
-            <h2 class="text-[#2E7D32] text-lg font-bold italic mb-4 flex items-center gap-2">
-                <svg fill="#2E7D32" viewBox="0 -0.11 33.736 33.736" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
-                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                    <g id="SVGRepo_iconCarrier">
-                        <g transform="translate(-287.982 -577.197)">
-                            <path d="M288.983,610.716a1,1,0,0,1-.528-1.85c.141-.088,14.151-8.859,17.653-17.833a1,1,0,0,1,1.863.727c-3.745,9.6-17.863,18.434-18.462,18.8A.993.993,0,0,1,288.983,610.716Z"></path>
-                            <path d="M292.256,607.871l-.017-1.09a28.119,28.119,0,0,1,4.178-14.957l.3-.441h3.806L299.6,588.4l.293-.4c5.611-7.734,15.292-10.108,19.194-10.77a2.261,2.261,0,0,1,2.621,2.408c-1.791,25.095-28.105,28.1-28.371,28.125Zm5.547-14.488a26.983,26.983,0,0,0-3.554,12.23c4.909-.811,23.983-5.3,25.469-26.121a.275.275,0,0,0-.09-.232.224.224,0,0,0-.2-.06c-3.59.608-12.393,2.752-17.614,9.575l.776,2.529a1.607,1.607,0,0,1-1.536,2.079Z"></path>
-                        </g>
-                    </g>
-                </svg>
-                Votre plume
-            </h2>
-
-            {{ form_start(postForm, {'attr': {'class': 'space-y-4'}}) }}
-            {{ form_widget(postForm.content, {
-                'attr': {
-                    'class': 'w-full border border-[#2E7D32] rounded-lg p-3 bg-white text-[#333333] placeholder-gray-500 text-sm focus:ring-2 focus:ring-[#FF8A00] focus:border-[#FF8A00]',
-                    'rows': 4,
-                    'placeholder': 'Partagez une citation, un extrait ou une pensée...'
-                }
-            }) }}
-            <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 mt-4">
-                <div>
-                    {{ form_widget(postForm.imageFile, {
-                        'attr': {
-                            'class': 'text-[#2E7D32] hover:text-[#FF8A00] hover:underline text-sm',
-                            'accept': 'image/*'
-                        }
-                    }) }}
+        <!-- Zone de création de publication - Style mobile adapté desktop -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="p-6">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#FF8A00] to-[#e67300] flex items-center justify-center shadow-md flex-shrink-0">
+                        <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h2 class="text-gray-800 font-bold text-lg mb-2">Partagez vos pensées littéraires</h2>
+                        <p class="text-gray-500 text-sm">Exprimez-vous sur vos lectures favorites, partagez une citation inspirante...</p>
+                    </div>
                 </div>
-                <button type="submit"
-                        class="bg-[#FF8A00] text-white px-5 py-2 rounded-lg shadow hover:bg-[#e67e00] text-sm font-semibold transition-colors duration-200">
-                    Publier
-                </button>
+
+                {{ form_start(postForm, {'attr': {'class': 'space-y-4'}}) }}
+                {{ form_widget(postForm.content, {
+                    'attr': {
+                        'class': 'w-full border border-gray-200 rounded-xl p-4 bg-gray-50 text-gray-700 placeholder-gray-400 text-sm focus:ring-2 focus:ring-[#FF8A00] focus:border-[#FF8A00] focus:bg-white transition-all duration-200 min-h-[120px] resize-none',
+                        'rows': 4,
+                        'placeholder': 'Partagez une citation, un extrait, une réflexion sur votre lecture du moment...'
+                    }
+                }) }}
+
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div class="flex items-center space-x-4">
+                        <!-- Upload d'image -->
+                        <label for="{{ postForm.imageFile.vars.id }}" class="flex items-center text-gray-500 hover:text-[#FF8A00] transition-colors cursor-pointer group">
+                            <div class="p-2 rounded-lg bg-gray-50 group-hover:bg-orange-50 transition-colors mr-2">
+                                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                                </svg>
+                            </div>
+                            <span class="text-sm font-medium">Ajouter une image</span>
+                        </label>
+                        {{ form_widget(postForm.imageFile, {
+                            'attr': {
+                                'class': 'hidden',
+                                'accept': 'image/*'
+                            }
+                        }) }}
+
+                        <!-- Suggestions -->
+                        <button type="button" class="flex items-center text-gray-500 hover:text-emerald-600 transition-colors group">
+                            <div class="p-2 rounded-lg bg-gray-50 group-hover:bg-emerald-50 transition-colors mr-2">
+                                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                </svg>
+                            </div>
+                            <span class="text-sm font-medium">Inspiration</span>
+                        </button>
+                    </div>
+
+                    <button type="submit" class="bg-gradient-to-r from-[#FF8A00] to-[#e67300] text-white rounded-xl px-6 py-3 shadow-md hover:shadow-lg text-sm font-semibold transition-all duration-200 hover:scale-105 flex items-center">
+                        <svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                        </svg>
+                        Publier
+                    </button>
+                </div>
+                {{ form_end(postForm) }}
             </div>
-            {{ form_end(postForm) }}
         </div>
 
-        <!-- 📜 Liste des publications avec hauteur d'image fixe -->
+        <!-- Section Moments Littéraires (comme sur mobile) -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="p-6">
+                <h3 class="text-gray-800 font-bold text-lg mb-4 flex items-center gap-3">
+                    <div class="p-2 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg">
+                        <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                    </div>
+                    <span>Moments Littéraires</span>
+                </h3>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="group relative overflow-hidden rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 p-4 text-white cursor-pointer hover:scale-105 transition-transform duration-200">
+                        <div class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors"></div>
+                        <div class="relative">
+                            <div class="text-xs font-medium mb-2 opacity-90">Citation du jour</div>
+                            <p class="text-sm font-medium leading-relaxed">"La lecture d'un bon livre est un dialogue incessant..."</p>
+                            <div class="mt-3 text-xs opacity-75">André Maurois</div>
+                        </div>
+                    </div>
+
+                    <div class="group relative overflow-hidden rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 p-4 text-white cursor-pointer hover:scale-105 transition-transform duration-200">
+                        <div class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors"></div>
+                        <div class="relative">
+                            <div class="text-xs font-medium mb-2 opacity-90">Livre tendance</div>
+                            <p class="text-sm font-medium leading-relaxed">L'Étranger</p>
+                            <div class="mt-3 text-xs opacity-75">Albert Camus</div>
+                        </div>
+                    </div>
+
+                    <div class="group relative overflow-hidden rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 p-4 text-white cursor-pointer hover:scale-105 transition-transform duration-200">
+                        <div class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors"></div>
+                        <div class="relative">
+                            <div class="text-xs font-medium mb-2 opacity-90">Défi lecture</div>
+                            <p class="text-sm font-medium leading-relaxed">25 livres cette année</p>
+                            <div class="mt-3 text-xs opacity-75">18/25 complétés</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Liste des publications -->
         {% for post in posts %}
             {% set userHasLiked = app.user and post.likes|filter(like => like.user.id == app.user.id)|length > 0 %}
             {% set likeCount = post.likes|length %}
             {% set commentCount = post.comments|length %}
             {% set shareCount = post.shares|length %}
 
-            <div class="post-container bg-[#f7f9f4] border border-[#2E7D32] rounded-xl shadow-md p-6 space-y-4 transition-shadow hover:shadow-lg">
-                <!-- En-tête du post -->
-                <div class="flex flex-wrap items-center gap-2 text-sm text-[#333333]">
-                    <a href="{{ path('dashboard_user_profile_other', { 'username': post.user.username }) }}"
-                       class="text-[#2E7D32] font-bold hover:text-[#FF8A00] hover:underline italic transition-colors">
-                        {{ post.user.fullName }}
-                    </a>
-                    <span class="text-sm text-gray-500">· {{ post.createdAt|date('d/m/Y') }}</span>
-                </div>
-
-                <p class="text-[#333333] text-sm whitespace-pre-line">{{ post.content }}</p>
-
-                {% if post.imagePath %}
-                    <div class="flex justify-center">
-                        <div class="w-full h-64 overflow-hidden rounded-lg border border-[#2E7D32] shadow">
-                            <img src="{{ asset('uploads/' ~ post.imagePath) }}"
-                                 alt="Image de publication"
-                                 class="w-full h-full object-cover">
-                        </div>
-                    </div>
-                {% endif %}
-
-                {% if likeCount > 0 or commentCount > 0 or shareCount > 0 %}
-                    <div class="stats-container flex flex-wrap justify-between items-center text-xs text-gray-600 border-t border-[#2E7D32]/20 pt-2">
-                        <div class="flex items-center gap-2">
-                            {% if likeCount > 0 %}
-                                <span class="like-count flex items-center gap-1">
-                                    <svg class="w-4 h-4 text-[#2E7D32]" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                        <path d="M15.9 4.5C15.9 3 14.418 2 13.26 2c-.806 0-.869.612-.993 1.82-.055.53-.121 1.174-.267 1.93-.386 2.002-1.72 4.56-2.996 5.325V17C9 19.25 9.75 20 13 20h3.773c2.176 0 2.703-1.433 2.899-1.964l.013-.036c.114-.306.358-.547.638-.82.31-.306.664-.653.927-1.18.311-.623.27-1.177.233-1.67-.023-.299-.044-.575.017-.83.064-.27.146-.475.225-.671.143-.356.275-.686.275-1.329 0-1.5-.748-2.498-2.315-2.498H15.5S15.9 6 15.9 4.5zM5.5 10A1.5 1.5 0 0 0 4 11.5v7a1.5 1.5 0 0 0 3 0v-7A1.5 1.5 0 0 0 5.5 10z"/>
+            <article class="post-container bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-200">
+                <!-- Header du post -->
+                <div class="p-6 pb-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <a href="{{ path('dashboard_user_profile_other', {'username': post.user.username}) }}" class="flex items-center flex-1 min-w-0 group">
+                            <div class="relative flex-shrink-0">
+                                <img src="{{ asset(post.user.avatarPath|default('/images/user_default.png')) }}"
+                                     alt="{{ post.user.username }}"
+                                     class="w-12 h-12 rounded-full border-2 border-gray-100 group-hover:border-[#FF8A00] transition-colors">
+                                <div class="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full shadow-sm"></div>
+                            </div>
+                            <div class="ml-4 min-w-0 flex-1">
+                                <h3 class="font-semibold text-gray-800 group-hover:text-[#FF8A00] transition-colors">{{ post.user.fullName }}</h3>
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <svg class="w-4 h-4 mr-1 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
                                     </svg>
-                                    {{ likeCount }}
-                                </span>
-                            {% endif %}
+                                    <span>{{ post.createdAt|date('d M Y') }} à {{ post.createdAt|date('H:i') }}</span>
+                                </div>
+                            </div>
+                        </a>
+
+                        <div class="relative">
+                            <button class="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                                <svg class="w-5 h-5 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                                </svg>
+                            </button>
                         </div>
-                        <div class="flex items-center gap-4">
-                            {% if commentCount > 0 %}
-                                <button class="toggle-comments hover:text-[#2E7D32] comment-count-btn transition-colors"
-                                        data-count="{{ commentCount }}">
-                                    💬 {{ commentCount }} commentaire{{ commentCount > 1 ? 's' : '' }}
-                                </button>
-                            {% endif %}
-                            {% if shareCount > 0 %}
-                                <span>🔁 {{ shareCount }}</span>
-                            {% endif %}
+                    </div>
+
+                    <!-- Contenu du post -->
+                    <div class="mb-4">
+                        <p class="text-gray-700 leading-relaxed whitespace-pre-line">{{ post.content }}</p>
+                    </div>
+                </div>
+
+                <!-- Image du post -->
+                {% if post.imagePath %}
+                    <div class="px-6 pb-4">
+                        <div class="relative rounded-xl overflow-hidden bg-gray-100 border border-gray-200 shadow-sm">
+                            <div class="aspect-[16/10] w-full">
+                                <img src="{{ asset('uploads/' ~ post.imagePath) }}"
+                                     alt="Image du post"
+                                     class="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                                     loading="lazy">
+                            </div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                         </div>
                     </div>
                 {% endif %}
 
-                <!-- Barre d'actions -->
-                <div class="flex justify-around items-center text-sm border-t border-[#2E7D32]/20 pt-2 text-[#2E7D32]">
-                    <button class="like-button flex items-center gap-1 {{ userHasLiked ? 'text-[#FF8A00]' : 'text-[#2E7D32]' }} hover:text-[#FF8A00] transition-colors"
-                            data-id="{{ post.id }}">
-                        {% if userHasLiked %}
-                            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"
-                                 class="w-4 h-4">
-                                <path fill-rule="evenodd" clip-rule="evenodd"
-                                      d="M15.9 4.5C15.9 3 14.418 2 13.26 2c-.806 0-.869.612-.993 1.82-.055.53-.121 1.174-.267 1.93-.386 2.002-1.72 4.56-2.996 5.325V17C9 19.25 9.75 20 13 20h3.773c2.176 0 2.703-1.433 2.899-1.964l.013-.036c.114-.306.358-.547.638-.82.31-.306.664-.653.927-1.18.311-.623.27-1.177.233-1.67-.023-.299-.044-.575.017-.83.064-.27.146-.475.225-.671.143-.356.275-.686.275-1.329 0-1.5-.748-2.498-2.315-2.498H15.5S15.9 6 15.9 4.5zM5.5 10A1.5 1.5 0 0 0 4 11.5v7a1.5 1.5 0 0 0 3 0v-7A1.5 1.5 0 0 0 5.5 10z"/>
-                            </svg>
-                        {% else %}
-                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4">
-                                <path d="M8 10V20M8 10L4 9.99998V20L8 20M8 10L13.1956 3.93847C13.6886 3.3633 14.4642 3.11604 15.1992 3.29977L15.2467 3.31166C16.5885 3.64711 17.1929 5.21057 16.4258 6.36135L14 9.99998H18.5604C19.8225 9.99998 20.7691 11.1546 20.5216 12.3922L19.3216 18.3922C19.1346 19.3271 18.3138 20 17.3604 20L8 20"
-                                      stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                      stroke-linejoin="round"/>
-                            </svg>
-                        {% endif %}
-                        J'aime
-                    </button>
-
-                    <button class="toggle-comments hover:text-[#FF8A00] flex items-center gap-1 transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
-                             stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.77 9.77 0 01-4.29-1l-4.42 1 .82-4.16A7.964 7.964 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                        </svg>
-                        Commenter
-                    </button>
-                </div>
-
-                <!-- Zone des commentaires -->
-                <div class="comments-section mt-4 hidden space-y-3">
-                    {% for comment in post.comments %}
-                        <div class="border-t border-[#2E7D32]/20 pt-2 text-sm text-[#333333]">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <a href="{{ path('dashboard_user_profile_other', { 'username': comment.user.username }) }}"
-                                       class="text-[#2E7D32] font-semibold hover:text-[#FF8A00] hover:underline italic transition-colors">
-                                        {{ comment.user.fullName }}
-                                    </a>
-                                    <p class="text-xs text-gray-500">{{ comment.createdAt|date('d/m/Y H:i') }}</p>
-                                    <p class="mt-1">{{ comment.content }}</p>
-                                </div>
-                                {% if app.user and app.user.id == comment.user.id %}
-                                    <div class="ml-2 flex gap-2">
-                                        <button class="edit-comment text-[#2E7D32] hover:text-[#FF8A00] hover:underline text-xs transition-colors"
-                                                data-comment-id="{{ comment.id }}">✏️ Modifier
-                                        </button>
-                                        <button class="delete-comment text-red-600 hover:text-red-800 hover:underline text-xs transition-colors"
-                                                data-comment-id="{{ comment.id }}">🗑️ Supprimer
-                                        </button>
+                <!-- Stats et actions -->
+                <div class="px-6 pb-6">
+                    <!-- Stats -->
+                    {% if likeCount > 0 or commentCount > 0 or shareCount > 0 %}
+                        <div class="stats-container flex items-center justify-between text-sm text-gray-500 mb-4 py-2 border-t border-gray-100">
+                            <div class="flex items-center space-x-4">
+                                {% if likeCount > 0 %}
+                                    <div class="like-count flex items-center">
+                                        <div class="flex -space-x-1 mr-2">
+                                            <div class="w-5 h-5 bg-gradient-to-br from-red-500 to-red-600 rounded-full border-2 border-white flex items-center justify-center shadow-sm">
+                                                <svg class="w-3 h-3 text-white" viewBox="0 0 24 24" fill="currentColor">
+                                                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                                </svg>
+                                            </div>
+                                            <div class="w-5 h-5 bg-gradient-to-br from-[#FF8A00] to-[#e67300] rounded-full border-2 border-white flex items-center justify-center shadow-sm">
+                                                <svg class="w-3 h-3 text-white" viewBox="0 0 24 24" fill="currentColor">
+                                                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <span class="font-medium">{{ likeCount }} j'aime</span>
                                     </div>
                                 {% endif %}
+                                {% if commentCount > 0 %}
+                                    <span class="comment-count-display">{{ commentCount }} commentaire{{ commentCount > 1 ? 's' : '' }}</span>
+                                {% endif %}
                             </div>
+                            {% if shareCount > 0 %}
+                                <div class="flex items-center text-emerald-600">
+                                    <svg class="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/>
+                                    </svg>
+                                    <span class="font-medium">{{ shareCount }}</span>
+                                </div>
+                            {% endif %}
                         </div>
-                    {% endfor %}
+                    {% endif %}
 
-                    <!-- Formulaire d'ajout de commentaire -->
-                    <div class="add-comment flex flex-col sm:flex-row gap-2">
-                        <input type="text" placeholder="Exprimez-vous..."
-                               class="comment-input w-full border border-[#2E7D32] rounded p-2 text-sm bg-white focus:ring-2 focus:ring-[#FF8A00] focus:border-[#FF8A00]"
-                               data-post-id="{{ post.id }}">
-                        <button class="send-comment bg-[#FF8A00] text-white px-4 py-2 rounded hover:bg-[#e67e00] text-sm transition-colors"
-                                data-post-id="{{ post.id }}">
-                            Publier
+                    <!-- Actions principales -->
+                    <div class="flex items-center justify-around border-t border-gray-100 pt-3">
+                        <button class="like-button flex items-center justify-center flex-1 py-3 rounded-lg {{ userHasLiked ? 'text-red-500 bg-red-50' : 'text-gray-600 hover:bg-red-50 hover:text-red-500' }} transition-all duration-200 hover:scale-105 group"
+                                data-id="{{ post.id }}">
+                            {% if userHasLiked %}
+                                <svg class="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                </svg>
+                            {% else %}
+                                <svg class="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                                </svg>
+                            {% endif %}
+                            <span class="text-sm font-medium">J'aime</span>
+                        </button>
+
+                        <button class="toggle-comments flex items-center justify-center flex-1 py-3 rounded-lg text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 hover:scale-105 group">
+                            <svg class="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                            </svg>
+                            <span class="text-sm font-medium">Commenter</span>
+                        </button>
+
+                        <button class="flex items-center justify-center flex-1 py-3 rounded-lg text-gray-600 hover:bg-emerald-50 hover:text-emerald-600 transition-all duration-200 hover:scale-105 group">
+                            <svg class="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/>
+                            </svg>
+                            <span class="text-sm font-medium">Partager</span>
                         </button>
                     </div>
+
+                    <!-- Zone des commentaires -->
+                    <div class="comments-section mt-6 hidden space-y-4">
+                        {% for comment in post.comments %}
+                            <div class="border-t border-gray-100 pt-4 text-sm">
+                                <div class="flex justify-between items-start">
+                                    <div class="flex-1">
+                                        <div class="flex items-center gap-3 mb-2">
+                                            <img src="{{ asset(comment.user.avatarPath|default('/images/user_default.png')) }}"
+                                                 alt="{{ comment.user.username }}"
+                                                 class="w-8 h-8 rounded-full">
+                                            <div>
+                                                <a href="{{ path('dashboard_user_profile_other', { 'username': comment.user.username }) }}"
+                                                   class="text-gray-800 font-semibold hover:text-[#FF8A00] hover:underline transition-colors">
+                                                    {{ comment.user.fullName }}
+                                                </a>
+                                                <p class="text-xs text-gray-500">{{ comment.createdAt|date('d/m/Y H:i') }}</p>
+                                            </div>
+                                        </div>
+                                        <p class="text-gray-700 ml-11">{{ comment.content }}</p>
+                                    </div>
+                                    {% if app.user and app.user.id == comment.user.id %}
+                                        <div class="ml-4 flex gap-2">
+                                            <button class="edit-comment text-[#FF8A00] hover:text-[#e67300] hover:underline text-xs transition-colors"
+                                                    data-comment-id="{{ comment.id }}">✏️ Modifier
+                                            </button>
+                                            <button class="delete-comment text-red-600 hover:text-red-800 hover:underline text-xs transition-colors"
+                                                    data-comment-id="{{ comment.id }}">🗑️ Supprimer
+                                            </button>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                        <!-- Formulaire d'ajout de commentaire -->
+                        <div class="add-comment flex gap-3 pt-4 border-t border-gray-100">
+                            <img src="{{ asset(app.user.avatarPath|default('/images/default-profile.png')) }}"
+                                 alt="Votre avatar"
+                                 class="w-8 h-8 rounded-full flex-shrink-0">
+                            <div class="flex-1 flex gap-2">
+                                <input type="text" placeholder="Exprimez-vous..."
+                                       class="comment-input flex-1 border border-gray-200 rounded-lg p-3 text-sm bg-gray-50 focus:ring-2 focus:ring-[#FF8A00] focus:border-[#FF8A00] focus:bg-white transition-all"
+                                       data-post-id="{{ post.id }}">
+                                <button class="send-comment bg-gradient-to-r from-[#FF8A00] to-[#e67300] text-white px-4 py-3 rounded-lg hover:shadow-md text-sm font-medium transition-all duration-200 hover:scale-105"
+                                        data-post-id="{{ post.id }}">
+                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        {% else %}
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="p-12 text-center">
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Aucune publication pour le moment</h3>
+                    <p class="text-gray-500 mb-6">Soyez le premier à partager vos pensées littéraires avec la communauté !</p>
+                    <button onclick="document.querySelector('textarea').focus()" class="bg-gradient-to-r from-[#FF8A00] to-[#e67300] text-white px-6 py-3 rounded-xl shadow-md hover:shadow-lg font-semibold transition-all duration-200 hover:scale-105">
+                        Créer votre première publication
+                    </button>
                 </div>
             </div>
-        {% else %}
-            <p class="text-center text-gray-500 italic mt-8">Aucune publication pour le moment. Inspirez-nous !</p>
         {% endfor %}
 
     </div>
 {% endblock %}
 
-
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Le script reste le même que celui que vous avez
         // === 1. Toggle des commentaires ===
         document.querySelectorAll('.toggle-comments').forEach(button => {
             button.addEventListener('click', function () {
@@ -205,16 +340,32 @@
                         const likeCountEl = container.querySelector('.like-count');
 
                         if (likeCountEl) {
-                            likeCountEl.textContent = data.likesCount || 0;
+                            const countSpan = likeCountEl.querySelector('span');
+                            if (countSpan) {
+                                countSpan.textContent = data.likesCount + ' j\'aime';
+                            }
                             likeCountEl.classList.toggle('hidden', data.likesCount === 0);
                         }
 
-                        this.classList.toggle('text-[#FF8A00]', data.status === 'liked');
-                        this.classList.toggle('text-[#2E7D32]', data.status !== 'liked');
+                        // Mettre à jour le style du bouton
+                        if (data.status === 'liked') {
+                            this.classList.remove('text-gray-600', 'hover:bg-red-50', 'hover:text-red-500');
+                            this.classList.add('text-red-500', 'bg-red-50');
+                        } else {
+                            this.classList.remove('text-red-500', 'bg-red-50');
+                            this.classList.add('text-gray-600', 'hover:bg-red-50', 'hover:text-red-500');
+                        }
 
                         if (statsContainer) {
-                            const hasStats = data.likesCount > 0 || parseInt(statsContainer.querySelector('.comment-count-btn')?.dataset.count || 0) > 0;
-                            statsContainer.classList.toggle('hidden', !hasStats);
+                            const commentCountBtn = statsContainer.querySelector('.comment-count-display');
+                            const commentCount = commentCountBtn ? parseInt(commentCountBtn.textContent.match(/\d+/)?.[0] || '0', 10) : 0;
+
+                            // Vérifier si on doit afficher ou masquer stats-container
+                            if (data.likesCount === 0 && commentCount === 0) {
+                                statsContainer.classList.add('hidden');
+                            } else {
+                                statsContainer.classList.remove('hidden');
+                            }
                         }
                     })
                     .catch(err => console.error('Erreur like :', err));
@@ -243,31 +394,51 @@
                     if (data.status === 'commented') {
                         const commentsSection = container.querySelector('.comments-section');
                         const newComment = document.createElement('div');
-                        newComment.className = 'border-t border-[#2E7D32]/20 pt-2 text-sm text-[#333333]';
+                        newComment.className = 'border-t border-gray-100 pt-4 text-sm';
                         newComment.innerHTML = `
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <span class="text-[#2E7D32] font-semibold italic">${data.comment.user}</span>
-                                <p class="text-xs text-gray-500">${data.comment.createdAt}</p>
-                                <p class="mt-1">${data.comment.content}</p>
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <img src="${data.comment.avatar}" alt="${data.comment.user}" class="w-8 h-8 rounded-full">
+                                        <div>
+                                            <span class="text-gray-800 font-semibold">${data.comment.user}</span>
+                                            <p class="text-xs text-gray-500">${data.comment.createdAt}</p>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-700 ml-11">${data.comment.content}</p>
+                                </div>
+                                <div class="ml-4 flex gap-2">
+                                    <button class="edit-comment text-[#FF8A00] hover:text-[#e67300] hover:underline text-xs transition-colors" data-comment-id="${data.comment.id}">✏️ Modifier</button>
+                                    <button class="delete-comment text-red-600 hover:text-red-800 hover:underline text-xs transition-colors" data-comment-id="${data.comment.id}">🗑️ Supprimer</button>
+                                </div>
                             </div>
-                            <div class="ml-2 flex gap-2">
-                                <button class="edit-comment text-[#2E7D32] hover:text-[#FF8A00] hover:underline text-xs transition-colors" data-comment-id="${data.comment.id}">✏️ Modifier</button>
-                                <button class="delete-comment text-red-600 hover:text-red-800 hover:underline text-xs transition-colors" data-comment-id="${data.comment.id}">🗑️ Supprimer</button>
-                            </div>
-                        </div>
-                    `;
+                        `;
                         commentsSection.insertBefore(newComment, commentsSection.querySelector('.add-comment'));
                         input.value = '';
 
-                        const commentCountBtn = container.querySelector('.comment-count-btn');
-                        if (commentCountBtn) {
-                            commentCountBtn.dataset.count = data.commentsCount;
-                            commentCountBtn.textContent = `💬 ${data.commentsCount} commentaire${data.commentsCount > 1 ? 's' : ''}`;
-                            commentCountBtn.classList.remove('hidden');
+                        // Mettre à jour le compteur de commentaires
+                        const statsContainer = container.querySelector('.stats-container');
+                        let commentCountDisplay = container.querySelector('.comment-count-display');
+
+                        if (commentCountDisplay) {
+                            commentCountDisplay.textContent = `${data.commentsCount} commentaire${data.commentsCount > 1 ? 's' : ''}`;
+                        } else if (statsContainer && data.commentsCount > 0) {
+                            // Créer le compteur s'il n'existe pas
+                            const leftDiv = statsContainer.querySelector('.flex.items-center.space-x-4');
+                            if (leftDiv) {
+                                const commentCountSpan = document.createElement('span');
+                                commentCountSpan.className = 'comment-count-display';
+                                commentCountSpan.textContent = `${data.commentsCount} commentaire${data.commentsCount > 1 ? 's' : ''}`;
+                                leftDiv.appendChild(commentCountSpan);
+                            }
                         }
 
-                        container.querySelector('.stats-container')?.classList.remove('hidden');
+                        if (statsContainer) {
+                            statsContainer.classList.remove('hidden');
+                        }
+
+                        // Ouvrir automatiquement les commentaires
+                        commentsSection.classList.remove('hidden');
                     }
                 })
                 .catch(err => console.error('Erreur commentaire :', err));
@@ -296,66 +467,100 @@
                 e.preventDefault();
                 const commentId = el.dataset.commentId;
 
-                fetch(`/comment/${commentId}/delete`, {
-                    method: 'POST',
-                    headers: {'X-Requested-With': 'XMLHttpRequest'}
-                })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.status === 'deleted') {
-                            el.closest('.border-t').remove();
-                            const btn = container.querySelector('.comment-count-btn');
-                            if (btn) {
-                                if (data.commentsCount > 0) {
-                                    btn.dataset.count = data.commentsCount;
-                                    btn.textContent = `💬 ${data.commentsCount} commentaire${data.commentsCount > 1 ? 's' : ''}`;
-                                } else {
-                                    btn.classList.add('hidden');
+                if (confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?')) {
+                    fetch(`/comment/${commentId}/delete`, {
+                        method: 'POST',
+                        headers: {'X-Requested-With': 'XMLHttpRequest'}
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.status === 'deleted') {
+                                el.closest('.border-t').remove();
+
+                                // Mettre à jour le compteur
+                                const commentCountDisplay = container.querySelector('.comment-count-display');
+                                if (commentCountDisplay) {
+                                    if (data.commentsCount > 0) {
+                                        commentCountDisplay.textContent = `${data.commentsCount} commentaire${data.commentsCount > 1 ? 's' : ''}`;
+                                    } else {
+                                        commentCountDisplay.remove();
+
+                                        // Vérifier si on doit masquer stats-container
+                                        const statsContainer = container.querySelector('.stats-container');
+                                        const likeCount = container.querySelector('.like-count span')?.textContent.match(/\d+/)?.[0] || 0;
+                                        if (statsContainer && parseInt(likeCount) === 0) {
+                                            statsContainer.classList.add('hidden');
+                                        }
+                                    }
                                 }
                             }
-                        }
-                    });
+                        });
+                }
             }
 
             // Édition
             if (el.classList.contains('edit-comment')) {
                 e.preventDefault();
                 const commentBlock = el.closest('.border-t');
-                const p = commentBlock.querySelector('p.mt-1');
-                const oldText = p.textContent;
+                const contentP = commentBlock.querySelector('p.ml-11');
+                const oldText = contentP.textContent;
 
-                p.style.display = 'none';
+                // Masquer l'affichage normal
+                contentP.style.display = 'none';
                 el.style.display = 'none';
-
                 const deleteBtn = commentBlock.querySelector('.delete-comment');
-                deleteBtn?.style.setProperty('display', 'none');
+                if (deleteBtn) deleteBtn.style.display = 'none';
 
-                const input = document.createElement('input');
-                input.value = oldText;
-                input.className = 'border border-[#2E7D32] rounded w-full p-2 mt-2 text-sm focus:ring-2 focus:ring-[#FF8A00]';
-                commentBlock.appendChild(input);
+                // Créer un input pour éditer
+                const inputEdit = document.createElement('input');
+                inputEdit.value = oldText;
+                inputEdit.className = 'border border-gray-200 rounded-lg w-full p-3 mt-2 text-sm focus:ring-2 focus:ring-[#FF8A00] ml-11';
+                commentBlock.appendChild(inputEdit);
 
-                const valider = document.createElement('button');
-                valider.className = 'bg-[#2E7D32] text-white px-3 py-1 rounded text-sm ml-2 hover:bg-[#1b5e20] transition-colors';
-                valider.textContent = 'Valider';
-                commentBlock.appendChild(valider);
+                // Ajouter boutons valider/annuler
+                const buttonsDiv = document.createElement('div');
+                buttonsDiv.className = 'flex gap-2 mt-2 ml-11';
 
-                const annuler = document.createElement('button');
-                annuler.className = 'bg-gray-400 text-white px-3 py-1 rounded text-sm ml-2 hover:bg-gray-500 transition-colors';
-                annuler.textContent = 'Annuler';
-                commentBlock.appendChild(annuler);
+                const validateBtn = document.createElement('button');
+                validateBtn.className = 'bg-[#FF8A00] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#e67300] transition-colors';
+                validateBtn.textContent = 'Valider';
 
-                annuler.addEventListener('click', () => {
-                    input.remove();
-                    valider.remove();
-                    annuler.remove();
-                    p.style.display = '';
+                const cancelBtn = document.createElement('button');
+                cancelBtn.className = 'bg-gray-400 text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-500 transition-colors';
+                cancelBtn.textContent = 'Annuler';
+
+                buttonsDiv.appendChild(validateBtn);
+                buttonsDiv.appendChild(cancelBtn);
+                commentBlock.appendChild(buttonsDiv);
+
+                // Focus sur l'input
+                inputEdit.focus();
+                inputEdit.select();
+
+                // Annuler
+                cancelBtn.addEventListener('click', () => {
+                    inputEdit.remove();
+                    buttonsDiv.remove();
+                    contentP.style.display = '';
                     el.style.display = '';
-                    deleteBtn?.style.setProperty('display', '');
+                    if (deleteBtn) deleteBtn.style.display = '';
                 });
 
-                valider.addEventListener('click', () => {
-                    const newContent = input.value.trim();
+                // Valider avec Entrée
+                inputEdit.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        validateBtn.click();
+                    }
+                    if (e.key === 'Escape') {
+                        e.preventDefault();
+                        cancelBtn.click();
+                    }
+                });
+
+                // Valider
+                validateBtn.addEventListener('click', () => {
+                    const newContent = inputEdit.value.trim();
                     if (!newContent) return;
 
                     fetch(`/comment/${el.dataset.commentId}/edit`, {
@@ -369,17 +574,70 @@
                         .then(res => res.json())
                         .then(data => {
                             if (data.status === 'updated') {
-                                p.textContent = data.comment.content;
-                                input.remove();
-                                valider.remove();
-                                annuler.remove();
-                                p.style.display = '';
+                                contentP.textContent = data.comment.content;
+                                inputEdit.remove();
+                                buttonsDiv.remove();
+                                contentP.style.display = '';
                                 el.style.display = '';
-                                deleteBtn?.style.setProperty('display', '');
+                                if (deleteBtn) deleteBtn.style.display = '';
                             }
                         });
                 });
             }
+        });
+
+        // === 5. Prévisualisation d'image ===
+        document.querySelector('#{{ postForm.imageFile.vars.id }}')?.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                // Créer preview
+                let preview = document.querySelector('.image-preview');
+                if (!preview) {
+                    preview = document.createElement('div');
+                    preview.className = 'image-preview mt-3 relative';
+                    this.parentNode.appendChild(preview);
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.innerHTML = `
+                        <div class="relative inline-block">
+                            <img src="${e.target.result}" alt="Aperçu" class="max-h-40 rounded-lg border border-gray-200 shadow-sm">
+                            <button type="button" class="remove-image absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-colors">×</button>
+                        </div>
+                    `;
+
+                    // Bouton pour supprimer l'image
+                    preview.querySelector('.remove-image').addEventListener('click', function() {
+                        document.querySelector('#{{ postForm.imageFile.vars.id }}').value = '';
+                        preview.remove();
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // === 6. Animation d'apparition des posts ===
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Appliquer l'animation aux posts
+        document.querySelectorAll('.post-container').forEach((post, index) => {
+            post.style.opacity = '0';
+            post.style.transform = 'translateY(20px)';
+            post.style.transition = `opacity 0.6s ease ${index * 0.1}s, transform 0.6s ease ${index * 0.1}s`;
+            observer.observe(post);
         });
     });
 </script>

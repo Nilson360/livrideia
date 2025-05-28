@@ -1,0 +1,558 @@
+{% extends 'home/desktop/base_desktop.html.twig' %}
+
+{% block title %}Suggestions d'amitié - Livridea{% endblock %}
+
+{% block content %}
+    <div class="min-h-screen bg-gray-50">
+        <!-- En-tête de la page -->
+        <div class="bg-gradient-to-br from-[#FF8A00] to-[#e67300] text-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div class="text-center">
+                    <div class="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-2xl mb-6">
+                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <g id="read">
+                                <g>
+                                    <path d="M12,18.883a10.8,10.8,0,0,1-9.675-5.728,2.6,2.6,0,0,1,0-2.31A10.8,10.8,0,0,1,12,5.117a10.8,10.8,0,0,1,9.675,5.728h0a2.6,2.6,0,0,1,0,2.31A10.8,10.8,0,0,1,12,18.883ZM12,6.117a9.787,9.787,0,0,0-8.78,5.176,1.586,1.586,0,0,0,0,1.415A9.788,9.788,0,0,0,12,17.883a9.787,9.787,0,0,0,8.78-5.176,1.584,1.584,0,0,0,0-1.414h0A9.787,9.787,0,0,0,12,6.117Z"/>
+                                    <path d="M12,16.049A4.049,4.049,0,1,1,16.049,12,4.054,4.054,0,0,1,12,16.049Zm0-7.1A3.049,3.049,0,1,0,15.049,12,3.052,3.052,0,0,0,12,8.951Z"/>
+                                    <circle cx="12" cy="12" r="2.028"/>
+                                </g>
+                            </g>
+                        </svg>
+                    </div>
+                    <h1 class="text-4xl md:text-5xl font-bold mb-4">Suggestions d'amitié</h1>
+                    <p class="text-xl text-orange-100 mb-2">Découvrez de nouveaux lecteurs passionnés</p>
+                    <p class="text-orange-200 max-w-2xl mx-auto">
+                        Connectez-vous avec d'autres membres de la communauté Livridea qui partagent vos goûts
+                        littéraires
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenu principal -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex flex-col lg:flex-row gap-8">
+
+                <!-- Contenu principal - Suggestions -->
+                <div class="flex-1">
+                    <!-- Statistiques -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
+                        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                            <div class="text-center sm:text-left">
+                                <h2 class="text-2xl font-bold text-gray-900 mb-2">
+                                    {{ totalSuggestions }} suggestion{{ totalSuggestions > 1 ? 's' : '' }}
+                                    trouvée{{ totalSuggestions > 1 ? 's' : '' }}
+                                </h2>
+                                <p class="text-gray-600">Élargissez votre réseau de lecteurs</p>
+                            </div>
+
+                            <!-- Options de filtrage (pour plus tard) -->
+                            <div class="flex items-center gap-3">
+                                <div class="relative">
+                                    <select class="appearance-none bg-white border border-gray-200 rounded-lg px-4 py-2 pr-8 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#FF8A00] focus:border-[#FF8A00]">
+                                        <option>Suggestions aléatoires</option>
+                                        <option>Lecteurs actifs</option>
+                                        <option>Nouveaux membres</option>
+                                    </select>
+                                    <svg class="w-4 h-4 text-gray-400 absolute right-3 top-3 pointer-events-none"
+                                         viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                              clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if suggestedUsers|length > 0 %}
+                        <!-- Grille des suggestions -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                            {% for suggested in suggestedUsers %}
+                                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
+                                    <div class="p-6">
+                                        <!-- Avatar et badge de statut -->
+                                        <div class="flex justify-center mb-4">
+                                            <div class="relative">
+                                                <div class="w-20 h-20 rounded-full border-3 border-gray-200 shadow-lg overflow-hidden hover:border-[#FF8A00] transition-colors">
+                                                    <img src="{{ asset(suggested.avatarPath|default('/images/user_Default.png')) }}"
+                                                         alt="Avatar de {{ suggested.username }}"
+                                                         class="w-full h-full object-cover">
+                                                </div>
+                                                <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-emerald-500 border-3 border-white rounded-full shadow-sm flex items-center justify-center">
+                                                    <svg class="w-3 h-3 text-white" fill="currentColor"
+                                                         viewBox="0 0 20 20">
+                                                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Informations utilisateur -->
+                                        <div class="text-center mb-4">
+                                            <a href="{{ path('dashboard_user_profile_other', {'username': suggested.username}) }}"
+                                               class="text-lg font-bold text-gray-900 hover:text-[#FF8A00] transition-colors block mb-1">
+                                                {{ suggested.username }}
+                                            </a>
+                                            <p class="text-sm text-gray-500 mb-2">
+                                                @{{ suggested.pseudo|default(suggested.username) }}</p>
+
+                                            <!-- Badges/Infos -->
+                                            <div class="flex items-center justify-center gap-2 mb-3">
+                                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
+                                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                    </svg>
+                                                    Lecteur vérifié
+                                                </span>
+                                            </div>
+
+                                            <!-- Stats factices -->
+                                            <div class="flex justify-center gap-4 text-xs text-gray-500 mb-4">
+                                                <div class="text-center">
+                                                    <div class="font-semibold text-gray-700">{{ random(10, 150) }}</div>
+                                                    <div>Livres lus</div>
+                                                </div>
+                                                <div class="text-center">
+                                                    <div class="font-semibold text-gray-700">{{ random(5, 50) }}</div>
+                                                    <div>Avis</div>
+                                                </div>
+                                                <div class="text-center">
+                                                    <div class="font-semibold text-gray-700">{{ random(2, 25) }}</div>
+                                                    <div>Amis</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Actions -->
+                                        <div class="flex gap-2 justify-center">
+                                            <a href="{{ path('dashboard_user_profile_other', {'username': suggested.username}) }}"
+                                               class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 text-center">
+                                                Voir profil
+                                            </a>
+                                            <button class="friend-request-btn flex-1 bg-gradient-to-r from-[#FF8A00] to-[#e67300] text-white px-4 py-2 rounded-lg shadow-sm hover:shadow-md text-sm font-medium transition-all duration-200 hover:scale-105 flex items-center justify-center gap-1"
+                                                    data-user-id="{{ suggested.id }}">
+                                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"/>
+                                                </svg>
+                                                Se lier
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Pagination -->
+                        {% if totalPages > 1 %}
+                            <div class="flex items-center justify-center gap-2 mb-8">
+                                {% if hasPrevPage %}
+                                    <a href="{{ path('app_friends_suggestions', {'page': currentPage - 1}) }}"
+                                       class="flex items-center px-4 py-2 bg-white border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                                        <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M15 19l-7-7 7-7"/>
+                                        </svg>
+                                        Précédent
+                                    </a>
+                                {% endif %}
+
+                                <div class="flex items-center gap-1">
+                                    {% for page in 1..totalPages %}
+                                        {% if page == currentPage %}
+                                            <span class="px-4 py-2 bg-[#FF8A00] text-white rounded-lg font-medium">{{ page }}</span>
+                                        {% elseif page <= currentPage + 2 and page >= currentPage - 2 %}
+                                            <a href="{{ path('app_friends_suggestions', {'page': page}) }}"
+                                               class="px-4 py-2 bg-white border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                                                {{ page }}
+                                            </a>
+                                        {% elseif page == 1 or page == totalPages %}
+                                            <a href="{{ path('app_friends_suggestions', {'page': page}) }}"
+                                               class="px-4 py-2 bg-white border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                                                {{ page }}
+                                            </a>
+                                        {% elseif (page == currentPage - 3 and page > 1) or (page == currentPage + 3 and page < totalPages) %}
+                                            <span class="px-2 py-2 text-gray-400">...</span>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+
+                                {% if hasNextPage %}
+                                    <a href="{{ path('app_friends_suggestions', {'page': currentPage + 1}) }}"
+                                       class="flex items-center px-4 py-2 bg-white border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                                        Suivant
+                                        <svg class="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M9 5l7 7-7 7"/>
+                                        </svg>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+
+                    {% else %}
+                        <!-- État vide -->
+                        <div class="text-center py-16">
+                            <div class="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
+                                <svg class="w-12 h-12 text-gray-400" fill="none" viewBox="0 0 24 24"
+                                     stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-2">Aucune suggestion disponible</h3>
+                            <p class="text-gray-500 mb-6">Vous avez déjà exploré toutes les suggestions disponibles
+                                !</p>
+                            <a href="{{ path('app_home') }}"
+                               class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-[#FF8A00] to-[#e67300] text-white rounded-lg font-medium hover:shadow-lg transition-all duration-200 hover:scale-105">
+                                <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-5 0v-3a1 1 0 011-1h2a1 1 0 011 1v3M9 21h6"/>
+                                </svg>
+                                Retour à l'accueil
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Sidebar droite -->
+                <div class="w-full lg:w-80 space-y-4">
+                    {% set pendingRequests = friendRequests|filter(r => r.status == 'pending') %}
+
+                    <!-- Demandes d'amitié reçues -->
+                    {% if pendingRequests|length >= 1 %}
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                            <div class="p-4">
+                                <h3 class="text-gray-800 font-bold text-lg mb-4 flex items-center gap-3">
+                                    <div class="p-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg">
+                                        <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24"
+                                             stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M21.75 9v-.906c0-1.19-.972-2.152-2.165-2.152H4.415c-1.193 0-2.165.961-2.165 2.152V9h19.5zM19.585 9h-15.17l3.938-3.94a2.25 2.25 0 013.15 0l3.938 3.94zm-15.17 6h15.17M6.75 12h.008v.008H6.75V12zm2.25 0h.008v.008H9V12zm2.25 0h.008v.008H11.25V12z"/>
+                                        </svg>
+                                    </div>
+                                    <span>Demandes reçues</span>
+                                    <div class="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full font-semibold">
+                                        {{ pendingRequests|length }}
+                                    </div>
+                                </h3>
+
+                                <ul class="space-y-3">
+                                    {% for request in pendingRequests %}
+                                        <li class="p-3 rounded-xl hover:bg-gray-50 transition-all duration-200">
+                                            <div class="flex items-start gap-3">
+                                                <div class="relative flex-shrink-0">
+                                                    <div class="w-10 h-10 rounded-full border-2 border-gray-200 shadow-sm overflow-hidden">
+                                                        <img src="{{ asset(request.sender.avatarPath|default('/images/default-profile.png')) }}"
+                                                             alt="Avatar de {{ request.sender.username }}"
+                                                             class="w-full h-full object-cover">
+                                                    </div>
+                                                    <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-blue-500 border-2 border-white rounded-full shadow-sm"></div>
+                                                </div>
+                                                <div class="min-w-0 flex-1">
+                                                    <div class="mb-2">
+                                                        <a href="{{ path('dashboard_user_profile_other', {'username': request.sender.username}) }}"
+                                                           class="text-gray-800 font-semibold hover:text-blue-600 text-sm block transition-colors">
+                                                            {{ request.sender.username }}
+                                                        </a>
+                                                        <p class="text-xs text-gray-500">
+                                                            @{{ request.sender.pseudo|default(request.sender.username) }}
+                                                        </p>
+                                                    </div>
+                                                    <div class="flex gap-2">
+                                                        <button class="accept-friend-btn bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 hover:scale-105 shadow-sm hover:shadow-md flex items-center gap-1"
+                                                                data-friend-id="{{ request.id }}">
+                                                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24"
+                                                                 stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                      stroke-width="2" d="M5 13l4 4L19 7"/>
+                                                            </svg>
+                                                            Accepter
+                                                        </button>
+                                                        <button class="decline-friend-btn bg-gradient-to-r from-red-500 to-red-600 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 hover:scale-105 shadow-sm hover:shadow-md flex items-center gap-1"
+                                                                data-friend-id="{{ request.id }}">
+                                                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24"
+                                                                 stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                      stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                            </svg>
+                                                            Refuser
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <!-- Widget conseils -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="p-4">
+                            <h3 class="text-gray-800 font-bold text-lg mb-4 flex items-center gap-3">
+                                <div class="p-2 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg">
+                                    <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24"
+                                         stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                                    </svg>
+                                </div>
+                                <span>Conseils</span>
+                            </h3>
+
+                            <div class="space-y-4">
+                                <div class="p-3 bg-purple-50 rounded-lg border border-purple-100">
+                                    <h4 class="font-semibold text-purple-800 mb-2 flex items-center gap-2">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                        </svg>
+                                        Complétez votre profil
+                                    </h4>
+                                    <p class="text-purple-700 text-sm">
+                                        Un profil complet avec vos goûts littéraires attire plus d'amis !
+                                    </p>
+                                </div>
+
+                                <div class="p-3 bg-orange-50 rounded-lg border border-orange-100">
+                                    <h4 class="font-semibold text-orange-800 mb-2 flex items-center gap-2">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"/>
+                                        </svg>
+                                        Soyez actif
+                                    </h4>
+                                    <p class="text-orange-700 text-sm">
+                                        Partagez vos lectures et commentez les posts d'autres lecteurs.
+                                    </p>
+                                </div>
+
+                                <div class="p-3 bg-emerald-50 rounded-lg border border-emerald-100">
+                                    <h4 class="font-semibold text-emerald-800 mb-2 flex items-center gap-2">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M4 4v5h.835l.97-2.91A1 1 0 016.72 5.5h2.56a1 1 0 01.915.59l.97 2.91H16V4a1 1 0 011-1h2a1 1 0 011 1v16a1 1 0 01-1 1H6a1 1 0 01-1-1V4z"/>
+                                        </svg>
+                                        Rejoignez des groupes
+                                    </h4>
+                                    <p class="text-emerald-700 text-sm">
+                                        Participez aux discussions sur vos genres littéraires préférés.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {#
+                    <!-- Widget activité récente -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="p-4">
+                            <h3 class="text-gray-800 font-bold text-lg mb-4 flex items-center gap-3">
+                                <div class="p-2 bg-gradient-to-br from-green-500 to-green-600 rounded-lg">
+                                    <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24"
+                                         stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                    </svg>
+                                </div>
+                                <span>Activité récente</span>
+                            </h3>
+
+                            <ul class="space-y-3">
+                                <li class="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 transition-all duration-200">
+                                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#FF8A00] to-[#e67300] flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <p class="text-sm text-gray-800"><span class="font-semibold">Emma M.</span> a
+                                            rejoint la communauté</p>
+                                        <p class="text-xs text-gray-500 mt-1">Il y a 30 minutes</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 transition-all duration-200">
+                                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M4 4v5h.835l.97-2.91A1 1 0 016.72 5.5h2.56a1 1 0 01.915.59l.97 2.91H16V4a1 1 0 011-1h2a1 1 0 011 1v16a1 1 0 01-1 1H6a1 1 0 01-1-1V4z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <p class="text-sm text-gray-800"><span class="font-semibold">Lucas P.</span> a
+                                            publié un avis sur "Dune"</p>
+                                        <p class="text-xs text-gray-500 mt-1">Il y a 1 heure</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 transition-all duration-200">
+                                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <p class="text-sm text-gray-800"><span class="font-semibold">Sarah K.</span> a
+                                            ajouté 3 livres à sa liste</p>
+                                        <p class="text-xs text-gray-500 mt-1">Il y a 2 heures</p>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <div class="mt-4 pt-3 border-t border-gray-100">
+                                <a href="#"
+                                   class="text-green-600 hover:text-green-700 text-sm font-medium flex items-center group transition-colors">
+                                    <span>Voir toute l'activité</span>
+                                    <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none"
+                                         viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M9 5l7 7-7 7"/>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>#}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts JavaScript -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Gérer l'envoi d'une demande d'amitié
+            document.querySelectorAll(".friend-request-btn").forEach(button => {
+                button.addEventListener("click", function () {
+                    let userId = this.getAttribute("data-user-id");
+                    sendFriendRequest(userId, this);
+                });
+            });
+
+            // Gérer l'acceptation d'une demande d'amitié
+            document.querySelectorAll(".accept-friend-btn").forEach(button => {
+                button.addEventListener("click", function () {
+                    let requestId = this.getAttribute("data-friend-id");
+                    acceptFriendRequest(requestId, this);
+                });
+            });
+
+            // Gérer le refus d'une demande d'amitié
+            document.querySelectorAll(".decline-friend-btn").forEach(button => {
+                button.addEventListener("click", function () {
+                    let requestId = this.getAttribute("data-friend-id");
+                    declineFriendRequest(requestId, this);
+                });
+            });
+
+            // Fonction pour envoyer une demande d'amitié
+            function sendFriendRequest(userId, button) {
+                // Animation de chargement
+                const originalContent = button.innerHTML;
+                button.innerHTML = `
+                    <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Envoi...
+                `;
+                button.disabled = true;
+
+                fetch(`/friend/add/${userId}`, {
+                    method: "POST",
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === "pending") {
+                            button.innerHTML = `
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                Demande envoyée
+                            `;
+                            button.classList.remove("from-[#FF8A00]", "to-[#e67300]", "hover:scale-105");
+                            button.classList.add("from-gray-400", "to-gray-500", "cursor-not-allowed", "opacity-80");
+
+                            // Animation de succès
+                            button.classList.add("animate-pulse");
+                            setTimeout(() => {
+                                button.classList.remove("animate-pulse");
+                            }, 1000);
+                        } else {
+                            // Restaurer le bouton en cas d'erreur
+                            button.innerHTML = originalContent;
+                            button.disabled = false;
+                            alert(data.error || 'Une erreur est survenue');
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Erreur:", error);
+                        button.innerHTML = originalContent;
+                        button.disabled = false;
+                        alert('Une erreur est survenue');
+                    });
+            }
+
+            // Fonction pour accepter une demande d'amitié
+            function acceptFriendRequest(requestId, button) {
+                fetch(`/friend/accept/${requestId}`, {
+                    method: "POST",
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === "accepted") {
+                            button.closest("li").innerHTML = `
+                                <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 animate-pulse">
+                                    <p class="text-emerald-700 font-semibold flex items-center gap-2 text-sm">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                        Ami(e) ajouté(e) avec succès !
+                                    </p>
+                                </div>
+                            `;
+                        } else {
+                            alert(data.error || 'Une erreur est survenue');
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Erreur:", error);
+                        alert('Une erreur est survenue');
+                    });
+            }
+
+            // Fonction pour refuser une demande d'amitié
+            function declineFriendRequest(requestId, button) {
+                fetch(`/friend/decline/${requestId}`, {
+                    method: "POST",
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === "declined") {
+                            button.closest("li").innerHTML = `
+                                <div class="p-3 rounded-xl bg-red-50 border border-red-200 animate-pulse">
+                                    <p class="text-red-700 font-semibold flex items-center gap-2 text-sm">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                        Demande refusée.
+                                    </p>
+                                </div>
+                            `;
+                        } else {
+                            alert(data.error || 'Une erreur est survenue');
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Erreur:", error);
+                        alert('Une erreur est survenue');
+                    });
+            }
+        });
+    </script>
+{% endblock %}

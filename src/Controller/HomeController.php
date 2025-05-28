@@ -2,11 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\Contact;
 use App\Entity\Friend;
 use App\Entity\Post;
 use App\Entity\User;
+use App\Form\ContactType;
 use App\Form\PostFormType;
 use App\Service\DeviceDetectorService;
+use App\Service\EmailService;
 use App\Service\FileUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,14 +20,17 @@ use Symfony\Component\Routing\Annotation\Route;
 class HomeController extends AbstractController
 {
     public function __construct(
-        private readonly DeviceDetectorService $deviceDetector
+        private readonly DeviceDetectorService $deviceDetector,
+        private readonly EntityManagerInterface $em,
+        private readonly FileUploader $uploader,
+        private readonly EmailService $emailService
     )
     {
 
     }
 
     #[Route('/', name: 'app_home')]
-    public function index(Request $request, EntityManagerInterface $em, FileUploader $uploader): Response
+    public function index(Request $request): Response
     {
         // Vérification de l'authentification
         $user = $this->getUser();
@@ -44,27 +50,27 @@ class HomeController extends AbstractController
             $imageFile = $form->get('imageFile')->getData();
             if ($imageFile) {
                 try {
-                    $newFilename = $uploader->upload($imageFile);
+                    $newFilename = $this->uploader->upload($imageFile);
                     $post->setImagePath($newFilename);
                 } catch (\Exception $e) {
                     $this->addFlash('error', 'Erreur lors du téléchargement de l\'image.');
                 }
             }
-            $em->persist($post);
-            $em->flush();
+            $this->em->persist($post);
+            $this->em->flush();
 
             $this->addFlash('success', 'Votre publication a été ajoutée.');
             return $this->redirectToRoute('app_home');
         }
 
         // Récupération des posts triés par date de création décroissante
-        $posts = $em->getRepository(Post::class)->findBy([], ['created_at' => 'DESC']);
+        $posts = $this->em->getRepository(Post::class)->findBy([], ['created_at' => 'DESC']);
 
         // Utilisation d'une méthode dédiée dans le repository pour les suggestions d'amis
-        $suggestedUsers = $em->getRepository(User::class)->getSugeredUsers($user->getId());
+        $suggestedUsers = $this->em->getRepository(User::class)->getSugeredUsers($user->getId());
 
         // Récupérer les demandes d'amitié en attente
-        $friendRequests = $em->getRepository(Friend::class)->findBy([
+        $friendRequests = $this->em->getRepository(Friend::class)->findBy([
             'receiver' => $user,
             'status' => 'pending'
         ]);
@@ -88,64 +94,44 @@ class HomeController extends AbstractController
     }
 
     #[Route('/menu', name: 'app_menu')]
-    public function menu(Request $request, EntityManagerInterface $em): Response
+    public function menu(Request $request): Response
     {
         return $this->json(['error' => 'Not implemented yet.']);
     }
-    #[Route('/conditions-utilisation', name: 'app_terms_of_service')]
-    public function termsOfService(): Response
-    {
-        return $this->render('home/terms_of_service.html.twig');
-    }
 
-    #[Route('/politique-confidentialite', name: 'app_privacy_policy')]
-    public function privacyPolicy(): Response
+    #[Route('/contact', name: 'app_contact', methods: ['GET', 'POST'])]
+    public function contact(Request $request): Response
     {
-        return $this->render('home/privacy_policy.html.twig');
-    }
+        $contact = new Contact();
+        $form = $this->createForm(ContactType::class, $contact);
+        $form->handleRequest($request);
 
-    #[Route('/contact', name: 'app_contact')]
-    public function contact(): Response
-    {
-        return $this->render('home/contact.html.twig');
-    }
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->em->persist($contact);
+            $this->em->flush();
 
-    #[Route('/a-propos', name: 'app_about')]
-    public function about(): Response
-    {
-        return $this->render('home/about.html.twig');
-    }
+            $emailSent = $this->emailService->sendContactEmail($contact);
+            $confirmationSent = $this->emailService->sendContactConfirmation($contact);
 
-    #[Route('/livres/semaine', name: 'app_books_week')]
-    public function booksOfTheWeek(): Response
-    {
-        return $this->render('books/week.html.twig', [
-            'books' => []
-        ]);
-    }
-    #[Route('/livres/newsletter-history', name: 'app_newslatter_history')]
-    public function newsletterHistory(): Response
-    {
-        return $this->render('books/newsletter_history.html.twig', [
-            'books' => []
+            if ($emailSent) {
+                $this->addFlash('success', 'Votre message a bien été envoyé. Nous vous répondrons dans les plus brefs délais.');
+
+                if ($confirmationSent) {
+                    $this->addFlash('info', 'Un email de confirmation vous a été envoyé.');
+                }
+            } else {
+                $this->addFlash('success', 'Votre message a bien été enregistré. Nous vous répondrons dans les plus brefs délais.');
+                $this->addFlash('warning', 'Une erreur s\'est produite lors de l\'envoi de l\'email, mais votre message a été sauvegardé.');
+            }
+
+            return $this->redirectToRoute('app_contact');
+        }
+
+        return $this->render('contact/contact.html.twig', [
+            'form' => $form,
         ]);
     }
 
-    #[Route('/livres/suggestions', name: 'app_books_suggestions')]
-    public function suggestedBooks(): Response
-    {
-        return $this->render('books/suggestions.html.twig', [
-            'books' => []
-        ]);
-    }
-
-    #[Route('/livres/sorties', name: 'app_books_latest')]
-    public function latestBooks(): Response
-    {
-        return $this->render('books/latest.html.twig', [
-            'books' => []
-        ]);
-    }
     #[Route('/recherche', name: 'app_search')]
     public function search(Request $request, EntityManagerInterface $em): Response
     {
@@ -161,4 +147,18 @@ class HomeController extends AbstractController
         ]);
     }
 
+    #[Route('/{page}', name: 'app_static_page', requirements: [
+        'page' => 'politique-confidentialite|conditions-utilisation|a-propos'
+    ])]
+    public function staticPage(string $page): Response
+    {
+        $template = match ($page) {
+            'politique-confidentialite' => 'home/desktop/legales/privacy_policy.html.twig',
+            'conditions-utilisation' => 'home/desktop/legales/terms_of_service.html.twig',
+            'a-propos' => 'home/desktop/legales/about.html.twig',
+            default => throw $this->createNotFoundException('Page inconnue.'),
+        };
+
+        return $this->render($template);
+    }
 }

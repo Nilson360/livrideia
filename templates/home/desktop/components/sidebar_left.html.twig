@@ -1,147 +1,251 @@
 {% block sidebar_left %}
-    <div class="w-1/4 p-4 hidden lg:block space-y-6">
+    <div class="w-80 hidden lg:block space-y-4">
 
         <!-- 📚 Livres de la semaine -->
-        <div class="bg-[#fdf9f3] border border-bookmark rounded-xl shadow-sm p-4">
-            <h3 class="text-leather font-bold text-lg mb-4 italic flex items-center gap-2">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
-                    <path d="M12 6.90909C10.8999 5.50893 9.20406 4.10877 5.00119 4.00602C4.72513 3.99928 4.5 4.22351 4.5 4.49965C4.5 6.54813 4.5 14.3034 4.5 16.597C4.5 16.8731 4.72515 17.09 5.00114 17.099C9.20405 17.2364 10.8999 19.0998 12 20.5M12 6.90909C13.1001 5.50893 14.7959 4.10877 18.9988 4.00602C19.2749 3.99928 19.5 4.21847 19.5 4.49461C19.5 6.78447 19.5 14.3064 19.5 16.5963C19.5 16.8724 19.2749 17.09 18.9989 17.099C14.796 17.2364 13.1001 19.0998 12 20.5M12 6.90909L12 20.5" stroke="#000000" stroke-linejoin="round"/>
-                    <path d="M19.2353 6H21.5C21.7761 6 22 6.22386 22 6.5V19.539C22 19.9436 21.5233 20.2124 21.1535 20.0481C20.3584 19.6948 19.0315 19.2632 17.2941 19.2632C14.3529 19.2632 12 21 12 21C12 21 9.64706 19.2632 6.70588 19.2632C4.96845 19.2632 3.64156 19.6948 2.84647 20.0481C2.47668 20.2124 2 19.9436 2 19.539V6.5C2 6.22386 2.22386 6 2.5 6H4.76471" stroke="#000000" stroke-linejoin="round"/>
-                </svg>
-                Livres de la semaine
-            </h3>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="p-4">
+                <h3 class="text-gray-800 font-bold text-lg mb-4 flex items-center gap-3">
+                    <div class="p-2 bg-gradient-to-br from-[#FF8A00] to-[#e67300] rounded-lg">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white">
+                            <path d="M12 6.90909C10.8999 5.50893 9.20406 4.10877 5.00119 4.00602C4.72513 3.99928 4.5 4.22351 4.5 4.49965C4.5 6.54813 4.5 14.3034 4.5 16.597C4.5 16.8731 4.72515 17.09 5.00114 17.099C9.20405 17.2364 10.8999 19.0998 12 20.5M12 6.90909C13.1001 5.50893 14.7959 4.10877 18.9988 4.00602C19.2749 3.99928 19.5 4.21847 19.5 4.49461C19.5 6.78447 19.5 14.3064 19.5 16.5963C19.5 16.8724 19.2749 17.09 18.9989 17.099C14.796 17.2364 13.1001 19.0998 12 20.5M12 6.90909L12 20.5" stroke="currentColor" stroke-linejoin="round"/>
+                            <path d="M19.2353 6H21.5C21.7761 6 22 6.22386 22 6.5V19.539C22 19.9436 21.5233 20.2124 21.1535 20.0481C20.3584 19.6948 19.0315 19.2632 17.2941 19.2632C14.3529 19.2632 12 21 12 21C12 21 9.64706 19.2632 6.70588 19.2632C4.96845 19.2632 3.64156 19.6948 2.84647 20.0481C2.47668 20.2124 2 19.9436 2 19.539V6.5C2 6.22386 2.22386 6 2.5 6H4.76471" stroke="currentColor" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <span>Livres de la semaine</span>
+                </h3>
 
-            <ul class="space-y-4">
-                <li>
-                    <a href="{{ path('app_books_week') }}"
-                       class="flex items-start gap-3 hover:bg-parchment p-2 rounded transition">
-                        <img src="/images/default.png" alt="Livre 1"
-                             class="w-12 h-16 rounded shadow border border-bookmark">
-                        <div>
-                            <p class="text-bookmark font-semibold hover:underline text-sm">Titre du Livre 1</p>
-                            <p class="text-gray-500 text-xs">Auteur</p>
-                        </div>
+                <ul class="space-y-3">
+                    <li>
+                        <a href="#" class="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 transition-all duration-200 hover:scale-[1.02] group">
+                            <div class="relative flex-shrink-0">
+                                <img src="/images/default-book.png" alt="Livre 1" class="w-12 h-16 rounded-lg shadow-sm border border-gray-200 group-hover:shadow-md transition-shadow">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p class="text-gray-800 font-semibold text-sm leading-snug group-hover:text-[#FF8A00] transition-colors">Titre du Livre 1</p>
+                                <p class="text-gray-500 text-xs mt-1">Auteur</p>
+                                <div class="flex items-center mt-2 text-xs text-gray-400">
+                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                    </svg>
+                                    <span>4.5</span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 transition-all duration-200 hover:scale-[1.02] group">
+                            <div class="relative flex-shrink-0">
+                                <img src="/images/default-book.png" alt="Livre 2" class="w-12 h-16 rounded-lg shadow-sm border border-gray-200 group-hover:shadow-md transition-shadow">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p class="text-gray-800 font-semibold text-sm leading-snug group-hover:text-[#FF8A00] transition-colors">Titre du Livre 2</p>
+                                <p class="text-gray-500 text-xs mt-1">Auteur</p>
+                                <div class="flex items-center mt-2 text-xs text-gray-400">
+                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                    </svg>
+                                    <span>4.2</span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="mt-4 pt-3 border-t border-gray-100">
+                    <a href="{{ path('app_books_section', {'section':'semaine'}) }}" class="text-[#FF8A00] hover:text-[#e67300] text-sm font-medium flex items-center group transition-colors">
+                        <span>Voir tous les livres</span>
+                        <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
                     </a>
-                </li>
-                <li>
-                    <a href="{{ path('app_books_week') }}"
-                       class="flex items-start gap-3 hover:bg-parchment p-2 rounded transition">
-                        <img src="/images/default.png" alt="Livre 2"
-                             class="w-12 h-16 rounded shadow border border-bookmark">
-                        <div>
-                            <p class="text-bookmark font-semibold hover:underline text-sm">Titre du Livre 2</p>
-                            <p class="text-gray-500 text-xs">Auteur</p>
-                        </div>
-                    </a>
-                </li>
-            </ul>
+                </div>
+            </div>
         </div>
 
         <!-- 📚 Histoires de la Newsletter -->
-        <div class="bg-[#fdf9f3] border border-bookmark rounded-xl shadow-sm p-4">
-            <h3 class="text-leather font-bold text-lg mb-4 italic flex items-center gap-2">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
-                    <path d="M12 6.90909C10.8999 5.50893 9.20406 4.10877 5.00119 4.00602C4.72513 3.99928 4.5 4.22351 4.5 4.49965C4.5 6.54813 4.5 14.3034 4.5 16.597C4.5 16.8731 4.72515 17.09 5.00114 17.099C9.20405 17.2364 10.8999 19.0998 12 20.5M12 6.90909C13.1001 5.50893 14.7959 4.10877 18.9988 4.00602C19.2749 3.99928 19.5 4.21847 19.5 4.49461C19.5 6.78447 19.5 14.3064 19.5 16.5963C19.5 16.8724 19.2749 17.09 18.9989 17.099C14.796 17.2364 13.1001 19.0998 12 20.5M12 6.90909L12 20.5" stroke="#000000" stroke-linejoin="round"/>
-                    <path d="M19.2353 6H21.5C21.7761 6 22 6.22386 22 6.5V19.539C22 19.9436 21.5233 20.2124 21.1535 20.0481C20.3584 19.6948 19.0315 19.2632 17.2941 19.2632C14.3529 19.2632 12 21 12 21C12 21 9.64706 19.2632 6.70588 19.2632C4.96845 19.2632 3.64156 19.6948 2.84647 20.0481C2.47668 20.2124 2 19.9436 2 19.539V6.5C2 6.22386 2.22386 6 2.5 6H4.76471" stroke="#000000" stroke-linejoin="round"/>
-                </svg>
-                Histoires de la Newsletter
-            </h3>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="p-4">
+                <h3 class="text-gray-800 font-bold text-lg mb-4 flex items-center gap-3">
+                    <div class="p-2 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white">
+                            <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <span>Histoires Newsletter</span>
+                </h3>
 
-            <ul class="space-y-4">
-                <li>
-                    <a href="{{ path('app_newslatter_history') }}"
-                       class="flex items-start gap-3 hover:bg-parchment p-2 rounded transition">
-                        <img src="/images/default.png" alt="Livre 1"
-                             class="w-12 h-16 rounded shadow border border-bookmark">
-                        <div>
-                            <p class="text-bookmark font-semibold hover:underline text-sm">Listoire 1</p>
-                            <p class="text-gray-500 text-xs">Livridea</p>
-                        </div>
+                <ul class="space-y-3">
+                    <li>
+                        <a href="#" class="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 transition-all duration-200 hover:scale-[1.02] group">
+                            <div class="relative flex-shrink-0">
+                                <img src="/images/default-book.png" alt="Histoire 1" class="w-12 h-16 rounded-lg shadow-sm border border-gray-200 group-hover:shadow-md transition-shadow">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p class="text-gray-800 font-semibold text-sm leading-snug group-hover:text-emerald-600 transition-colors">Histoire 1</p>
+                                <p class="text-gray-500 text-xs mt-1">Livridea</p>
+                                <div class="flex items-center mt-2 text-xs text-gray-400">
+                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span>Il y a 2j</span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 transition-all duration-200 hover:scale-[1.02] group">
+                            <div class="relative flex-shrink-0">
+                                <img src="/images/default-book.png" alt="Histoire 2" class="w-12 h-16 rounded-lg shadow-sm border border-gray-200 group-hover:shadow-md transition-shadow">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p class="text-gray-800 font-semibold text-sm leading-snug group-hover:text-emerald-600 transition-colors">Histoire 2</p>
+                                <p class="text-gray-500 text-xs mt-1">Livridea</p>
+                                <div class="flex items-center mt-2 text-xs text-gray-400">
+                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span>Il y a 5j</span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="mt-4 pt-3 border-t border-gray-100">
+                    <a href="{{ path('app_books_section', {'section':'newsletter-history'}) }}" class="text-emerald-600 hover:text-emerald-700 text-sm font-medium flex items-center group transition-colors">
+                        <span>Toutes les histoires</span>
+                        <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
                     </a>
-                </li>
-                <li>
-                    <a href="{{ path('app_newslatter_history') }}"
-                       class="flex items-start gap-3 hover:bg-parchment p-2 rounded transition">
-                        <img src="/images/default.png" alt="Livre 2"
-                             class="w-12 h-16 rounded shadow border border-bookmark">
-                        <div>
-                            <p class="text-bookmark font-semibold hover:underline text-sm">Histoire 2</p>
-                            <p class="text-gray-500 text-xs">Livridea</p>
-                        </div>
-                    </a>
-                </li>
-            </ul>
+                </div>
+            </div>
         </div>
 
-        <!-- 🪶 Suggestions pour toi -->
-        <div class="bg-[#fdf9f3] border border-bookmark rounded-xl shadow-sm p-4">
-            <h3 class="text-leather font-bold text-lg mb-4 italic flex items-center gap-2">
-                <svg fill="#000000" viewBox="0 -0.11 33.736 33.736" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
-                    <g transform="translate(-287.982 -577.197)">
-                        <path d="M288.983,610.716a1,1,0,0,1-.528-1.85c.141-.088,14.151-8.859,17.653-17.833a1,1,0,0,1,1.863.727c-3.745,9.6-17.863,18.434-18.462,18.8A.993.993,0,0,1,288.983,610.716Z"/>
-                        <path d="M292.256,607.871l-.017-1.09a28.119,28.119,0,0,1,4.178-14.957l.3-.441h3.806L299.6,588.4l.293-.4c5.611-7.734,15.292-10.108,19.194-10.77a2.261,2.261,0,0,1,2.621,2.408c-1.791,25.095-28.105,28.1-28.371,28.125Zm5.547-14.488a26.983,26.983,0,0,0-3.554,12.23c4.909-.811,23.983-5.3,25.469-26.121a.275.275,0,0,0-.09-.232.224.224,0,0,0-.2-.06c-3.59.608-12.393,2.752-17.614,9.575l.776,2.529a1.607,1.607,0,0,1-1.536,2.079Z"/>
-                    </g>
-                </svg>
-                Suggestions littéraires
-            </h3>
-            <ul class="space-y-4">
-                <li>
-                    <a href="{{ path('app_books_suggestions') }}"
-                       class="flex items-start gap-3 hover:bg-parchment p-2 rounded transition">
-                        <img src="{{ asset('/images/default.png') }}" alt="Suggestion 1"
-                             class="w-12 h-16 rounded shadow border border-bookmark">
-                        <div>
-                            <p class="text-bookmark font-semibold hover:underline text-sm">Livre Suggestion 1</p>
-                            <p class="text-gray-500 text-xs">Auteur</p>
-                        </div>
+        <!-- 🪶 Suggestions littéraires -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="p-4">
+                <h3 class="text-gray-800 font-bold text-lg mb-4 flex items-center gap-3">
+                    <div class="p-2 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg">
+                        <svg fill="currentColor" viewBox="0 -0.11 33.736 33.736" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white">
+                            <g transform="translate(-287.982 -577.197)">
+                                <path d="M288.983,610.716a1,1,0,0,1-.528-1.85c.141-.088,14.151-8.859,17.653-17.833a1,1,0,0,1,1.863.727c-3.745,9.6-17.863,18.434-18.462,18.8A.993.993,0,0,1,288.983,610.716Z"/>
+                                <path d="M292.256,607.871l-.017-1.09a28.119,28.119,0,0,1,4.178-14.957l.3-.441h3.806L299.6,588.4l.293-.4c5.611-7.734,15.292-10.108,19.194-10.77a2.261,2.261,0,0,1,2.621,2.408c-1.791,25.095-28.105,28.1-28.371,28.125Zm5.547-14.488a26.983,26.983,0,0,0-3.554,12.23c4.909-.811,23.983-5.3,25.469-26.121a.275.275,0,0,0-.09-.232.224.224,0,0,0-.2-.06c-3.59.608-12.393,2.752-17.614,9.575l.776,2.529a1.607,1.607,0,0,1-1.536,2.079Z"/>
+                            </g>
+                        </svg>
+                    </div>
+                    <span>Suggestions littéraires</span>
+                </h3>
+
+                <ul class="space-y-3">
+                    <li>
+                        <a href="#" class="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 transition-all duration-200 hover:scale-[1.02] group">
+                            <div class="relative flex-shrink-0">
+                                <img src="{{ asset('/images/default-book.png') }}" alt="Suggestion 1" class="w-12 h-16 rounded-lg shadow-sm border border-gray-200 group-hover:shadow-md transition-shadow">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p class="text-gray-800 font-semibold text-sm leading-snug group-hover:text-purple-600 transition-colors">Livre Suggestion 1</p>
+                                <p class="text-gray-500 text-xs mt-1">Auteur</p>
+                                <div class="flex items-center mt-2">
+                                    <span class="bg-purple-100 text-purple-600 text-xs px-2 py-1 rounded-full font-medium">Recommandé</span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 transition-all duration-200 hover:scale-[1.02] group">
+                            <div class="relative flex-shrink-0">
+                                <img src="/images/default-book.png" alt="Suggestion 2" class="w-12 h-16 rounded-lg shadow-sm border border-gray-200 group-hover:shadow-md transition-shadow">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p class="text-gray-800 font-semibold text-sm leading-snug group-hover:text-purple-600 transition-colors">Livre Suggestion 2</p>
+                                <p class="text-gray-500 text-xs mt-1">Auteur</p>
+                                <div class="flex items-center mt-2">
+                                    <span class="bg-purple-100 text-purple-600 text-xs px-2 py-1 rounded-full font-medium">Populaire</span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="mt-4 pt-3 border-t border-gray-100">
+                    <a href="{{ path('app_books_section', {'section':'suggestions'}) }}" class="text-purple-600 hover:text-purple-700 text-sm font-medium flex items-center group transition-colors">
+                        <span>Plus de suggestions</span>
+                        <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
                     </a>
-                </li>
-                <li>
-                    <a href="{{ path('app_books_suggestions') }}"
-                       class="flex items-start gap-3 hover:bg-parchment p-2 rounded transition">
-                        <img src="/images/default.png" alt="Suggestion 2"
-                             class="w-12 h-16 rounded shadow border border-bookmark">
-                        <div>
-                            <p class="text-bookmark font-semibold hover:underline text-sm">Livre Suggestion 2</p>
-                            <p class="text-gray-500 text-xs">Auteur</p>
-                        </div>
-                    </a>
-                </li>
-            </ul>
+                </div>
+            </div>
         </div>
 
         <!-- Dernières parutions -->
-        <div class="bg-[#fdf9f3] border border-bookmark rounded-xl shadow-sm p-4">
-            <h3 class="text-leather font-bold text-lg mb-4 italic flex items-center gap-2">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
-                    <path d="M12 6.90909C10.8999 5.50893 9.20406 4.10877 5.00119 4.00602C4.72513 3.99928 4.5 4.22351 4.5 4.49965C4.5 6.54813 4.5 14.3034 4.5 16.597C4.5 16.8731 4.72515 17.09 5.00114 17.099C9.20405 17.2364 10.8999 19.0998 12 20.5M12 6.90909C13.1001 5.50893 14.7959 4.10877 18.9988 4.00602C19.2749 3.99928 19.5 4.21847 19.5 4.49461C19.5 6.78447 19.5 14.3064 19.5 16.5963C19.5 16.8724 19.2749 17.09 18.9989 17.099C14.796 17.2364 13.1001 19.0998 12 20.5M12 6.90909L12 20.5" stroke="#000000" stroke-linejoin="round"/>
-                </svg>
-                Dernières parutions
-            </h3>
-            <ul class="space-y-4">
-                <li>
-                    <a href="{{ path('app_books_latest') }}"
-                       class="flex items-start gap-3 hover:bg-parchment p-2 rounded transition">
-                        <img src="/images/default.png" alt="Sortie 1"
-                             class="w-12 h-16 rounded shadow border border-bookmark">
-                        <div>
-                            <p class="text-bookmark font-semibold hover:underline text-sm">Livre Sortie 1</p>
-                            <p class="text-gray-500 text-xs">Auteur</p>
-                        </div>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="p-4">
+                <h3 class="text-gray-800 font-bold text-lg mb-4 flex items-center gap-3">
+                    <div class="p-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <span>Dernières parutions</span>
+                </h3>
+
+                <ul class="space-y-3">
+                    <li>
+                        <a href="#" class="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 transition-all duration-200 hover:scale-[1.02] group">
+                            <div class="relative flex-shrink-0">
+                                <img src="/images/default-book.png" alt="Sortie 1" class="w-12 h-16 rounded-lg shadow-sm border border-gray-200 group-hover:shadow-md transition-shadow">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                <div class="absolute -top-1 -right-1 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full font-semibold">NEW</div>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p class="text-gray-800 font-semibold text-sm leading-snug group-hover:text-blue-600 transition-colors">Livre Sortie 1</p>
+                                <p class="text-gray-500 text-xs mt-1">Auteur</p>
+                                <div class="flex items-center mt-2 text-xs text-gray-400">
+                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span>Sorti le 15 mai</span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 transition-all duration-200 hover:scale-[1.02] group">
+                            <div class="relative flex-shrink-0">
+                                <img src="/images/default-book.png" alt="Sortie 2" class="w-12 h-16 rounded-lg shadow-sm border border-gray-200 group-hover:shadow-md transition-shadow">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p class="text-gray-800 font-semibold text-sm leading-snug group-hover:text-blue-600 transition-colors">Livre Sortie 2</p>
+                                <p class="text-gray-500 text-xs mt-1">Auteur</p>
+                                <div class="flex items-center mt-2 text-xs text-gray-400">
+                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span>Sorti le 10 mai</span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="mt-4 pt-3 border-t border-gray-100">
+                    <a href="{{ path('app_books_section', {'section':'sorties'}) }}" class="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center group transition-colors">
+                        <span>Toutes les nouveautés</span>
+                        <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
                     </a>
-                </li>
-                <li>
-                    <a href="{{ path('app_books_latest') }}"
-                       class="flex items-start gap-3 hover:bg-parchment p-2 rounded transition">
-                        <img src="/images/default.png" alt="Sortie 2"
-                             class="w-12 h-16 rounded shadow border border-bookmark">
-                        <div>
-                            <p class="text-bookmark font-semibold hover:underline text-sm">Livre Sortie 2</p>
-                            <p class="text-gray-500 text-xs">Auteur</p>
-                        </div>
-                    </a>
-                </li>
-            </ul>
+                </div>
+            </div>
         </div>
 
     </div>

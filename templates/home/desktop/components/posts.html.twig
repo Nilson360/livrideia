@@ -5,140 +5,213 @@
         {% set commentCount = post.comments|length %}
         {% set shareCount = post.shares|length %}
 
-        <div class="bg-[#fdf9f3] border border-bookmark rounded-xl shadow p-6 mb-6 space-y-4 bg-white">
-            <!-- En-tête -->
-            <div class="flex items-center space-x-2 text-sm text-ink">
-                <span class="font-bold text-leather italic">{{ post.user.fullName }}</span>
-                <span class="text-sm text-gray-500">· {{ post.createdAt|date('d/m/Y') }}</span>
-            </div>
-
-            <!-- Contenu -->
-            <p class="text-sm text-ink whitespace-pre-line">{{ post.content }}</p>
-
-            {% if post.imagePath %}
-                <div>
-                    <img src="{{ asset('uploads/' ~ post.imagePath) }}"
-                         alt="Image de publication"
-                         class="block mx-auto w-full max-h-[500px] object-cover rounded-lg border border-bookmark shadow">
-                </div>
-            {% endif %}
-
-            {% if likeCount > 0 or commentCount > 0 or shareCount > 0 %}
-                <div class="stats-container flex justify-between items-center text-xs text-gray-600 border-t pt-2">
-                    <div class="flex items-center gap-2">
-                        {% if likeCount > 0 %}
-                            <span class="like-count flex items-center gap-1">
-                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                          d="M8 10V20M8 10L4 10V20H8M8 10L13.2 3.94C13.69 3.36 14.46 3.12 15.2 3.3C16.59 3.65 17.19 5.21 16.43 6.36L14 10H18.56C19.82 10 20.77 11.15 20.52 12.39L19.32 18.39C19.13 19.33 18.31 20 17.36 20H8"/>
+        <article class="post-container bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-200 mb-6">
+            <!-- Header du post -->
+            <div class="p-6 pb-4">
+                <div class="flex items-center justify-between mb-4">
+                    <a href="{{ path('dashboard_user_profile_other', {'username': post.user.username}) }}" class="flex items-center flex-1 min-w-0 group">
+                        <div class="relative flex-shrink-0">
+                            <img src="{{ asset(post.user.avatarPath|default('/images/default-profile.png')) }}"
+                                 alt="{{ post.user.username }}"
+                                 class="w-12 h-12 rounded-full border-2 border-gray-100 group-hover:border-[#FF8A00] transition-colors">
+                            <div class="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full shadow-sm"></div>
+                        </div>
+                        <div class="ml-4 min-w-0 flex-1">
+                            <h3 class="font-semibold text-gray-800 group-hover:text-[#FF8A00] transition-colors">{{ post.user.fullName }}</h3>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <svg class="w-4 h-4 mr-1 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
                                 </svg>
-                                {{ likeCount }}
-                            </span>
-                        {% endif %}
-                    </div>
-                    <div class="flex items-center gap-4">
-                        {% if commentCount > 0 %}
-                            <button class="toggle-comments hover:text-ink comment-count-btn"
-                                    data-count="{{ commentCount }}">
-                                <svg class="w-4 h-4 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.77 9.77 0 01-4.29-1l-4.42 1 .82-4.16A7.964 7.964 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                                </svg>
-                                {{ commentCount }} commentaire{{ commentCount > 1 ? 's' : '' }}
-                            </button>
-                        {% endif %}
-                        {% if shareCount > 0 %}
-                            <span class="share-count flex items-center gap-1">
-                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M4 12v2c0 2.21 1.79 4 4 4h6v4l8-6-8-6v4H8c-1.1 0-2-.9-2-2v-2"/>
-                                </svg>
-                                {{ shareCount }}
-                            </span>
-                        {% endif %}
-                    </div>
-                </div>
-            {% endif %}
-
-            <!-- Actions -->
-            <div class="flex justify-around items-center text-sm border-t pt-2 text-bookmark">
-                <button class="like-button {{ userHasLiked ? 'text-leather' : 'text-bookmark' }} hover:text-leather"
-                        data-id="{{ post.id }}">
-                    <svg class="w-4 h-4 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M14 9V5a3 3 0 00-6 0v4H5a2 2 0 00-2 2v7a2 2 0 002 2h6a2 2 0 002-2v-7a2 2 0 00-2-2H8"/>
-                    </svg>
-                    J’aime
-                </button>
-                <button class="toggle-comments hover:text-leather flex items-center gap-1">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.77 9.77 0 01-4.29-1l-4.42 1 .82-4.16A7.964 7.964 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                    </svg>
-                    Commenter
-                </button>
-            </div>
-
-            <!-- Commentaires -->
-            <div class="comments-section mt-4 hidden space-y-3">
-                {% for comment in post.comments %}
-                    <div class="border-t pt-2 text-sm text-ink comment">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <span class="text-leather font-semibold italic">{{ comment.user.fullName }}</span>
-                                <p class="text-xs text-gray-500">{{ comment.createdAt|date('d/m/Y H:i') }}</p>
-                                <p class="mt-1">{{ comment.content }}</p>
+                                <span>{{ post.createdAt|date('d M Y') }} à {{ post.createdAt|date('H:i') }}</span>
                             </div>
-                            {% if app.user and app.user.id == comment.user.id %}
-                                <div class="ml-2 flex gap-2">
-                                    <button class="edit-comment text-leather hover:underline text-xs"
-                                            data-comment-id="{{ comment.id }}">Modifier
-                                    </button>
-                                    <button class="delete-comment text-red-600 hover:underline text-xs"
-                                            data-comment-id="{{ comment.id }}">Supprimer
-                                    </button>
+                        </div>
+                    </a>
+
+                    <div class="relative">
+                        <button class="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                            <svg class="w-5 h-5 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Contenu du post -->
+                <div class="mb-4">
+                    <p class="text-gray-700 leading-relaxed whitespace-pre-line">{{ post.content }}</p>
+                </div>
+            </div>
+
+            <!-- Image du post -->
+            {% if post.imagePath %}
+                <div class="px-6 pb-4">
+                    <div class="relative rounded-xl overflow-hidden bg-gray-100 border border-gray-200 shadow-sm">
+                        <div class="aspect-[16/10] w-full">
+                            <img src="{{ asset('uploads/' ~ post.imagePath) }}"
+                                 alt="Image du post"
+                                 class="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                                 loading="lazy">
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Stats et actions -->
+            <div class="px-6 pb-6">
+                <!-- Stats -->
+                {% if likeCount > 0 or commentCount > 0 or shareCount > 0 %}
+                    <div class="stats-container flex items-center justify-between text-sm text-gray-500 mb-4 py-2 border-t border-gray-100">
+                        <div class="flex items-center space-x-4">
+                            {% if likeCount > 0 %}
+                                <div class="like-count flex items-center">
+                                    <div class="flex -space-x-1 mr-2">
+                                        <div class="w-5 h-5 bg-gradient-to-br from-red-500 to-red-600 rounded-full border-2 border-white flex items-center justify-center shadow-sm">
+                                            <svg class="w-3 h-3 text-white" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                            </svg>
+                                        </div>
+                                        <div class="w-5 h-5 bg-gradient-to-br from-[#FF8A00] to-[#e67300] rounded-full border-2 border-white flex items-center justify-center shadow-sm">
+                                            <svg class="w-3 h-3 text-white" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <span class="font-medium">{{ likeCount }} j'aime</span>
                                 </div>
                             {% endif %}
+                            {% if commentCount > 0 %}
+                                <span class="comment-count-display">{{ commentCount }} commentaire{{ commentCount > 1 ? 's' : '' }}</span>
+                            {% endif %}
                         </div>
+                        {% if shareCount > 0 %}
+                            <div class="flex items-center text-emerald-600">
+                                <svg class="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/>
+                                </svg>
+                                <span class="font-medium">{{ shareCount }}</span>
+                            </div>
+                        {% endif %}
                     </div>
-                {% endfor %}
+                {% endif %}
 
-                <div class="add-comment mt-2 flex items-center">
-                    <input type="text" placeholder="Ajouter un commentaire"
-                           class="comment-input w-full border rounded p-2" data-post-id="{{ post.id }}">
-                    <button class="send-comment ml-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                            data-post-id="{{ post.id }}">
-                        Envoyer
+                <!-- Actions principales -->
+                <div class="flex items-center justify-around border-t border-gray-100 pt-3">
+                    <button class="like-button flex items-center justify-center flex-1 py-3 rounded-lg {{ userHasLiked ? 'text-red-500 bg-red-50' : 'text-gray-600 hover:bg-red-50 hover:text-red-500' }} transition-all duration-200 hover:scale-105 group"
+                            data-id="{{ post.id }}">
+                        {% if userHasLiked %}
+                            <svg class="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                            </svg>
+                        {% else %}
+                            <svg class="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                            </svg>
+                        {% endif %}
+                        <span class="text-sm font-medium">J'aime</span>
+                    </button>
+
+                    <button class="toggle-comments flex items-center justify-center flex-1 py-3 rounded-lg text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 hover:scale-105 group">
+                        <svg class="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                        </svg>
+                        <span class="text-sm font-medium">Commenter</span>
+                    </button>
+
+                    <button class="flex items-center justify-center flex-1 py-3 rounded-lg text-gray-600 hover:bg-emerald-50 hover:text-emerald-600 transition-all duration-200 hover:scale-105 group">
+                        <svg class="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/>
+                        </svg>
+                        <span class="text-sm font-medium">Partager</span>
                     </button>
                 </div>
+
+                <!-- Zone des commentaires -->
+                <div class="comments-section mt-6 hidden space-y-4">
+                    {% for comment in post.comments %}
+                        <div class="border-t border-gray-100 pt-4 text-sm">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <img src="{{ asset(comment.user.avatarPath|default('/images/default-profile.png')) }}"
+                                             alt="{{ comment.user.username }}"
+                                             class="w-8 h-8 rounded-full">
+                                        <div>
+                                            <a href="{{ path('dashboard_user_profile_other', { 'username': comment.user.username }) }}"
+                                               class="text-gray-800 font-semibold hover:text-[#FF8A00] hover:underline transition-colors">
+                                                {{ comment.user.fullName }}
+                                            </a>
+                                            <p class="text-xs text-gray-500">{{ comment.createdAt|date('d/m/Y H:i') }}</p>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-700 ml-11">{{ comment.content }}</p>
+                                </div>
+                                {% if app.user and app.user.id == comment.user.id %}
+                                    <div class="ml-4 flex gap-2">
+                                        <button class="edit-comment text-[#FF8A00] hover:text-[#e67300] hover:underline text-xs transition-colors"
+                                                data-comment-id="{{ comment.id }}">✏️ Modifier
+                                        </button>
+                                        <button class="delete-comment text-red-600 hover:text-red-800 hover:underline text-xs transition-colors"
+                                                data-comment-id="{{ comment.id }}">🗑️ Supprimer
+                                        </button>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                    <!-- Formulaire d'ajout de commentaire -->
+                    <div class="add-comment flex gap-3 pt-4 border-t border-gray-100">
+                        <img src="{{ asset(app.user.avatarPath|default('/images/default-profile.png')) }}"
+                             alt="Votre avatar"
+                             class="w-8 h-8 rounded-full flex-shrink-0">
+                        <div class="flex-1 flex gap-2">
+                            <input type="text" placeholder="Exprimez-vous..."
+                                   class="comment-input flex-1 border border-gray-200 rounded-lg p-3 text-sm bg-gray-50 focus:ring-2 focus:ring-[#FF8A00] focus:border-[#FF8A00] focus:bg-white transition-all"
+                                   data-post-id="{{ post.id }}">
+                            <button class="send-comment bg-gradient-to-r from-[#FF8A00] to-[#e67300] text-white px-4 py-3 rounded-lg hover:shadow-md text-sm font-medium transition-all duration-200 hover:scale-105"
+                                    data-post-id="{{ post.id }}">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </article>
+    {% else %}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="p-12 text-center">
+                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">Aucune publication pour le moment</h3>
+                <p class="text-gray-500 mb-6">Les publications apparaîtront ici une fois partagées.</p>
             </div>
         </div>
-    {% else %}
-        <p class="text-center text-gray-500">Aucune publication pour le moment.</p>
     {% endfor %}
 {% endblock %}
 
-
-{% block javascript %}
-{# 1. Toggle d'affichage des commentaires #}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
+        // === 1. Toggle des commentaires ===
         document.querySelectorAll('.toggle-comments').forEach(button => {
-            button.addEventListener('click', function() {
-                let container = this.closest('.bg-white');
-                let commentSection = container.querySelector('.comments-section');
-                commentSection.classList.toggle('hidden');
+            button.addEventListener('click', function () {
+                const container = this.closest('.post-container');
+                const commentSection = container.querySelector('.comments-section');
+                commentSection?.classList.toggle('hidden');
             });
         });
-    });
-</script>
 
-{# 2. Gestion du like (AJAX) #}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
+        // === 2. Gestion du like ===
         document.querySelectorAll('.like-button').forEach(button => {
-            button.addEventListener('click', function() {
-                let postId = this.getAttribute('data-id');
+            button.addEventListener('click', function () {
+                const postId = this.getAttribute('data-id');
+                const container = this.closest('.post-container');
+
                 fetch('/post/' + postId + '/like', {
                     method: 'POST',
                     headers: {
@@ -148,62 +221,50 @@
                 })
                     .then(response => response.json())
                     .then(data => {
-                        if (data.likesCount !== undefined) {
-                            // Mettre à jour le compteur en haut (si présent)
-                            let container = this.closest('.bg-white');
-                            let likeCountEl = container.querySelector('.like-count');
-                            let statsContainer = container.querySelector('.stats-container');
+                        const statsContainer = container.querySelector('.stats-container');
+                        const likeCountEl = container.querySelector('.like-count');
 
-                            // Mettre à jour le texte du compteur
-                            if (likeCountEl) {
-                                if (data.likesCount > 0) {
-                                    likeCountEl.textContent = data.likesCount;
-                                    likeCountEl.classList.remove('hidden');
-                                } else {
-                                    likeCountEl.textContent = '0';
-                                    likeCountEl.classList.add('hidden');
-                                }
+                        if (likeCountEl) {
+                            const countSpan = likeCountEl.querySelector('span');
+                            if (countSpan) {
+                                countSpan.textContent = data.likesCount + ' j\'aime';
                             }
+                            likeCountEl.classList.toggle('hidden', data.likesCount === 0);
+                        }
 
-                            // Gérer la couleur du bouton
-                            if (data.status === 'liked') {
-                                this.classList.remove('text-gray-600');
-                                this.classList.add('text-blue-500');
-                            } else {
-                                this.classList.remove('text-blue-500');
-                                this.classList.add('text-gray-600');
-                            }
+                        // Mettre à jour le style du bouton
+                        if (data.status === 'liked') {
+                            this.classList.remove('text-gray-600', 'hover:bg-red-50', 'hover:text-red-500');
+                            this.classList.add('text-red-500', 'bg-red-50');
+                        } else {
+                            this.classList.remove('text-red-500', 'bg-red-50');
+                            this.classList.add('text-gray-600', 'hover:bg-red-50', 'hover:text-red-500');
+                        }
+
+                        if (statsContainer) {
+                            const commentCountBtn = statsContainer.querySelector('.comment-count-display');
+                            const commentCount = commentCountBtn ? parseInt(commentCountBtn.textContent.match(/\d+/)?.[0] || '0', 10) : 0;
 
                             // Vérifier si on doit afficher ou masquer stats-container
-                            if (statsContainer) {
-                                let commentCountBtn = statsContainer.querySelector('.comment-count-btn');
-                                let shareCountEl    = statsContainer.querySelector('.share-count');
-                                let commentCount    = commentCountBtn ? parseInt(commentCountBtn.getAttribute('data-count') || '0', 10) : 0;
-                                let shareCount      = shareCountEl ? parseInt(shareCountEl.textContent || '0', 10) : 0;
-
-                                // Si tous les compteurs sont 0 => masquer
-                                if (data.likesCount === 0 && commentCount === 0 && shareCount === 0) {
-                                    statsContainer.classList.add('hidden');
-                                } else {
-                                    statsContainer.classList.remove('hidden');
-                                }
+                            if (data.likesCount === 0 && commentCount === 0) {
+                                statsContainer.classList.add('hidden');
+                            } else {
+                                statsContainer.classList.remove('hidden');
                             }
                         }
                     })
-                    .catch(error => console.error('Erreur:', error));
+                    .catch(err => console.error('Erreur like :', err));
             });
         });
-    });
-</script>
 
-{# 3. Envoi d'un nouveau commentaire (AJAX) #}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
+        // === 3. Envoi d'un commentaire ===
         function sendComment(button) {
-            let postId = button.getAttribute('data-post-id');
-            let input  = button.closest('.add-comment').querySelector('.comment-input');
-            let content = input.value.trim();
-            if (content === '') return;
+            const container = button.closest('.post-container');
+            const postId = button.getAttribute('data-post-id');
+            const input = container.querySelector('.comment-input');
+            const content = input.value.trim();
+
+            if (!content) return;
 
             fetch('/post/' + postId + '/comment', {
                 method: 'POST',
@@ -211,219 +272,203 @@
                     'X-Requested-With': 'XMLHttpRequest',
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
-                body: new URLSearchParams({ content: content })
+                body: new URLSearchParams({content})
             })
-                .then(response => response.json())
+                .then(res => res.json())
                 .then(data => {
                     if (data.status === 'commented') {
-                        let commentsSection = button.closest('.comments-section');
-                        let newComment = document.createElement('div');
-                        newComment.classList.add('comment', 'p-2', 'border-b', 'flex', 'justify-between', 'items-center');
+                        const commentsSection = container.querySelector('.comments-section');
+                        const newComment = document.createElement('div');
+                        newComment.className = 'border-t border-gray-100 pt-4 text-sm';
                         newComment.innerHTML = `
-                    <div>
-                        <div class="flex justify-between">
-                            <span class="font-bold">${data.comment.user}</span>
-                            <span class="text-gray-500 text-sm">${data.comment.createdAt}</span>
+                        <div class="flex justify-between items-start">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <img src="${data.comment.avatar}" alt="${data.comment.user}" class="w-8 h-8 rounded-full">
+                                    <div>
+                                        <span class="text-gray-800 font-semibold">${data.comment.user}</span>
+                                        <p class="text-xs text-gray-500">${data.comment.createdAt}</p>
+                                    </div>
+                                </div>
+                                <p class="text-gray-700 ml-11">${data.comment.content}</p>
+                            </div>
+                            <div class="ml-4 flex gap-2">
+                                <button class="edit-comment text-[#FF8A00] hover:text-[#e67300] hover:underline text-xs transition-colors" data-comment-id="${data.comment.id}">✏️ Modifier</button>
+                                <button class="delete-comment text-red-600 hover:text-red-800 hover:underline text-xs transition-colors" data-comment-id="${data.comment.id}">🗑️ Supprimer</button>
+                            </div>
                         </div>
-                        <p>${data.comment.content}</p>
-                    </div>
-                    <div class="ml-2">
-                        <button class="edit-comment text-blue-500 hover:text-blue-700" data-comment-id="${data.comment.id}">Modifier</button>
-                        <button class="delete-comment text-red-500 hover:text-red-700 ml-2" data-comment-id="${data.comment.id}">Supprimer</button>
-                    </div>
-                `;
+                    `;
                         commentsSection.insertBefore(newComment, commentsSection.querySelector('.add-comment'));
                         input.value = '';
 
                         // Mettre à jour le compteur de commentaires
-                        let container = button.closest('.bg-white');
-                        let statsContainer   = container.querySelector('.stats-container');
-                        let commentCountBtn  = container.querySelector('.comment-count-btn');
-                        let likeCountEl      = container.querySelector('.like-count');
-                        let shareCountEl     = container.querySelector('.share-count');
+                        const statsContainer = container.querySelector('.stats-container');
+                        let commentCountDisplay = container.querySelector('.comment-count-display');
 
-                        if (commentCountBtn) {
-                            // S'il existe déjà, on le met à jour
-                            commentCountBtn.setAttribute('data-count', data.commentsCount);
-                            commentCountBtn.textContent = data.commentsCount + ' commentaires';
-                            commentCountBtn.classList.remove('hidden');
-                        } else {
-                            // S'il n'existait pas, on doit éventuellement afficher la zone stats-container
-                            // et/ou créer un bouton. Simplification :
-                            if (statsContainer) {
-                                statsContainer.classList.remove('hidden');
+                        if (commentCountDisplay) {
+                            commentCountDisplay.textContent = `${data.commentsCount} commentaire${data.commentsCount > 1 ? 's' : ''}`;
+                        } else if (statsContainer && data.commentsCount > 0) {
+                            // Créer le compteur s'il n'existe pas
+                            const leftDiv = statsContainer.querySelector('.flex.items-center.space-x-4');
+                            if (leftDiv) {
+                                const commentCountSpan = document.createElement('span');
+                                commentCountSpan.className = 'comment-count-display';
+                                commentCountSpan.textContent = `${data.commentsCount} commentaire${data.commentsCount > 1 ? 's' : ''}`;
+                                leftDiv.appendChild(commentCountSpan);
                             }
                         }
 
-                        // Vérifier si on doit afficher ou masquer stats-container
                         if (statsContainer) {
-                            let likeCount   = likeCountEl ? parseInt(likeCountEl.textContent || '0', 10) : 0;
-                            let shareCount  = shareCountEl ? parseInt(shareCountEl.textContent || '0', 10) : 0;
-
-                            if (data.commentsCount === 0 && likeCount === 0 && shareCount === 0) {
-                                statsContainer.classList.add('hidden');
-                            } else {
-                                statsContainer.classList.remove('hidden');
-                            }
+                            statsContainer.classList.remove('hidden');
                         }
+
+                        // Ouvrir automatiquement les commentaires
+                        commentsSection.classList.remove('hidden');
                     }
                 })
-                .catch(error => console.error('Erreur:', error));
+                .catch(err => console.error('Erreur commentaire :', err));
         }
 
         document.querySelectorAll('.send-comment').forEach(button => {
-            button.addEventListener('click', function() {
-                sendComment(this);
-            });
+            button.addEventListener('click', () => sendComment(button));
         });
 
-        // Possibilité d'envoyer en appuyant sur "Entrée"
         document.querySelectorAll('.comment-input').forEach(input => {
-            input.addEventListener('keypress', function(e) {
+            input.addEventListener('keypress', function (e) {
                 if (e.key === 'Enter') {
                     e.preventDefault();
-                    let button = this.parentElement.querySelector('.send-comment');
-                    sendComment(button);
+                    sendComment(this.closest('.post-container').querySelector('.send-comment'));
                 }
             });
         });
-    });
-</script>
 
-{# 4. Suppression et édition d'un commentaire (et mise à jour des compteurs) #}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Suppression
-        document.addEventListener('click', function(e) {
-            if (e.target && e.target.classList.contains('delete-comment')) {
+        // === 4. Suppression et édition d'un commentaire ===
+        document.addEventListener('click', function (e) {
+            const el = e.target;
+            const container = el.closest('.post-container');
+
+            // Suppression
+            if (el.classList.contains('delete-comment')) {
                 e.preventDefault();
-                let commentId = e.target.getAttribute('data-comment-id');
-                fetch('/comment/' + commentId + '/delete', {
-                    method: 'POST',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.status === 'deleted') {
-                            e.target.closest('.comment').remove();
+                const commentId = el.dataset.commentId;
 
-                            // Mettre à jour le compteur
-                            let container       = e.target.closest('.bg-white');
-                            let statsContainer  = container.querySelector('.stats-container');
-                            let commentCountBtn = container.querySelector('.comment-count-btn');
-                            let likeCountEl     = container.querySelector('.like-count');
-                            let shareCountEl    = container.querySelector('.share-count');
-
-                            if (commentCountBtn) {
-                                if (data.commentsCount > 0) {
-                                    commentCountBtn.setAttribute('data-count', data.commentsCount);
-                                    commentCountBtn.textContent = data.commentsCount + ' commentaires';
-                                } else {
-                                    // 0 commentaire => on cache le bouton
-                                    commentCountBtn.classList.add('hidden');
-                                    commentCountBtn.setAttribute('data-count', 0);
-                                }
-                            }
-
-                            if (statsContainer) {
-                                let likeCount  = likeCountEl ? parseInt(likeCountEl.textContent || '0', 10) : 0;
-                                let shareCount = shareCountEl ? parseInt(shareCountEl.textContent || '0', 10) : 0;
-
-                                if (data.commentsCount === 0 && likeCount === 0 && shareCount === 0) {
-                                    statsContainer.classList.add('hidden');
-                                }
-                            }
-                        }
+                if (confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?')) {
+                    fetch(`/comment/${commentId}/delete`, {
+                        method: 'POST',
+                        headers: {'X-Requested-With': 'XMLHttpRequest'}
                     })
-                    .catch(error => console.error('Erreur:', error));
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.status === 'deleted') {
+                                el.closest('.border-t').remove();
+
+                                // Mettre à jour le compteur
+                                const commentCountDisplay = container.querySelector('.comment-count-display');
+                                if (commentCountDisplay) {
+                                    if (data.commentsCount > 0) {
+                                        commentCountDisplay.textContent = `${data.commentsCount} commentaire${data.commentsCount > 1 ? 's' : ''}`;
+                                    } else {
+                                        commentCountDisplay.remove();
+
+                                        // Vérifier si on doit masquer stats-container
+                                        const statsContainer = container.querySelector('.stats-container');
+                                        const likeCount = container.querySelector('.like-count span')?.textContent.match(/\d+/)?.[0] || 0;
+                                        if (statsContainer && parseInt(likeCount) === 0) {
+                                            statsContainer.classList.add('hidden');
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                }
             }
-        });
 
-        // Modification
-        document.addEventListener('click', function(e) {
-            if (e.target && e.target.classList.contains('edit-comment')) {
+            // Édition
+            if (el.classList.contains('edit-comment')) {
                 e.preventDefault();
-                let commentEl = e.target.closest('.comment');
-                let commentId = e.target.getAttribute('data-comment-id');
-
-                // Exemple simplifié : on remplace le contenu par un input
-                let contentEl = commentEl.querySelector('p');
-                let oldContent = contentEl.textContent;
+                const commentBlock = el.closest('.border-t');
+                const contentP = commentBlock.querySelector('p.ml-11');
+                const oldText = contentP.textContent;
 
                 // Masquer l'affichage normal
-                contentEl.style.display = 'none';
-                // Boutons
-                e.target.style.display = 'none';
-                let deleteBtn = commentEl.querySelector('.delete-comment');
-                if (deleteBtn) {
-                    deleteBtn.style.display = 'none';
-                }
+                contentP.style.display = 'none';
+                el.style.display = 'none';
+                const deleteBtn = commentBlock.querySelector('.delete-comment');
+                if (deleteBtn) deleteBtn.style.display = 'none';
 
                 // Créer un input pour éditer
-                let inputEdit = document.createElement('input');
-                inputEdit.type = 'text';
-                inputEdit.value = oldContent;
-                inputEdit.classList.add('w-full', 'border', 'rounded', 'p-2', 'mt-2');
-                commentEl.insertBefore(inputEdit, contentEl.nextSibling);
+                const inputEdit = document.createElement('input');
+                inputEdit.value = oldText;
+                inputEdit.className = 'border border-gray-200 rounded-lg w-full p-3 mt-2 text-sm focus:ring-2 focus:ring-[#FF8A00] ml-11';
+                commentBlock.appendChild(inputEdit);
 
-                // Ajouter un bouton pour valider
-                let validateBtn = document.createElement('button');
+                // Ajouter boutons valider/annuler
+                const buttonsDiv = document.createElement('div');
+                buttonsDiv.className = 'flex gap-2 mt-2 ml-11';
+
+                const validateBtn = document.createElement('button');
+                validateBtn.className = 'bg-[#FF8A00] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#e67300] transition-colors';
                 validateBtn.textContent = 'Valider';
-                validateBtn.classList.add('bg-green-500', 'text-white', 'px-4', 'py-2', 'rounded', 'hover:bg-green-600', 'ml-2');
-                commentEl.insertBefore(validateBtn, inputEdit.nextSibling);
 
-                // Bouton annuler
-                let cancelBtn = document.createElement('button');
+                const cancelBtn = document.createElement('button');
+                cancelBtn.className = 'bg-gray-400 text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-500 transition-colors';
                 cancelBtn.textContent = 'Annuler';
-                cancelBtn.classList.add('bg-gray-500', 'text-white', 'px-4', 'py-2', 'rounded', 'hover:bg-gray-600', 'ml-2');
-                commentEl.insertBefore(cancelBtn, validateBtn.nextSibling);
+
+                buttonsDiv.appendChild(validateBtn);
+                buttonsDiv.appendChild(cancelBtn);
+                commentBlock.appendChild(buttonsDiv);
+
+                // Focus sur l'input
+                inputEdit.focus();
+                inputEdit.select();
 
                 // Annuler
-                cancelBtn.addEventListener('click', function() {
-                    contentEl.style.display = '';
-                    e.target.style.display = '';
-                    if (deleteBtn) {
-                        deleteBtn.style.display = '';
-                    }
+                cancelBtn.addEventListener('click', () => {
                     inputEdit.remove();
-                    validateBtn.remove();
-                    cancelBtn.remove();
+                    buttonsDiv.remove();
+                    contentP.style.display = '';
+                    el.style.display = '';
+                    if (deleteBtn) deleteBtn.style.display = '';
+                });
+
+                // Valider avec Entrée
+                inputEdit.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        validateBtn.click();
+                    }
+                    if (e.key === 'Escape') {
+                        e.preventDefault();
+                        cancelBtn.click();
+                    }
                 });
 
                 // Valider
-                validateBtn.addEventListener('click', function() {
-                    let newContent = inputEdit.value.trim();
-                    if (newContent === '') return;
+                validateBtn.addEventListener('click', () => {
+                    const newContent = inputEdit.value.trim();
+                    if (!newContent) return;
 
-                    fetch('/comment/' + commentId + '/edit', {
+                    fetch(`/comment/${el.dataset.commentId}/edit`, {
                         method: 'POST',
                         headers: {
                             'X-Requested-With': 'XMLHttpRequest',
                             'Content-Type': 'application/x-www-form-urlencoded'
                         },
-                        body: new URLSearchParams({ content: newContent })
+                        body: new URLSearchParams({content: newContent})
                     })
-                        .then(response => response.json())
+                        .then(res => res.json())
                         .then(data => {
                             if (data.status === 'updated') {
-                                contentEl.textContent = data.comment.content;
-                                contentEl.style.display = '';
-                                e.target.style.display = '';
-                                if (deleteBtn) {
-                                    deleteBtn.style.display = '';
-                                }
+                                contentP.textContent = data.comment.content;
                                 inputEdit.remove();
-                                validateBtn.remove();
-                                cancelBtn.remove();
+                                buttonsDiv.remove();
+                                contentP.style.display = '';
+                                el.style.display = '';
+                                if (deleteBtn) deleteBtn.style.display = '';
                             }
-                        })
-                        .catch(error => console.error('Erreur:', error));
+                        });
                 });
             }
         });
     });
 </script>
-
-{% endblock %}

@@ -1,0 +1,392 @@
+{% extends 'home/desktop/base_desktop.html.twig' %}
+
+{% block title %}Messagerie{% endblock %}
+
+{% block content %}
+    <div class="flex gap-6 h-[calc(100vh-120px)] max-w-none mt-12">
+
+        <!-- Sidebar: Liste des conversations -->
+        <aside class="w-96 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
+            <!-- En-tête de la messagerie -->
+            <div class="p-6 border-b border-gray-100 bg-gradient-to-r from-[#FF8A00]/5 to-orange-50">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="p-2 bg-gradient-to-br from-[#FF8A00] to-[#e67300] rounded-xl shadow-md">
+                        <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-800">Messages</h1>
+                        <p class="text-sm text-gray-500">{{ friends|length }} conversation{{ friends|length > 1 ? 's' : '' }}</p>
+                    </div>
+                </div>
+
+                <!-- Barre de recherche -->
+                <div class="relative">
+                    <input type="text" id="search-input"
+                           placeholder="Rechercher une conversation..."
+                           class="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF8A00] focus:border-transparent text-sm text-gray-700 placeholder-gray-400 transition-all duration-200"/>
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Liste des conversations -->
+            <div class="flex-1 overflow-y-auto">
+                {% if friends is not empty %}
+                    <ul id="friend-list" class="divide-y divide-gray-100">
+                        {% for friend in friends %}
+                            <li class="friend-item p-4 hover:bg-gray-50 cursor-pointer transition-all duration-200 group border-l-4 border-transparent hover:border-[#FF8A00]"
+                                data-user-id="{{ friend.id }}"
+                                data-name="{{ friend.fullName }}">
+                                <div class="flex items-center gap-3">
+                                    <div class="relative flex-shrink-0">
+                                        <img src="{{ friend.avatarUrl ?? '/images/user_Default.png' }}"
+                                             class="w-12 h-12 rounded-full border-2 border-gray-200 group-hover:border-[#FF8A00] transition-colors shadow-sm"
+                                             alt="{{ friend.fullName }}"/>
+                                        <div class="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full shadow-sm"></div>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center justify-between mb-1">
+                                            <h3 class="font-semibold text-gray-800 group-hover:text-[#FF8A00] transition-colors truncate">{{ friend.fullName }}</h3>
+                                            <span class="text-xs text-gray-400 flex-shrink-0">{{ friend.lastActive }}</span>
+                                        </div>
+                                        <p class="text-sm text-gray-500 truncate">{{ friend.lastMessage|default('Aucun message') }}</p>
+                                    </div>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="flex flex-col items-center justify-center h-full p-8 text-center">
+                        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                            <svg class="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2v-6a2 2 0 012-2h8z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Aucune conversation</h3>
+                        <p class="text-gray-500 text-sm">Commencez à échanger avec vos amis lecteurs</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Bouton nouveau message -->
+            <div class="p-4 border-t border-gray-100">
+                <button class="w-full bg-gradient-to-r from-[#FF8A00] to-[#e67300] text-white py-3 rounded-xl shadow-md hover:shadow-lg font-semibold transition-all duration-200 hover:scale-105 flex items-center justify-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    Nouveau message
+                </button>
+            </div>
+        </aside>
+
+        <!-- Zone de conversation principale -->
+        <main class="flex-1 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
+
+            <!-- En-tête de la conversation -->
+            <header id="chat-header" class="flex items-center justify-between p-6 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 bg-gradient-to-br from-gray-200 to-gray-300 rounded-full flex items-center justify-center">
+                        <svg class="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.77 9.77 0 01-4.29-1l-4.42 1 .82-4.16A7.964 7.964 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-semibold text-gray-800">Sélectionnez une conversation</h2>
+                        <p class="text-sm text-gray-500">Choisissez un contact pour commencer</p>
+                    </div>
+                </div>
+
+                <div class="hidden" id="chat-actions">
+                    <div class="flex items-center gap-2">
+                        <button class="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                            <svg class="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                            </svg>
+                        </button>
+                        <button class="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                            <svg class="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                            </svg>
+                        </button>
+                        <button class="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                            <svg class="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Zone des messages -->
+            <div id="chat-messages" class="flex-1 p-6 overflow-y-auto bg-gradient-to-b from-gray-50/50 to-white space-y-4">
+                <div class="flex flex-col items-center justify-center h-full text-center">
+                    <div class="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mb-6">
+                        <svg class="w-10 h-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.77 9.77 0 01-4.29-1l-4.42 1 .82-4.16A7.964 7.964 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Prêt à échanger ?</h3>
+                    <p class="text-gray-500 max-w-md">
+                        Sélectionnez une conversation pour commencer à discuter de vos lectures favorites avec vos amis.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Zone de saisie -->
+            <footer class="border-t border-gray-100 bg-white p-4">
+                <form id="message-form" class="flex items-center gap-3">
+                    <div class="flex-1 relative">
+                        <input type="text" id="message-input"
+                               placeholder="Tapez votre message..."
+                               class="w-full pl-4 pr-12 py-3 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#FF8A00] focus:border-transparent text-sm transition-all duration-200"
+                               disabled/>
+                        <button type="button" class="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 hover:bg-gray-100 rounded-full transition-colors" disabled>
+                            <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <button type="submit" id="send-message"
+                            class="bg-gradient-to-r from-[#FF8A00] to-[#e67300] text-white p-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                            disabled>
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                        </svg>
+                    </button>
+                </form>
+            </footer>
+        </main>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const currentUserId = parseInt(document.body.dataset.userId);
+            let selectedFriendId = null;
+            let selectedFriendName = null;
+
+            const chatHeader = document.getElementById("chat-header");
+            const chatActions = document.getElementById("chat-actions");
+            const messageInput = document.getElementById("message-input");
+            const sendButton = document.getElementById("send-message");
+            const chatBox = document.getElementById("chat-messages");
+            const friendItems = document.querySelectorAll(".friend-item");
+
+            // Recherche d'amis
+            document.getElementById("search-input").addEventListener("input", function () {
+                const query = this.value.toLowerCase();
+                friendItems.forEach(item => {
+                    const name = item.dataset.name.toLowerCase();
+                    item.style.display = name.includes(query) ? "flex" : "none";
+                });
+            });
+
+            // Sélection d'un contact
+            friendItems.forEach(li => {
+                li.addEventListener("click", function () {
+                    selectedFriendId = this.dataset.userId;
+                    selectedFriendName = this.dataset.name;
+
+                    // Mettre à jour l'en-tête
+                    updateChatHeader(selectedFriendName);
+
+                    // Appliquer la classe active
+                    friendItems.forEach(el => {
+                        el.classList.remove("bg-orange-50", "border-[#FF8A00]");
+                        el.classList.add("border-transparent");
+                    });
+                    this.classList.remove("border-transparent");
+                    this.classList.add("bg-orange-50", "border-[#FF8A00]");
+
+                    // Activer l'interface de chat
+                    messageInput.disabled = false;
+                    sendButton.disabled = false;
+                    chatActions.classList.remove("hidden");
+
+                    loadMessages(selectedFriendId);
+                });
+            });
+
+            function updateChatHeader(friendName) {
+                chatHeader.innerHTML = `
+                    <div class="flex items-center gap-4">
+                        <div class="relative">
+                            <div class="w-10 h-10 bg-gradient-to-br from-[#FF8A00] to-[#e67300] rounded-full flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                </svg>
+                            </div>
+                            <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full"></div>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-semibold text-gray-800">${friendName}</h2>
+                            <p class="text-sm text-emerald-600 flex items-center">
+                                <div class="w-2 h-2 bg-emerald-500 rounded-full mr-2"></div>
+                                En ligne
+                            </p>
+                        </div>
+                    </div>
+                    <div id="chat-actions">
+                        <div class="flex items-center gap-2">
+                            <button class="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                                <svg class="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                </svg>
+                            </button>
+                            <button class="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                                <svg class="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                                </svg>
+                            </button>
+                            <button class="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                                <svg class="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            function loadMessages(friendId) {
+                fetch(`/chat/messages/${friendId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        chatBox.innerHTML = "";
+
+                        if (!data.messages || data.messages.length === 0) {
+                            chatBox.innerHTML = `
+                                <div class="flex flex-col items-center justify-center h-full text-center">
+                                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                                        <svg class="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.77 9.77 0 01-4.29-1l-4.42 1 .82-4.16A7.964 7.964 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Aucun message</h3>
+                                    <p class="text-gray-500">Commencez la conversation avec ${selectedFriendName}</p>
+                                </div>
+                            `;
+                            return;
+                        }
+
+                        data.messages.forEach(msg => {
+                            const wrapper = document.createElement("div");
+                            wrapper.className = "flex " + (msg.sender === currentUserId ? "justify-end" : "justify-start");
+
+                            const bubble = document.createElement("div");
+                            bubble.className = `max-w-md p-4 rounded-2xl text-sm shadow-sm transition-all duration-200 hover:shadow-md ${
+                                msg.sender === currentUserId
+                                    ? "bg-gradient-to-r from-[#FF8A00] to-[#e67300] text-white rounded-br-md"
+                                    : "bg-white text-gray-800 border border-gray-200 rounded-bl-md"
+                            }`;
+
+                            bubble.innerHTML = `
+                                <p class="leading-relaxed">${msg.content}</p>
+                                <small class="text-xs block mt-2 ${msg.sender === currentUserId ? 'text-orange-100' : 'text-gray-500'}">${msg.createdAt}</small>
+                            `;
+
+                            wrapper.appendChild(bubble);
+                            chatBox.appendChild(wrapper);
+                        });
+
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                    });
+            }
+
+            // Envoi de message
+            document.getElementById("message-form").addEventListener("submit", function (e) {
+                e.preventDefault();
+                const content = messageInput.value.trim();
+                if (!content || !selectedFriendId) return;
+
+                // Désactiver temporairement l'envoi
+                sendButton.disabled = true;
+                messageInput.disabled = true;
+
+                fetch('/chat/send', {
+                    method: "POST",
+                    headers: {"Content-Type": "application/x-www-form-urlencoded"},
+                    body: new URLSearchParams({content, receiver_id: selectedFriendId})
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        const wrapper = document.createElement("div");
+                        wrapper.className = "flex justify-end";
+
+                        const bubble = document.createElement("div");
+                        bubble.className = "max-w-md p-4 rounded-2xl text-sm shadow-sm bg-gradient-to-r from-[#FF8A00] to-[#e67300] text-white rounded-br-md";
+                        bubble.innerHTML = `
+                            <p class="leading-relaxed">${data.message.content}</p>
+                            <small class="text-xs block mt-2 text-orange-100">${data.message.createdAt}</small>
+                        `;
+
+                        wrapper.appendChild(bubble);
+                        chatBox.appendChild(wrapper);
+                        messageInput.value = "";
+                        chatBox.scrollTop = chatBox.scrollHeight;
+
+                        // Réactiver l'interface
+                        sendButton.disabled = false;
+                        messageInput.disabled = false;
+                        messageInput.focus();
+                    })
+                    .catch(error => {
+                        console.error('Erreur envoi message:', error);
+                        sendButton.disabled = false;
+                        messageInput.disabled = false;
+                    });
+            });
+
+            // Raccourci clavier Entrée
+            messageInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    document.getElementById("message-form").dispatchEvent(new Event('submit'));
+                }
+            });
+
+            // Réception Mercure
+            const eventSource = new EventSource(`https://test.livridea.com/mercure/.well-known/mercure?topic=chat_user_${currentUserId}`);
+            eventSource.onmessage = function (event) {
+                const data = JSON.parse(event.data);
+                if (selectedFriendId === data.senderId) {
+                    const wrapper = document.createElement("div");
+                    wrapper.className = "flex justify-start";
+
+                    const bubble = document.createElement("div");
+                    bubble.className = "max-w-md p-4 rounded-2xl text-sm shadow-sm bg-white text-gray-800 border border-gray-200 rounded-bl-md";
+                    bubble.innerHTML = `
+                        <p class="leading-relaxed">${data.content}</p>
+                        <small class="text-xs block mt-2 text-gray-500">${data.timestamp}</small>
+                    `;
+
+                    wrapper.appendChild(bubble);
+                    chatBox.appendChild(wrapper);
+                    chatBox.scrollTop = chatBox.scrollHeight;
+
+                    // Animation d'apparition
+                    bubble.style.opacity = '0';
+                    bubble.style.transform = 'translateY(10px)';
+                    setTimeout(() => {
+                        bubble.style.transition = 'all 0.3s ease';
+                        bubble.style.opacity = '1';
+                        bubble.style.transform = 'translateY(0)';
+                    }, 50);
+                }
+            };
+
+            // Feedback tactile
+            if (navigator.vibrate) {
+                sendButton.addEventListener('click', () => {
+                    navigator.vibrate(30);
+                });
+            }
+        });
+    </script>
+{% endblock %}

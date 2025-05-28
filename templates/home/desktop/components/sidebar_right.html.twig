@@ -1,105 +1,206 @@
 {% block sidebar_right %}
-    <div class="w-1/4 p-4 hidden lg:block space-y-6">
+    <div class="w-80 hidden lg:block space-y-4">
 
         <!-- Suggestions d'amitié -->
-        <div class="bg-[#f7f9f4] border border-[#2E7D32] rounded-xl shadow-sm p-4">
-            <h3 class="text-[#2E7D32] font-bold text-lg mb-4 italic flex items-center gap-2">
-                <svg fill="#2E7D32" class="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <g id="read">
-                        <g>
-                            <path d="M12,18.883a10.8,10.8,0,0,1-9.675-5.728,2.6,2.6,0,0,1,0-2.31A10.8,10.8,0,0,1,12,5.117a10.8,10.8,0,0,1,9.675,5.728h0a2.6,2.6,0,0,1,0,2.31A10.8,10.8,0,0,1,12,18.883ZM12,6.117a9.787,9.787,0,0,0-8.78,5.176,1.586,1.586,0,0,0,0,1.415A9.788,9.788,0,0,0,12,17.883a9.787,9.787,0,0,0,8.78-5.176,1.584,1.584,0,0,0,0-1.414h0A9.787,9.787,0,0,0,12,6.117Z"/>
-                            <path d="M12,16.049A4.049,4.049,0,1,1,16.049,12,4.054,4.054,0,0,1,12,16.049Zm0-7.1A3.049,3.049,0,1,0,15.049,12,3.052,3.052,0,0,0,12,8.951Z"/>
-                            <circle cx="12" cy="12" r="2.028"/>
-                        </g>
-                    </g>
-                </svg>
-                Lecteurs à découvrir
-            </h3>
-            <ul class="space-y-4">
-                {% for suggested in suggestedUsers %}
-                    <li class="flex justify-between items-center gap-2">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full border border-[#2E7D32] shadow-sm overflow-hidden">
-                                <img src="{{ asset(suggested.avatarPath|default('/images/default-profile.png')) }}"
-                                     alt="Avatar de {{ suggested.username }}"
-                                     class="w-full h-full object-cover">
-                            </div>
-                            <div>
-                                <a href="{{ path('dashboard_user_profile_other', {'username': suggested.username}) }}"
-                                   class="text-[#2E7D32] font-semibold hover:text-[#FF8A00] hover:underline text-sm italic transition-colors">
-                                    {{ suggested.username }}
-                                </a>
-                                <p class="text-xs text-gray-500">@{{ suggested.pseudo|default(suggested.username) }}</p>
-                            </div>
-                        </div>
-                        <button class="friend-request-btn bg-[#FF8A00] text-white px-3 py-1 rounded shadow hover:bg-[#e67e00] text-xs transition-colors"
-                                data-user-id="{{ suggested.id }}">
-                            Se lier
-                        </button>
-                    </li>
-                {% else %}
-                    <li class="text-gray-500 text-sm italic flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="p-4">
+                <h3 class="text-gray-800 font-bold text-lg mb-4 flex items-center gap-3">
+                    <div class="p-2 bg-gradient-to-br from-[#FF8A00] to-[#e67300] rounded-lg">
+                        <svg fill="currentColor" class="w-5 h-5 text-white" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <g id="read">
+                                <g>
+                                    <path d="M12,18.883a10.8,10.8,0,0,1-9.675-5.728,2.6,2.6,0,0,1,0-2.31A10.8,10.8,0,0,1,12,5.117a10.8,10.8,0,0,1,9.675,5.728h0a2.6,2.6,0,0,1,0,2.31A10.8,10.8,0,0,1,12,18.883ZM12,6.117a9.787,9.787,0,0,0-8.78,5.176,1.586,1.586,0,0,0,0,1.415A9.788,9.788,0,0,0,12,17.883a9.787,9.787,0,0,0,8.78-5.176,1.584,1.584,0,0,0,0-1.414h0A9.787,9.787,0,0,0,12,6.117Z"/>
+                                    <path d="M12,16.049A4.049,4.049,0,1,1,16.049,12,4.054,4.054,0,0,1,12,16.049Zm0-7.1A3.049,3.049,0,1,0,15.049,12,3.052,3.052,0,0,0,12,8.951Z"/>
+                                    <circle cx="12" cy="12" r="2.028"/>
+                                </g>
+                            </g>
                         </svg>
-                        Aucune suggestion pour le moment.
-                    </li>
-                {% endfor %}
-            </ul>
+                    </div>
+                    <span>Lecteurs à découvrir</span>
+                </h3>
+
+                <ul class="space-y-3">
+                    {% for suggested in suggestedUsers %}
+                        <li class="p-3 rounded-xl hover:bg-gray-50 transition-all duration-200 hover:scale-[1.02]">
+                            <div class="flex items-center justify-between gap-3">
+                                <div class="flex items-center gap-3 min-w-0 flex-1">
+                                    <div class="relative flex-shrink-0">
+                                        <div class="w-10 h-10 rounded-full border-2 border-gray-200 shadow-sm overflow-hidden hover:border-[#FF8A00] transition-colors">
+                                            <img src="{{ asset(suggested.avatarPath|default('/images/user_Default.png')) }}"
+                                                 alt="Avatar de {{ suggested.username }}"
+                                                 class="w-full h-full object-cover">
+                                        </div>
+                                        <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full shadow-sm"></div>
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <a href="{{ path('dashboard_user_profile_other', {'username': suggested.username}) }}"
+                                           class="text-gray-800 font-semibold hover:text-[#FF8A00] text-sm block truncate transition-colors">
+                                            {{ suggested.username }}
+                                        </a>
+                                        <p class="text-xs text-gray-500 truncate">@{{ suggested.pseudo|default(suggested.username) }}</p>
+                                        <div class="flex items-center mt-1 text-xs text-gray-400">
+                                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            <span>Lecteur vérifié</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="friend-request-btn bg-gradient-to-r from-[#FF8A00] to-[#e67300] text-white px-3 py-1.5 rounded-lg shadow-sm hover:shadow-md text-xs font-medium transition-all duration-200 hover:scale-105 flex-shrink-0"
+                                        data-user-id="{{ suggested.id }}">
+                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"/>
+                                    </svg>
+                                    Se lier
+                                </button>
+                            </div>
+                        </li>
+                    {% else %}
+                        <li class="text-gray-500 text-sm flex items-center justify-center gap-2 p-6 rounded-xl bg-gray-50">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span>Aucune suggestion pour le moment.</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+                {% if suggestedUsers|length > 0 %}
+                    <div class="mt-4 pt-3 border-t border-gray-100">
+                        <a href="{{ path('app_friends_suggestions') }}" class="text-[#FF8A00] hover:text-[#e67300] text-sm font-medium flex items-center group transition-colors">
+                            <span>Voir plus de suggestions</span>
+                            <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
         </div>
 
         {% set pendingRequests = friendRequests|filter(r => r.status == 'pending') %}
 
         <!-- Demandes d'amitié reçues -->
         {% if pendingRequests|length >= 1 %}
-            <div class="bg-[#f7f9f4] border border-[#2E7D32] rounded-xl shadow-sm p-4">
-                <h3 class="text-[#2E7D32] font-bold text-lg mb-4 italic flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="#2E7D32">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21.75 9v-.906c0-1.19-.972-2.152-2.165-2.152H4.415c-1.193 0-2.165.961-2.165 2.152V9h19.5zM19.585 9h-15.17l3.938-3.94a2.25 2.25 0 013.15 0l3.938 3.94zm-15.17 6h15.17M6.75 12h.008v.008H6.75V12zm2.25 0h.008v.008H9V12zm2.25 0h.008v.008H11.25V12z" />
-                    </svg>
-                    Demandes reçues
-                </h3>
-                <ul class="space-y-4">
-                    {% for request in pendingRequests %}
-                        <li class="flex flex-col gap-2">
-                            <div>
-                                <a href="{{ path('dashboard_user_profile_other', {'username': request.sender.username}) }}"
-                                   class="text-[#2E7D32] font-semibold hover:text-[#FF8A00] hover:underline text-sm italic transition-colors">
-                                    {{ request.sender.username }}
-                                </a>
-                                <p class="text-xs text-gray-500">
-                                    @{{ request.sender.pseudo|default(request.sender.username) }}
-                                </p>
-                            </div>
-                            <div class="flex gap-2">
-                                <button class="accept-friend-btn bg-[#2E7D32] text-white px-3 py-1 rounded hover:bg-[#1b5e20] text-xs transition-colors flex items-center gap-1"
-                                        data-friend-id="{{ request.id }}">
-                                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                    </svg>
-                                    Accepter
-                                </button>
-                                <button class="decline-friend-btn bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-xs transition-colors flex items-center gap-1"
-                                        data-friend-id="{{ request.id }}">
-                                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                    Refuser
-                                </button>
-                            </div>
-                            <hr class="h-px bg-[#2E7D32]/20 border-0">
-                        </li>
-                    {% else %}
-                        <li class="text-gray-500 text-sm italic flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="p-4">
+                    <h3 class="text-gray-800 font-bold text-lg mb-4 flex items-center gap-3">
+                        <div class="p-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg">
+                            <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21.75 9v-.906c0-1.19-.972-2.152-2.165-2.152H4.415c-1.193 0-2.165.961-2.165 2.152V9h19.5zM19.585 9h-15.17l3.938-3.94a2.25 2.25 0 013.15 0l3.938 3.94zm-15.17 6h15.17M6.75 12h.008v.008H6.75V12zm2.25 0h.008v.008H9V12zm2.25 0h.008v.008H11.25V12z" />
                             </svg>
-                            Aucune demande pour l'instant.
-                        </li>
-                    {% endfor %}
-                </ul>
+                        </div>
+                        <span>Demandes reçues</span>
+                        <div class="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full font-semibold">
+                            {{ pendingRequests|length }}
+                        </div>
+                    </h3>
+
+                    <ul class="space-y-3">
+                        {% for request in pendingRequests %}
+                            <li class="p-3 rounded-xl hover:bg-gray-50 transition-all duration-200">
+                                <div class="flex items-start gap-3">
+                                    <div class="relative flex-shrink-0">
+                                        <div class="w-10 h-10 rounded-full border-2 border-gray-200 shadow-sm overflow-hidden">
+                                            <img src="{{ asset(request.sender.avatarPath|default('/images/default-profile.png')) }}"
+                                                 alt="Avatar de {{ request.sender.username }}"
+                                                 class="w-full h-full object-cover">
+                                        </div>
+                                        <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-blue-500 border-2 border-white rounded-full shadow-sm"></div>
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <div class="mb-2">
+                                            <a href="{{ path('dashboard_user_profile_other', {'username': request.sender.username}) }}"
+                                               class="text-gray-800 font-semibold hover:text-blue-600 text-sm block transition-colors">
+                                                {{ request.sender.username }}
+                                            </a>
+                                            <p class="text-xs text-gray-500">
+                                                @{{ request.sender.pseudo|default(request.sender.username) }}
+                                            </p>
+                                        </div>
+                                        <div class="flex gap-2">
+                                            <button class="accept-friend-btn bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 hover:scale-105 shadow-sm hover:shadow-md flex items-center gap-1"
+                                                    data-friend-id="{{ request.id }}">
+                                                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                                </svg>
+                                                Accepter
+                                            </button>
+                                            <button class="decline-friend-btn bg-gradient-to-r from-red-500 to-red-600 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 hover:scale-105 shadow-sm hover:shadow-md flex items-center gap-1"
+                                                    data-friend-id="{{ request.id }}">
+                                                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                </svg>
+                                                Refuser
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
             </div>
         {% endif %}
+
+        <!-- Widget Activité récente -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="p-4">
+                <h3 class="text-gray-800 font-bold text-lg mb-4 flex items-center gap-3">
+                    <div class="p-2 bg-gradient-to-br from-green-500 to-green-600 rounded-lg">
+                        <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <span>Activité récente</span>
+                </h3>
+
+                <ul class="space-y-3">
+                    <li class="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 transition-all duration-200">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#FF8A00] to-[#e67300] flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-sm text-gray-800"><span class="font-semibold">Marie L.</span> a aimé votre citation</p>
+                            <p class="text-xs text-gray-500 mt-1">Il y a 2 heures</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 transition-all duration-200">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"/>
+                            </svg>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-sm text-gray-800"><span class="font-semibold">Thomas</span> a commenté votre post</p>
+                            <p class="text-xs text-gray-500 mt-1">Il y a 5 heures</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 transition-all duration-200">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"/>
+                            </svg>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-sm text-gray-800"><span class="font-semibold">Sophie</span> s'est abonnée à votre profil</p>
+                            <p class="text-xs text-gray-500 mt-1">Il y a 1 jour</p>
+                        </div>
+                    </li>
+                </ul>
+
+                <div class="mt-4 pt-3 border-t border-gray-100">
+                    <a href="#" class="text-green-600 hover:text-green-700 text-sm font-medium flex items-center group transition-colors">
+                        <span>Voir toute l'activité</span>
+                        <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
 
     </div>
 {% endblock %}
@@ -142,13 +243,13 @@
                 .then(data => {
                     if (data.status === "pending") {
                         button.innerHTML = `
-                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg class="w-3 h-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                             Demande envoyée
                         `;
-                        button.classList.remove("bg-[#FF8A00]", "hover:bg-[#e67e00]");
-                        button.classList.add("bg-gray-400", "cursor-not-allowed", "opacity-80");
+                        button.classList.remove("from-[#FF8A00]", "to-[#e67300]", "hover:scale-105");
+                        button.classList.add("from-gray-400", "to-gray-500", "cursor-not-allowed", "opacity-80");
                         button.disabled = true;
                     } else {
                         alert(data.error);
@@ -169,12 +270,14 @@
                 .then(data => {
                     if (data.status === "accepted") {
                         button.closest("li").innerHTML = `
-                            <p class="text-[#2E7D32] font-bold flex items-center gap-2">
-                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                </svg>
-                                Ami(e) ajouté(e) !
-                            </p>
+                            <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200">
+                                <p class="text-emerald-700 font-semibold flex items-center gap-2 text-sm">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    Ami(e) ajouté(e) avec succès !
+                                </p>
+                            </div>
                         `;
                     } else {
                         alert(data.error);
@@ -195,12 +298,14 @@
                 .then(data => {
                     if (data.status === "declined") {
                         button.closest("li").innerHTML = `
-                            <p class="text-red-500 font-bold flex items-center gap-2">
-                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                                Demande refusée.
-                            </p>
+                            <div class="p-3 rounded-xl bg-red-50 border border-red-200">
+                                <p class="text-red-700 font-semibold flex items-center gap-2 text-sm">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    Demande refusée.
+                                </p>
+                            </div>
                         `;
                     } else {
                         alert(data.error);

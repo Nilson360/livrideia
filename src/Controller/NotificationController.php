@@ -84,7 +84,7 @@ class NotificationController extends AbstractController
         }
 
         // Version desktop par défaut
-        return $this->render('home/notifications/list.html.twig', $templateData);
+        return $this->render('home/desktop/notifications/list.html.twig', $templateData);
     }
 
     #[Route('/notification/read/{id}', name: 'notification_mark_as_read', methods: ['POST'])]

@@ -4,9 +4,11 @@ namespace App\Controller;
 
 use App\Entity\Friend;
 use App\Entity\User;
+use App\Repository\UserRepository;
 use App\Service\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -14,11 +16,52 @@ class FriendController extends AbstractController
 {
     private NotificationService $notificationService;
     private EntityManagerInterface $entityManager;
-    public function __construct(NotificationService $notificationService, EntityManagerInterface $entityManager)
+    private UserRepository $userRepository;
+
+    public function __construct(NotificationService $notificationService, EntityManagerInterface $entityManager, UserRepository $userRepository)
     {
         $this->notificationService = $notificationService;
         $this->entityManager = $entityManager;
+        $this->userRepository = $userRepository;
     }
+
+    /**
+     * Affiche toutes les suggestions d'amitié
+     */
+    #[Route('/friends/suggestions', name: 'app_friends_suggestions', methods: ['GET'])]
+    public function suggestions(Request $request, EntityManagerInterface $em): Response
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        // Pagination
+        $page = max(1, $request->query->getInt('page', 1));
+        $limit = 12; // 12 suggestions par page
+
+        // Utiliser la méthode existante du repository avec pagination
+        $suggestedUsers = $this->userRepository->getSuggestedUsersWithPagination($user->getId(), $limit, $page);
+        $totalSuggestions = $this->userRepository->countSuggestedUsers($user->getId());
+        $totalPages = ceil($totalSuggestions / $limit);
+
+        // Récupérer les demandes d'amitié en attente (pour la sidebar)
+        $friendRequests = $em->getRepository(Friend::class)->findBy([
+            'receiver' => $user,
+            'status' => 'pending'
+        ]);
+
+        return $this->render('home/desktop/friends/suggestions.html.twig', [
+            'suggestedUsers' => $suggestedUsers,
+            'friendRequests' => $friendRequests,
+            'currentPage' => $page,
+            'totalPages' => $totalPages,
+            'totalSuggestions' => $totalSuggestions,
+            'hasNextPage' => $page < $totalPages,
+            'hasPrevPage' => $page > 1
+        ]);
+    }
+
     /**
      * Envoie une demande d'amitié à un utilisateur donné.
      */
@@ -29,6 +72,7 @@ class FriendController extends AbstractController
         if (!$sender) {
             return $this->json(['error' => 'Utilisateur non authentifié.'], Response::HTTP_UNAUTHORIZED);
         }
+
         if ($sender->getId() === $receiver->getId()) {
             return $this->json(['error' => 'Vous ne pouvez pas vous ajouter vous-même.'], Response::HTTP_BAD_REQUEST);
         }
@@ -36,9 +80,10 @@ class FriendController extends AbstractController
         // Vérifier si une demande existe déjà (qu'elle soit en attente ou acceptée)
         $friendRepo = $em->getRepository(Friend::class);
         $existingRequest = $friendRepo->findOneBy([
-            'sender'   => $sender,
+            'sender' => $sender,
             'receiver' => $receiver,
         ]);
+
         if ($existingRequest) {
             return $this->json(['error' => 'Une demande d\'amitié existe déjà.'], Response::HTTP_BAD_REQUEST);
         }
@@ -51,7 +96,9 @@ class FriendController extends AbstractController
 
         $em->persist($friend);
         $em->flush();
-        $this->notificationService->sendNotification($receiver,'friend_request', $sender);
+
+        $this->notificationService->sendNotification($receiver, 'friend_request', $sender);
+
         return $this->json([
             'status' => 'pending',
             'message' => 'Demande d\'amitié envoyée.',
@@ -69,6 +116,7 @@ class FriendController extends AbstractController
         if (!$user) {
             return $this->json(['error' => 'Utilisateur non authentifié.'], Response::HTTP_UNAUTHORIZED);
         }
+
         // Seul le destinataire peut accepter la demande
         if ($friend->getReceiver()->getId() !== $user->getId()) {
             return $this->json(['error' => 'Accès refusé.'], Response::HTTP_FORBIDDEN);
@@ -76,6 +124,7 @@ class FriendController extends AbstractController
 
         $friend->setStatus('accepted');
         $em->flush();
+
         $this->notificationService->sendNotification($friend->getSender(), 'friend_accept', $user);
 
         return $this->json([
@@ -94,6 +143,7 @@ class FriendController extends AbstractController
         if (!$user) {
             return $this->json(['error' => 'Utilisateur non authentifié.'], Response::HTTP_UNAUTHORIZED);
         }
+
         // Seul le destinataire peut refuser la demande
         if ($friend->getReceiver()->getId() !== $user->getId()) {
             return $this->json(['error' => 'Accès refusé.'], Response::HTTP_FORBIDDEN);
@@ -133,17 +183,19 @@ class FriendController extends AbstractController
         // Rechercher la relation d'amitié dans laquelle le user est soit sender soit receiver
         $friendRepo = $em->getRepository(Friend::class);
         $friend = $friendRepo->findOneBy([
-            'sender'   => $user,
+            'sender' => $user,
             'receiver' => $friendUser,
-            'status'   => 'accepted'
+            'status' => 'accepted'
         ]);
+
         if (!$friend) {
             $friend = $friendRepo->findOneBy([
-                'sender'   => $friendUser,
+                'sender' => $friendUser,
                 'receiver' => $user,
-                'status'   => 'accepted'
+                'status' => 'accepted'
             ]);
         }
+
         if (!$friend) {
             return $this->json(['error' => 'Relation d\'amitié introuvée.'], Response::HTTP_NOT_FOUND);
         }
@@ -152,14 +204,14 @@ class FriendController extends AbstractController
         $em->flush();
 
         return $this->json([
-            'status'  => 'removed',
+            'status' => 'removed',
             'message' => 'Relation d\'amitié supprimée.'
         ]);
     }
 
-    #[Route('/friends/', name: 'app_friends', methods: ['POST'])]
-    public function friends($friendUserId, EntityManagerInterface $em): Response
+    #[Route('/friends/', name: 'app_friends', methods: ['GET'])]
+    public function friends(EntityManagerInterface $em): Response
     {
-       return $this->json(['error' => 'Not implemented yet.']);
+        return $this->json(['error' => 'Not implemented yet.']);
     }
 }
