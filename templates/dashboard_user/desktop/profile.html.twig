@@ -33,7 +33,7 @@
 
                 <!-- Bouton pour modifier la couverture -->
                 {% if app.user and app.user.id == user.id %}
-                    <form id="cover-form" action="{{ path('dashboard_user_cover_upload') }}" method="post"
+                    <form id="cover-form" action="{{ path('dashboard_user_image_upload', {'type':'cover'}) }}" method="post"
                           enctype="multipart/form-data" class="absolute top-4 right-4">
                         <input type="file" id="cover-file-input" name="coverFile" accept="image/png, image/jpeg, image/jpg"
                                class="hidden" onchange="validateAndSubmitImage(this, 'cover-form')">
@@ -70,7 +70,7 @@
 
                             <!-- Overlay pour modification avatar -->
                             {% if app.user and app.user.id == user.id %}
-                                <form id="avatar-form" action="{{ path('dashboard_user_avatar_upload') }}" method="post"
+                                <form id="avatar-form" action="{{ path('dashboard_user_image_upload', {'type':'avatar'}) }}" method="post"
                                       enctype="multipart/form-data"
                                       class="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-full">
                                     <input type="file" id="avatar-file-input" name="avatarFile"

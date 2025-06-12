@@ -4,20 +4,22 @@
 
 {% block content %}
     <div class="flex gap-12 max-w-none mt-12">
-        <!-- Sidebar gauche - Cachée sur écrans moyens -->
         <aside class="hidden xl:block w-80 flex-shrink-0">
             {% include 'home/desktop/components/sidebar_left.html.twig' %}
         </aside>
 
-        <!-- Contenu principal - Prend toute la largeur disponible -->
         <main class="flex-1 min-w-0 max-w-2xl mx-auto xl:mx-0">
             {% include 'home/desktop/components/main_content.html.twig' %}
         </main>
 
-        <!-- Sidebar droite - Cachée sur écrans moyens -->
         <aside class="hidden xl:block w-80 flex-shrink-0">
             {% include 'home/desktop/components/sidebar_right.html.twig' %}
         </aside>
     </div>
 
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('home') }}
 {% endblock %}

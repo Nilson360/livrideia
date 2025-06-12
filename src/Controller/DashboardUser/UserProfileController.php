@@ -6,40 +6,64 @@ use App\Entity\Friend;
 use App\Entity\Post;
 use App\Entity\User;
 use App\Form\ChangePasswordType;
+use App\Form\PostFormType;
 use App\Form\ProfileType;
+use App\Repository\FriendRepository;
+use App\Repository\PostRepository;
+use App\Repository\UserRepository;
 use App\Service\DeviceDetectorService;
 use App\Service\FileUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/dashboard-user')]
+#[IsGranted('ROLE_USER')]
 class UserProfileController extends AbstractController
 {
-    private DeviceDetectorService $deviceDetector;
+    public function __construct(
+        private readonly EntityManagerInterface $em,
+        private readonly DeviceDetectorService  $deviceDetector,
+        private readonly FileUploader           $fileUploader,
+        private readonly PostRepository         $postRepository,
+        private readonly UserRepository         $userRepository,
+        private readonly FriendRepository       $friendRepository,
+        private readonly RequestStack           $requestStack,
+    )
 
-    public function __construct(DeviceDetectorService $deviceDetector)
     {
-        $this->deviceDetector = $deviceDetector;
     }
 
-    #[Route('/profile', name: 'dashboard_user_profile', methods: ['GET'])]
-    public function profile(EntityManagerInterface $em): Response
+    #[Route('/profile', name: 'dashboard_user_profile', methods: ['GET', 'POST'])]
+    public function profile(Request $request): Response
     {
         /** @var User $user */
         $user = $this->getUser();
-        if (!$user) {
-            return $this->redirectToRoute('app_login');
-        }
-        $user = $em->getRepository(User::class)->find($user->getId());
-        $posts = $em->getRepository(Post::class)->findBy(['user' => $user]);
+        $posts = $this->postRepository->findBy(['user' => $user], ['createdAt' => 'DESC']);
+
         // Récupération des relations d'amitié acceptées pour l'utilisateur connecté
-        $friendRepo = $em->getRepository(Friend::class);
+        $friendRepo = $this->em->getRepository(Friend::class);
         $sentFriends = $friendRepo->findBy(['sender' => $user, 'status' => 'accepted']);
         $receivedFriends = $friendRepo->findBy(['receiver' => $user, 'status' => 'accepted']);
+
+        $post = new Post();
+        $form = $this->createForm(PostFormType::class, $post);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $postImagePath = $form->get('postFile')->getData();
+            $postFileName = $this->fileUploader->upload($postImagePath, 'posts');
+            $post->setUser($user);
+            $post->setImagePath($postFileName);
+            $this->em->persist($post);
+            $this->em->flush();
+            return $this->redirectToRoute('dashboard_user_profile');
+        }
 
         // Fusionner les relations
         $friendRelationships = array_merge($sentFriends, $receivedFriends);
@@ -48,6 +72,7 @@ class UserProfileController extends AbstractController
             'user' => $user,
             'posts' => $posts,
             'friends' => $friendRelationships,
+            'form' => $form->createView(),
         ];
 
         // Détection de l'appareil et choix du template approprié
@@ -60,18 +85,10 @@ class UserProfileController extends AbstractController
     }
 
     #[Route('/profile/edit', name: 'dashboard_user_profile_edit', methods: ['GET', 'POST'])]
-    public function editProfile(
-        Request                $request,
-        EntityManagerInterface $em,
-        FileUploader           $fileUploader
-    ): Response
+    public function editProfile(Request $request): Response
     {
         /** @var User $user */
         $user = $this->getUser();
-        if (!$user) {
-            return $this->redirectToRoute('app_login');
-        }
-
         $form = $this->createForm(ProfileType::class, $user);
         $form->handleRequest($request);
 
@@ -79,20 +96,20 @@ class UserProfileController extends AbstractController
             // Gestion de l'avatar
             $avatarFile = $form->get('avatarFile')->getData();
             if ($avatarFile) {
-                $avatarFileName = $fileUploader->upload($avatarFile, 'avatars');
+                $avatarFileName = $this->fileUploader->upload($avatarFile, 'avatars');
                 $user->setAvatarPath('uploads/avatars/' . $avatarFileName);
             }
 
             // Gestion de la photo de couverture
             $coverFile = $form->get('coverFile')->getData();
             if ($coverFile) {
-                $coverFileName = $fileUploader->upload($coverFile, 'covers');
+                $coverFileName = $this->fileUploader->upload($coverFile, 'covers');
                 $user->setCoverPath('uploads/covers/' . $coverFileName);
             }
 
             $user->setUpdatedAt(new \DateTimeImmutable());
-            $em->persist($user);
-            $em->flush();
+            $this->em->persist($user);
+            $this->em->flush();
 
             $this->addFlash('success', 'Profil mis à jour avec succès !');
             return $this->redirectToRoute('dashboard_user_profile');
@@ -115,7 +132,6 @@ class UserProfileController extends AbstractController
     public function changePassword(
         Request                     $request,
         UserPasswordHasherInterface $passwordHasher,
-        EntityManagerInterface      $em
     ): Response
     {
         /** @var User $user */
@@ -139,8 +155,8 @@ class UserProfileController extends AbstractController
                 $hashedPassword = $passwordHasher->hashPassword($user, $newPassword);
                 $user->setPassword($hashedPassword);
 
-                $em->persist($user);
-                $em->flush();
+                $this->em->persist($user);
+                $this->em->flush();
 
                 $this->addFlash('success', 'Mot de passe mis à jour avec succès !');
                 return $this->redirectToRoute('dashboard_user_profile');
@@ -153,7 +169,6 @@ class UserProfileController extends AbstractController
             'form' => $form->createView(),
         ];
 
-        // Détection de l'appareil et choix du template approprié
         if ($this->deviceDetector->isMobile()) {
             return $this->render('dashboard_user/mobile/profile/change_password.html.twig', $templateData);
         }
@@ -163,10 +178,10 @@ class UserProfileController extends AbstractController
     }
 
     #[Route('/profile/{id}/friends', name: 'app_profile_friends', methods: ['GET'])]
-    public function friends(User $user, EntityManagerInterface $em): Response
+    public function friends(User $user): Response
     {
         // Récupérer les relations d'amitié acceptées pour l'utilisateur
-        $friendRepo = $em->getRepository(Friend::class);
+        $friendRepo = $this->friendRepository;
         $sentFriends = $friendRepo->findBy(['sender' => $user, 'status' => 'accepted']);
         $receivedFriends = $friendRepo->findBy(['receiver' => $user, 'status' => 'accepted']);
 
@@ -183,8 +198,7 @@ class UserProfileController extends AbstractController
             'friends' => $friends,
         ];
 
-        // Détection de l'appareil et choix du template approprié
-        if ($this->deviceDetector->isMobile() && $this->getRequest()->isXmlHttpRequest()) {
+        if ($this->deviceDetector->isMobile() && $this->requestStack->getCurrentRequest()->isXmlHttpRequest()) {
             return $this->render('dashboard_user/mobile/profile/friends_list.html.twig', $templateData);
         } elseif ($this->deviceDetector->isMobile()) {
             return $this->render('dashboard_user/mobile/profile/friends.html.twig', $templateData);
@@ -195,10 +209,10 @@ class UserProfileController extends AbstractController
     }
 
     #[Route('/utilisateur/{username}', name: 'dashboard_user_profile_other')]
-    public function userProfileOther(string $username, EntityManagerInterface $em): Response
+    public function userProfileOther(string $username): Response
     {
         // Trouver l'utilisateur par son nom d'utilisateur
-        $user = $em->getRepository(User::class)->findOneBy(['username' => $username]);
+        $user = $this->userRepository->findOneBy(['username' => $username]);
 
         if (!$user) {
             throw $this->createNotFoundException('Utilisateur non trouvé');
@@ -215,77 +229,40 @@ class UserProfileController extends AbstractController
             'posts' => $user->getPosts(),
         ];
 
-        // Détection de l'appareil et choix du template approprié
         if ($this->deviceDetector->isMobile()) {
             return $this->render('dashboard_user/mobile/profile/profile_other.html.twig', $templateData);
         }
 
-        // Version desktop par défaut
         return $this->render('dashboard_user/desktop/profile_other.html.twig', $templateData);
     }
 
-    #[Route('/profile/avatar-upload', name: 'dashboard_user_avatar_upload', methods: ['POST'])]
-    public function uploadAvatar(
-        Request                $request,
-        EntityManagerInterface $em,
-        FileUploader           $fileUploader
-    ): Response
+    #[Route('/profile/image-upload/{type}', name: 'dashboard_user_image_upload', requirements: ['type' => 'avatar|cover'], methods: ['POST'])]
+    public function uploadImage(Request $request, string $type): Response
     {
         /** @var User $user */
         $user = $this->getUser();
-        if (!$user) {
-            return $this->redirectToRoute('app_login');
-        }
+        $fileField = $type === 'avatar' ? 'avatarFile' : 'coverFile';
+        $folder = $type === 'avatar' ? 'avatars' : 'covers';
+        $setter = $type === 'avatar' ? 'setAvatarPath' : 'setCoverPath';
 
-        $avatarFile = $request->files->get('avatarFile');
-        if ($avatarFile) {
-            $avatarFileName = $fileUploader->upload($avatarFile, 'avatars');
-            $user->setAvatarPath('uploads/avatars/' . $avatarFileName);
+        $file = $request->files->get($fileField);
+        if ($file) {
+            $fileName = $this->fileUploader->upload($file, $folder);
+            $user->$setter('uploads/' . $folder . '/' . $fileName);
             $user->setUpdatedAt(new \DateTimeImmutable());
 
-            $em->persist($user);
-            $em->flush();
+            $this->em->persist($user);
+            $this->em->flush();
 
-            $this->addFlash('success', 'Photo de profil mise à jour avec succès !');
+            $this->addFlash('success',
+                $type === 'avatar'
+                    ? 'Photo de profil mise à jour avec succès !'
+                    : 'Photo de couverture mise à jour avec succès !'
+            );
         } else {
             $this->addFlash('error', 'Veuillez sélectionner une image.');
         }
 
         return $this->redirectToRoute('dashboard_user_profile');
-    }
-
-    #[Route('/profile/cover-upload', name: 'dashboard_user_cover_upload', methods: ['POST'])]
-    public function uploadCover(
-        Request                $request,
-        EntityManagerInterface $em,
-        FileUploader           $fileUploader
-    ): Response
-    {
-        /** @var User $user */
-        $user = $this->getUser();
-        if (!$user) {
-            return $this->redirectToRoute('app_login');
-        }
-
-        $coverFile = $request->files->get('coverFile');
-        if ($coverFile) {
-            $coverFileName = $fileUploader->upload($coverFile, 'covers');
-            $user->setCoverPath('uploads/covers/' . $coverFileName);
-            $user->setUpdatedAt(new \DateTimeImmutable());
-
-            $em->persist($user);
-            $em->flush();
-
-            $this->addFlash('success', 'Photo de couverture mise à jour avec succès !');
-        } else {
-            $this->addFlash('error', 'Veuillez sélectionner une image.');
-        }
-
-        return $this->redirectToRoute('dashboard_user_profile');
-    }
-
-    private function getRequest()
-    {
-        return $this->container->get('request_stack')->getCurrentRequest();
     }
 }

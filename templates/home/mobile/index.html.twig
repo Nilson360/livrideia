@@ -5,12 +5,17 @@
 {% block content %}
     <div class="p-4">
         {# Zone de création de post #}
-        {% include 'home/mobile/partials/_create_post.html.twig' %}
+        {% include 'home/mobile/components/create_post.html.twig' %}
 
         {# Section Moments Littéraires #}
-        {% include 'home/mobile/partials/_novels_moments.html.twig' %}
+        {% include 'home/mobile/components/novels_moments.html.twig' %}
 
         {# Posts #}
-        {% include 'home/mobile/partials/_posts.html.twig' %}
+        {% include 'home/mobile/components/posts.html.twig' %}
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('home_mobile') }}
 {% endblock %}

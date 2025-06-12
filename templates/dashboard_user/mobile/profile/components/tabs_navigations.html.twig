@@ -1,0 +1,16 @@
+<div class="p-4">
+    {# Onglet Publications #}
+    {% include 'dashboard_user/mobile/profile/components/posts.html.twig' %}
+    {# Onglet Amis #}
+    <div id="friends-tab" class="tab-content hidden">
+        <div id="friends-list-container">
+            <div class="text-center py-8">
+                <div class="w-8 h-8 mx-auto border-2 border-t-[#FF8A00] border-gray-200 rounded-full animate-spin"></div>
+                <p class="text-sm text-gray-500 mt-2">Chargement des amis...</p>
+            </div>
+        </div>
+    </div>
+
+    {# Onglet Photos #}
+    {% include 'dashboard_user/mobile/profile/components/galery.html.twig' %}
+</div>

@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Livridea - Interface Mobile</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>{% block title %}Bienvenue sur Livridea{% endblock %}</title>
+    <link rel="icon" href="{{ asset('/images/favicon.ico') }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('app') }}
+    {% endblock %}
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -23,7 +26,7 @@
 <body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
 
 {# Header premium avec logo et design moderne #}
-{% include 'home/mobile/partials/_header.html.twig' %}
+{% include 'home/mobile/components/header.html.twig' %}
 
 {# Contenu principal avec espacement optimisé #}
 <div class="flex-grow pb-20 pt-2">
@@ -31,7 +34,7 @@
 </div>
 
 {# Barre de navigation du bas améliorée #}
-{% include 'home/mobile/partials/_bottom_navbar.html.twig' %}
+{% include 'home/mobile/components/bottom_navbar.html.twig' %}
 
 {% block javascripts %}
     {{ encore_entry_script_tags('app') }}

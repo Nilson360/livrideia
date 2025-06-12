@@ -11,7 +11,7 @@
                 <div class="flex items-center justify-between mb-4">
                     <a href="{{ path('dashboard_user_profile_other', {'username': post.user.username}) }}" class="flex items-center flex-1 min-w-0 group">
                         <div class="relative flex-shrink-0">
-                            <img src="{{ asset(post.user.avatarPath|default('/images/default-profile.png')) }}"
+                            <img src="{{ asset(post.user.avatarPath|default('/uploads/avatars/user_default.png')) }}"
                                  alt="{{ post.user.username }}"
                                  class="w-12 h-12 rounded-full border-2 border-gray-100 group-hover:border-[#FF8A00] transition-colors">
                             <div class="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full shadow-sm"></div>
@@ -47,7 +47,7 @@
                 <div class="px-6 pb-4">
                     <div class="relative rounded-xl overflow-hidden bg-gray-100 border border-gray-200 shadow-sm">
                         <div class="aspect-[16/10] w-full">
-                            <img src="{{ asset('uploads/' ~ post.imagePath) }}"
+                            <img src="{{ asset('uploads/posts/' ~ post.imagePath) }}"
                                  alt="Image du post"
                                  class="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                                  loading="lazy">
@@ -133,7 +133,7 @@
                             <div class="flex justify-between items-start">
                                 <div class="flex-1">
                                     <div class="flex items-center gap-3 mb-2">
-                                        <img src="{{ asset(comment.user.avatarPath|default('/images/default-profile.png')) }}"
+                                        <img src="{{ asset(comment.user.avatarPath|default('/uploads/avatars/user_default.png')) }}"
                                              alt="{{ comment.user.username }}"
                                              class="w-8 h-8 rounded-full">
                                         <div>
@@ -149,10 +149,10 @@
                                 {% if app.user and app.user.id == comment.user.id %}
                                     <div class="ml-4 flex gap-2">
                                         <button class="edit-comment text-[#FF8A00] hover:text-[#e67300] hover:underline text-xs transition-colors"
-                                                data-comment-id="{{ comment.id }}">✏️ Modifier
+                                                data-comment-id="{{ comment.id }}">Modifier
                                         </button>
                                         <button class="delete-comment text-red-600 hover:text-red-800 hover:underline text-xs transition-colors"
-                                                data-comment-id="{{ comment.id }}">🗑️ Supprimer
+                                                data-comment-id="{{ comment.id }}">Supprimer
                                         </button>
                                     </div>
                                 {% endif %}
@@ -162,7 +162,7 @@
 
                     <!-- Formulaire d'ajout de commentaire -->
                     <div class="add-comment flex gap-3 pt-4 border-t border-gray-100">
-                        <img src="{{ asset(app.user.avatarPath|default('/images/default-profile.png')) }}"
+                        <img src="{{ asset(app.user.avatarPath|default('/uploads/avatars/user_default.png')) }}"
                              alt="Votre avatar"
                              class="w-8 h-8 rounded-full flex-shrink-0">
                         <div class="flex-1 flex gap-2">

@@ -20,10 +20,10 @@ use Symfony\Component\Routing\Annotation\Route;
 class HomeController extends AbstractController
 {
     public function __construct(
-        private readonly DeviceDetectorService $deviceDetector,
+        private readonly DeviceDetectorService  $deviceDetector,
         private readonly EntityManagerInterface $em,
-        private readonly FileUploader $uploader,
-        private readonly EmailService $emailService
+        private readonly FileUploader           $uploader,
+        private readonly EmailService           $emailService
     )
     {
 
@@ -35,7 +35,6 @@ class HomeController extends AbstractController
         // Vérification de l'authentification
         $user = $this->getUser();
         if (!$user) {
-            $this->addFlash('error', 'Veuillez vous connecter pour accéder à cette page.');
             return $this->redirectToRoute('app_login');
         }
 
@@ -75,21 +74,18 @@ class HomeController extends AbstractController
             'status' => 'pending'
         ]);
 
-        // Données communes aux deux types de templates
         $templateData = [
             'postForm' => $form->createView(),
             'posts' => $posts,
             'suggestedUsers' => $suggestedUsers,
             'friendRequests' => $friendRequests,
+            'form' => $form->createView()
         ];
 
-        // Détection de l'appareil et chargement du template correspondant
         if ($this->deviceDetector->isMobile()) {
-            // Vous pouvez ici ajouter des données spécifiques à la version mobile si nécessaire
             return $this->render('home/mobile/index.html.twig', $templateData);
         }
 
-        // Version desktop (par défaut)
         return $this->render('home/desktop/index.html.twig', $templateData);
     }
 

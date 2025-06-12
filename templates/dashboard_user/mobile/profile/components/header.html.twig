@@ -1,0 +1,95 @@
+<div class="relative">
+    {# Photo de couverture #}
+    <div class="h-32 bg-gradient-to-br from-[#FF8A00] to-[#e67300] relative overflow-hidden">
+        {% if user.coverPath %}
+            <img src="{{ asset(user.coverPath) }}" alt="Photo de couverture" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+        {% else %}
+            {# Motif géométrique par défaut #}
+            <div class="absolute inset-0 opacity-20">
+                <svg class="w-full h-full" viewBox="0 0 100 100" fill="none">
+                    <circle cx="20" cy="20" r="2" fill="white"/>
+                    <circle cx="40" cy="10" r="1.5" fill="white"/>
+                    <circle cx="60" cy="25" r="2.5" fill="white"/>
+                    <circle cx="80" cy="15" r="1" fill="white"/>
+                    <circle cx="10" cy="40" r="1.5" fill="white"/>
+                    <circle cx="30" cy="35" r="2" fill="white"/>
+                    <circle cx="70" cy="45" r="1.5" fill="white"/>
+                    <circle cx="90" cy="35" r="2" fill="white"/>
+                </svg>
+            </div>
+        {% endif %}
+
+        {# Bouton retour si ce n'est pas son propre profil #}
+        {% if app.user and app.user.id != user.id %}
+            <button onclick="history.back()"
+                    class="absolute top-4 left-4 p-2 bg-black/30 backdrop-blur-sm rounded-full text-white active:scale-95 transition-transform">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                </svg>
+            </button>
+        {% endif %}
+    </div>
+
+    {# Avatar et informations principales #}
+    <div class="px-4 -mt-16 relative z-10">
+        <div class="flex flex-col items-center">
+            <div class="relative">
+                <div class="w-32 h-32 rounded-full border-4 border-white overflow-hidden shadow-xl bg-white">
+                    {% if user.avatarPath %}
+                        <img src="{{ asset(user.avatarPath) }}" alt="Photo de profil"
+                             class="w-full h-full object-cover">
+                    {% else %}
+                        <img src="{{ asset('/uploads/avatars/user_default.png') }}" alt="Photo de profil"
+                             class="w-full h-full object-cover">
+                    {% endif %}
+                </div>
+
+                {# Bouton de modification d'avatar pour son propre profil #}
+                {% if app.user and app.user.id == user.id %}
+                    <form id="avatar-form" action="{{ path('dashboard_user_image_upload', {'type':'avatar'}) }}" method="post"
+                          enctype="multipart/form-data">
+                        <input type="file" id="avatar-file-input" name="avatarFile"
+                               accept="image/png, image/jpeg, image/jpg" class="hidden"
+                               onchange="document.getElementById('avatar-form').submit()">
+                        <label for="avatar-file-input"
+                               class="absolute bottom-2 right-2 w-10 h-10 bg-[#FF8A00] text-white rounded-full flex items-center justify-center shadow-lg cursor-pointer active:scale-95 transition-transform border-2 border-white">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                            </svg>
+                        </label>
+                    </form>
+                {% endif %}
+
+                {# Badge de statut en ligne #}
+                <div class="absolute top-2 right-2 w-6 h-6 bg-emerald-500 border-2 border-white rounded-full shadow-sm"></div>
+            </div>
+
+            {# Informations utilisateur #}
+            <div class="text-center mt-4 mb-6">
+                <h1 class="text-2xl font-bold text-gray-800">{{ user.fullName }}</h1>
+                <p class="text-[#FF8A00] font-medium text-lg">@{{ user.username }}</p>
+                <p class="text-gray-500 text-sm mt-1">Membre depuis {{ user.createdAt|date('M Y') }}</p>
+
+                {# Stats utilisateur #}
+                <div class="flex items-center justify-center space-x-6 mt-4">
+                    <div class="text-center">
+                        <div class="text-xl font-bold text-gray-800">{{ posts|length }}</div>
+                        <div class="text-xs text-gray-500">Publications</div>
+                    </div>
+                    <div class="w-px h-8 bg-gray-300"></div>
+                    <div class="text-center">
+                        <div class="text-xl font-bold text-gray-800"
+                             id="friends-count">{{ friends|length }}</div>
+                        <div class="text-xs text-gray-500">Amis</div>
+                    </div>
+                    <div class="w-px h-8 bg-gray-300"></div>
+                    <div class="text-center">
+                        <div class="text-xl font-bold text-gray-800">{{ user.likes|length }}</div>
+                        <div class="text-xs text-gray-500">J'aime</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

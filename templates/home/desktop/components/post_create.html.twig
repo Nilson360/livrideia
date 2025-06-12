@@ -1,0 +1,66 @@
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="p-6">
+        <div class="flex items-start gap-4 mb-4">
+            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#FF8A00] to-[#e67300] flex items-center justify-center shadow-md flex-shrink-0">
+                <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                </svg>
+            </div>
+            <div class="flex-1 min-w-0">
+                <h2 class="text-gray-800 font-bold text-lg mb-2">Partagez vos pensées littéraires</h2>
+                <p class="text-gray-500 text-sm">Exprimez-vous sur vos lectures favorites, partagez une citation inspirante...</p>
+            </div>
+        </div>
+
+        {{ form_start(form, {'attr': {'class': 'space-y-4', 'data-post-form': 'true'}}) }}
+        {{ form_widget(form.content, {
+            'attr': {
+                'class': 'w-full border border-gray-200 rounded-xl p-4 bg-gray-50 text-gray-700 placeholder-gray-400 text-sm focus:ring-2 focus:ring-[#FF8A00] focus:border-[#FF8A00] focus:bg-white transition-all duration-200 min-h-[120px] resize-none',
+                'rows': 4,
+                'placeholder': 'Partagez une citation, un extrait, une réflexion sur votre lecture du moment...'
+            }
+        }) }}
+
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div class="flex items-center space-x-4">
+                <!-- Upload d'image -->
+                <label for="{{ form.imageFile.vars.id }}"
+                       class="flex items-center text-gray-500 hover:text-[#FF8A00] transition-colors cursor-pointer group">
+                    <div class="p-2 rounded-lg bg-gray-50 group-hover:bg-orange-50 transition-colors mr-2">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                        </svg>
+                    </div>
+                    <span class="text-sm font-medium">Ajouter une image</span>
+                </label>
+                {{ form_widget(form.imageFile, {
+                    'attr': {
+                        'class': 'hidden post-image-input',
+                        'accept': 'image/*',
+                        'data-image-input': 'true'
+                    }
+                }) }}
+
+                <!-- Suggestions -->
+                <button type="button"
+                        class="flex items-center text-gray-500 hover:text-emerald-600 transition-colors group">
+                    <div class="p-2 rounded-lg bg-gray-50 group-hover:bg-emerald-50 transition-colors mr-2">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                    </div>
+                    <span class="text-sm font-medium">Inspiration</span>
+                </button>
+            </div>
+
+            <button type="submit"
+                    class="bg-gradient-to-r from-[#FF8A00] to-[#e67300] text-white rounded-xl px-6 py-3 shadow-md hover:shadow-lg text-sm font-semibold transition-all duration-200 hover:scale-105 flex items-center">
+                <svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                </svg>
+                Publier
+            </button>
+        </div>
+        {{ form_end(form) }}
+    </div>
+</div>
