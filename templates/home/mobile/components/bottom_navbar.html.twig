@@ -21,7 +21,7 @@
                   {% if app.request.attributes.get('_route') == 'dashboard_user_profile' %}text-[#FF8A00] bg-gradient-to-br from-orange-50 to-orange-100/50 shadow-sm{% else %}text-gray-500 active:bg-gray-50{% endif %}">
             <div class="relative mb-1">
                 <div class="w-6 h-6 rounded-full overflow-hidden border border-gray-300">
-                    <img src="{{ asset(app.user.avatarPath|default('/images/default-profile.png')) }}"
+                    <img src="{{ asset(app.user.avatarPath|default('uploads/avatars/user_default.png')) }}"
                          alt="Profile"
                          class="w-full h-full object-cover">
                 </div>
@@ -41,7 +41,7 @@
             <div class="absolute inset-0 bg-white/20 rounded-full animate-pulse"></div>
         </button>
 
-        {# Notifications avec Badge #}
+        {# Notifications avec Badge Dynamique #}
         <a href="{{ path('notifications_list') }}"
            class="flex flex-col items-center p-2 rounded-xl transition-all duration-200 active:scale-95 relative min-w-[68px]
                   {% if app.request.attributes.get('_route') == 'notifications_list' %}text-[#FF8A00] bg-gradient-to-br from-orange-50 to-orange-100/50 shadow-sm{% else %}text-gray-500 active:bg-gray-50{% endif %}">
@@ -49,9 +49,9 @@
                 <svg class="w-6 h-6 mb-1" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
                 </svg>
-                {# Badge notification amélioré #}
-                <div class="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-semibold border-2 border-white shadow-sm">
-                    2
+                {# Badge notification dynamique #}
+                <div id="notification-badge" class="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-semibold border-2 border-white shadow-sm transition-all duration-300 hidden">
+                    <span id="notification-count">0</span>
                 </div>
                 {% if app.request.attributes.get('_route') == 'notifications_list' %}
                     <div class="absolute -top-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-[#FF8A00] rounded-full shadow-sm"></div>
@@ -61,7 +61,7 @@
         </a>
 
         {# Découvrir #}
-        <a href="{{ path('app_menu') }}"
+        <a href="{{ path('app_discover') }}"
            class="flex flex-col items-center p-2 rounded-xl transition-all duration-200 active:scale-95 min-w-[68px] relative
                   {% if app.request.attributes.get('_route') == 'app_menu' %}text-[#FF8A00] bg-gradient-to-br from-orange-50 to-orange-100/50 shadow-sm{% else %}text-gray-500 active:bg-gray-50{% endif %}">
             <div class="relative">
@@ -84,40 +84,80 @@
 {# Script pour interactions et animations #}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Feedback tactile pour mobile
-        if (navigator.vibrate) {
-            document.querySelectorAll('nav a, nav button').forEach(element => {
-                element.addEventListener('click', () => {
-                    navigator.vibrate(30);
+        // Contador dinâmico de notificações
+        const notificationBadge = document.getElementById('notification-badge');
+        const notificationCount = document.getElementById('notification-count');
+        let currentCount = 0;
+
+        // Função para atualizar o contador de notificações
+        async function updateNotificationCount() {
+            try {
+                const response = await fetch('{{ path("notifications_unread_count") }}', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
                 });
-            });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                const newCount = data.count || 0;
+
+                // Atualizar apenas se o contador mudou
+                if (newCount !== currentCount) {
+                    updateBadgeDisplay(newCount);
+                    currentCount = newCount;
+                }
+            } catch (error) {
+                console.warn('Erro ao buscar contador de notificações:', error);
+            }
         }
 
-        // Animation de l'indicateur lors du changement de page
-        const navLinks = document.querySelectorAll('nav a');
-        const indicator = document.querySelector('.nav-indicator');
+        // Função para atualizar a exibição do badge
+        function updateBadgeDisplay(count) {
+            if (count > 0) {
+                notificationCount.textContent = count > 99 ? '99+' : count;
+                notificationBadge.classList.remove('hidden');
 
-        navLinks.forEach((link, index) => {
-            // Ignorer le bouton central (index 2)
-            if (index === 2) return;
+                // Animação de entrada
+                if (count > currentCount) {
+                    notificationBadge.style.transform = 'scale(1.2)';
+                    setTimeout(() => {
+                        notificationBadge.style.transform = 'scale(1)';
+                    }, 200);
+                }
+            } else {
+                notificationBadge.classList.add('hidden');
+            }
+        }
 
-            link.addEventListener('click', function() {
-                // Calculer la position en fonction de l'index (en excluant le bouton central)
-                let position = index;
-                if (index > 2) position--; // Ajuster pour le bouton central
+        // Carregamento inicial
+        updateNotificationCount();
 
-                const newPosition = position * 20;
-                indicator.style.marginLeft = `${newPosition}%`;
-            });
+        // Atualização periódica (a cada 30 segundos)
+        setInterval(updateNotificationCount, 30000);
+
+        // Atualizar quando a página ganha foco
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                updateNotificationCount();
+            }
         });
+
+        // Atualizar quando volta do background (mobile)
+        window.addEventListener('focus', updateNotificationCount);
     });
 
-    // Fonction pour ouvrir le modal de publication
+    // Função para ouvrir o modal de publication
     function openPublishModal() {
         // Ici vous pouvez ajouter votre logique pour ouvrir un modal ou rediriger
         console.log('Ouverture du modal de publication');
 
-        // Exemple de redirection vers une page de création de post
+        // Exemplo de redireção vers une page de création de post
         // window.location.href = '{{ path("app_post_create") }}';
 
         // Ou ouverture d'un modal

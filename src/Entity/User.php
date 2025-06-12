@@ -92,6 +92,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $coverPath = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $lastActivity = null;
+
     /**
      * @return void
      */
@@ -514,6 +517,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCoverPath(?string $coverPath): self
     {
         $this->coverPath = $coverPath;
+        return $this;
+    }
+
+    public function getLastActivity(): ?\DateTimeImmutable
+    {
+        return $this->lastActivity;
+    }
+
+    public function setLastActivity(?\DateTimeImmutable $lastActivity): static
+    {
+        $this->lastActivity = $lastActivity;
+
+
+        return $this;
+    }
+
+    public function updateLastActivity(): self
+    {
+        $this->lastActivity = new \DateTimeImmutable();
         return $this;
     }
 }

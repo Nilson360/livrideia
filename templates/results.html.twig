@@ -109,7 +109,7 @@
                                         <!-- Header du post -->
                                         <div class="flex items-start gap-3 mb-4">
                                             <div class="relative flex-shrink-0">
-                                                <img src="{{ asset(post.user.avatarPath|default('/images/default-profile.png')) }}"
+                                                <img src="{{ asset(post.user.avatarPath|default('uploads/avatars/user_default.png')) }}"
                                                      alt="{{ post.user.username }}"
                                                      class="w-12 h-12 rounded-full border-2 border-gray-200 hover:border-[#FF8A00] transition-colors">
                                                 <div class="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full shadow-sm"></div>
@@ -148,7 +148,7 @@
                                             <div class="mb-4">
                                                 <div class="relative rounded-xl overflow-hidden bg-gray-100 border border-gray-200 shadow-sm">
                                                     <div class="aspect-[16/10]">
-                                                        <img src="{{ asset('uploads/' ~ post.imagePath) }}"
+                                                        <img src="{{ asset('uploads/posts/' ~ post.imagePath) }}"
                                                              alt="Image de la publication"
                                                              class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                                                              loading="lazy">
@@ -211,7 +211,7 @@
                                     <div class="p-4 hover:bg-gray-50 transition-colors">
                                         <div class="flex items-center gap-3 mb-3">
                                             <div class="relative flex-shrink-0">
-                                                <img src="{{ asset(user.avatarPath|default('/images/default-profile.png')) }}"
+                                                <img src="{{ asset(user.avatarPath|default('uploads/avatars/user_default.png')) }}"
                                                      alt="{{ user.username }}"
                                                      class="w-12 h-12 rounded-full border-2 border-gray-200 hover:border-[#FF8A00] transition-colors">
                                                 <div class="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full shadow-sm"></div>

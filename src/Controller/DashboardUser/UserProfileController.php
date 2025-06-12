@@ -56,7 +56,7 @@ class UserProfileController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $postImagePath = $form->get('postFile')->getData();
+            $postImagePath = $form->get('imageFile')->getData();
             $postFileName = $this->fileUploader->upload($postImagePath, 'posts');
             $post->setUser($user);
             $post->setImagePath($postFileName);
@@ -77,7 +77,7 @@ class UserProfileController extends AbstractController
 
         // Détection de l'appareil et choix du template approprié
         if ($this->deviceDetector->isMobile()) {
-            return $this->render('dashboard_user/mobile/profile/index.html.twig', $templateData);
+            return $this->render('dashboard_user/mobile/profile/myProfile/index.html.twig', $templateData);
         }
 
         // Version desktop par défaut
@@ -121,7 +121,7 @@ class UserProfileController extends AbstractController
 
         // Détection de l'appareil et choix du template approprié
         if ($this->deviceDetector->isMobile()) {
-            return $this->render('dashboard_user/mobile/profile/edit_profile.html.twig', $templateData);
+            return $this->render('dashboard_user/mobile/profile/myProfile/edit.html.twig', $templateData);
         }
 
         // Version desktop par défaut
@@ -170,7 +170,7 @@ class UserProfileController extends AbstractController
         ];
 
         if ($this->deviceDetector->isMobile()) {
-            return $this->render('dashboard_user/mobile/profile/change_password.html.twig', $templateData);
+            return $this->render('dashboard_user/mobile/profile/myProfile/change_password.html.twig', $templateData);
         }
 
         // Version desktop par défaut
@@ -199,9 +199,9 @@ class UserProfileController extends AbstractController
         ];
 
         if ($this->deviceDetector->isMobile() && $this->requestStack->getCurrentRequest()->isXmlHttpRequest()) {
-            return $this->render('dashboard_user/mobile/profile/friends_list.html.twig', $templateData);
+            return $this->render('dashboard_user/mobile/profile/myProfile/friends_list.html.twig', $templateData);
         } elseif ($this->deviceDetector->isMobile()) {
-            return $this->render('dashboard_user/mobile/profile/friends.html.twig', $templateData);
+            return $this->render('dashboard_user/mobile/profile/myProfile/friends.html.twig', $templateData);
         }
 
         // Version desktop par défaut
@@ -230,7 +230,7 @@ class UserProfileController extends AbstractController
         ];
 
         if ($this->deviceDetector->isMobile()) {
-            return $this->render('dashboard_user/mobile/profile/profile_other.html.twig', $templateData);
+            return $this->render('dashboard_user/mobile/profile/profileOther/profile_other.html.twig', $templateData);
         }
 
         return $this->render('dashboard_user/desktop/profile_other.html.twig', $templateData);

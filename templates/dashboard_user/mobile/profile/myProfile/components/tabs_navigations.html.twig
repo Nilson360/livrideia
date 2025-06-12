@@ -1,8 +1,10 @@
 <div class="p-4">
     {# Onglet Publications #}
+    {# {% include 'home/mobile/components/create_post.html.twig' %} #}
     {% include 'dashboard_user/mobile/profile/components/posts.html.twig' %}
+
     {# Onglet Amis #}
-    <div id="friends-tab" class="tab-content hidden">
+    <div id="friends-tab" class="tab-content hidden" data-url-friends="{{ path('app_profile_friends', {'id': user.id}) }}">
         <div id="friends-list-container">
             <div class="text-center py-8">
                 <div class="w-8 h-8 mx-auto border-2 border-t-[#FF8A00] border-gray-200 rounded-full animate-spin"></div>

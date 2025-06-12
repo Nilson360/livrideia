@@ -13,31 +13,51 @@
                     {{ form_widget(form.content, {
                         'attr': {
                             'placeholder': 'Partagez une citation, un extrait...',
-                            'class': 'w-full focus:outline-none resize-none text-gray-700 placeholder-gray-400 text-sm leading-relaxed',
-                            'rows': 4
+                            'class': 'w-full focus:outline-none resize-none text-gray-700 placeholder-gray-400 text-sm leading-relaxed border-0'
                         }
                     }) }}
+                </div>
+            </div>
+
+            <!-- Preview container melhorado para mobile -->
+            <div id="mobile-image-preview-container" class="hidden mb-3">
+                <div class="relative bg-gray-50 rounded-lg p-2 border border-gray-200">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-medium text-gray-600 flex items-center">
+                            <svg class="w-3 h-3 mr-1 text-green-500" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                            </svg>
+                            Image ajoutée
+                        </span>
+                        <button type="button" id="mobile-remove-image-btn" class="p-1 text-red-500 hover:bg-red-50 rounded-full transition-colors">
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M18 6L6 18M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div id="mobile-image-preview" class="relative overflow-hidden rounded-md">
+                        <!-- Preview da imagem será inserido aqui -->
+                    </div>
                 </div>
             </div>
 
             {{ form_widget(form.imageFile, {
                 'attr': {
                     'class': 'hidden',
-                    'accept': 'image/*',
-                    'id': 'mobile-image-input'
+                    'accept': 'image/*'
                 }
             }) }}
 
             <div class="flex justify-between items-center pt-2 border-t border-gray-100">
                 <div class="flex items-center space-x-3">
-                    <label for="mobile-image-input" class="flex items-center text-gray-500 active:text-[#FF8A00] transition-colors cursor-pointer">
+                    <label for="{{ form.imageFile.vars.id }}" class="flex items-center text-gray-500 active:text-[#FF8A00] transition-colors cursor-pointer tap-highlight-transparent">
                         <div class="p-2 rounded-lg bg-gray-50 active:bg-orange-50 transition-colors">
                             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
                             </svg>
                         </div>
                     </label>
-                    <button type="button" class="flex items-center text-gray-500 active:text-emerald-600 transition-colors">
+                    <button type="button" class="flex items-center text-gray-500 active:text-emerald-600 transition-colors tap-highlight-transparent">
                         <div class="p-2 rounded-lg bg-gray-50 active:bg-emerald-50 transition-colors">
                             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
@@ -45,7 +65,7 @@
                         </div>
                     </button>
                 </div>
-                <button type="submit" class="bg-gradient-to-r from-[#FF8A00] to-[#e67300] text-white rounded-full px-5 py-2 text-sm font-semibold shadow-md active:scale-95 transition-transform min-h-[44px] min-w-[44px] flex items-center">
+                <button type="submit" class="bg-gradient-to-r from-[#FF8A00] to-[#e67300] text-white rounded-full px-5 py-2 text-sm font-semibold shadow-md active:scale-95 transition-transform min-h-[44px] min-w-[44px] flex items-center tap-highlight-transparent disabled:opacity-50 disabled:cursor-not-allowed">
                     <svg class="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
                     </svg>
@@ -60,38 +80,118 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Upload de imagem mobile
-        const imageInput = document.getElementById('mobile-image-input');
+        // Usar IDs reais do Symfony Forms
+        const imageInput = document.getElementById('{{ form.imageFile.vars.id }}');
+        const contentTextarea = document.getElementById('{{ form.content.vars.id }}');
+        const previewContainer = document.getElementById('mobile-image-preview-container');
+        const previewDiv = document.getElementById('mobile-image-preview');
+        const removeBtn = document.getElementById('mobile-remove-image-btn');
+        const submitBtn = document.querySelector('button[type="submit"]');
+
+        // Validação do formulário
+        function validateForm() {
+            if (!contentTextarea || !submitBtn) return;
+
+            try {
+                const content = contentTextarea.value.trim();
+                const hasImage = imageInput && imageInput.files && imageInput.files.length > 0;
+
+                if (content.length >= 3 || hasImage) {
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                } else {
+                    submitBtn.disabled = true;
+                    submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+            } catch (error) {
+                console.error('Erro na validação do formulário:', error);
+            }
+        }
+
+        // Upload de imagem otimizado para mobile
         if (imageInput) {
             imageInput.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        // Criar preview da imagem
-                        let preview = document.querySelector('.mobile-image-preview');
-                        if (!preview) {
-                            preview = document.createElement('div');
-                            preview.className = 'mobile-image-preview mt-3 border-t border-gray-100 pt-3';
-                            imageInput.closest('.p-3').appendChild(preview);
+                try {
+                    const file = e.target.files[0];
+                    if (file) {
+                        // Verificar tamanho do arquivo (max 5MB para mobile)
+                        if (file.size > 5 * 1024 * 1024) {
+                            alert('L\'image est trop volumineuse. Taille maximale: 5MB');
+                            this.value = '';
+                            return;
                         }
 
-                        preview.innerHTML = `
-                        <div class="relative inline-block">
-                            <img src="${e.target.result}" alt="Preview" class="max-h-40 rounded-lg border border-gray-200 shadow-sm object-cover">
-                            <button type="button" class="remove-mobile-image absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 text-xs hover:bg-red-600 transition-colors flex items-center justify-center">×</button>
-                        </div>
-                    `;
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            // Mostrar preview
+                            if (previewDiv) {
+                                previewDiv.innerHTML = `
+                                <img src="${e.target.result}" alt="Preview" class="w-full h-32 object-cover rounded border">
+                            `;
+                            }
+                            if (previewContainer) {
+                                previewContainer.classList.remove('hidden');
 
-                        // Botão para remover imagem
-                        preview.querySelector('.remove-mobile-image').addEventListener('click', function() {
-                            imageInput.value = '';
-                            preview.remove();
-                        });
-                    };
-                    reader.readAsDataURL(file);
+                                // Scroll suave para mostrar o preview
+                                setTimeout(() => {
+                                    previewContainer.scrollIntoView({
+                                        behavior: 'smooth',
+                                        block: 'nearest'
+                                    });
+                                }, 100);
+                            }
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                    validateForm();
+                } catch (error) {
+                    console.error('Erro no upload de imagem:', error);
                 }
             });
+        }
+
+        // Remover imagem
+        if (removeBtn) {
+            removeBtn.addEventListener('click', function() {
+                try {
+                    if (imageInput) imageInput.value = '';
+                    if (previewContainer) previewContainer.classList.add('hidden');
+                    if (previewDiv) previewDiv.innerHTML = '';
+                    validateForm();
+                } catch (error) {
+                    console.error('Erro ao remover imagem:', error);
+                }
+            });
+        }
+
+        // Auto-resize do textarea otimizado para mobile
+        if (contentTextarea) {
+            contentTextarea.addEventListener('input', function() {
+                try {
+                    this.style.height = 'auto';
+                    const newHeight = Math.min(this.scrollHeight, 150); // Max 150px
+                    this.style.height = newHeight + 'px';
+                    validateForm();
+                } catch (error) {
+                    console.error('Erro no auto-resize:', error);
+                }
+            });
+
+            // Validação inicial
+            validateForm();
+        }
+
+        // Prevenir zoom no iOS quando focando no input
+        if (/iPad|iPhone|iPod/.test(navigator.userAgent) && contentTextarea) {
+            const viewport = document.querySelector('meta[name=viewport]');
+            if (viewport) {
+                contentTextarea.addEventListener('focus', function() {
+                    viewport.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no');
+                });
+                contentTextarea.addEventListener('blur', function() {
+                    viewport.setAttribute('content', 'width=device-width, initial-scale=1, user-scalable=yes');
+                });
+            }
         }
     });
 </script>

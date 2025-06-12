@@ -6,6 +6,7 @@ use App\Entity\Comment;
 use App\Entity\Like;
 use App\Entity\Post;
 use App\Form\PostFormType;
+use App\Service\DeviceDetectorService;
 use App\Service\FileUploader;
 use App\Service\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -13,20 +14,18 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[isGranted('ROLE_USER')]
 class PostController extends AbstractController
 {
-    private FileUploader $fileUploader;
-
     public function __construct(
-        NotificationService    $notificationService,
-        EntityManagerInterface $entityManager,
-        FileUploader           $fileUploader
+        private readonly NotificationService    $notificationService,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly FileUploader           $fileUploader,
+        private readonly DeviceDetectorService  $deviceDetectorService,
     )
     {
-        $this->notificationService = $notificationService;
-        $this->entityManager = $entityManager;
-        $this->fileUploader = $fileUploader;
     }
 
     #[Route('/post/create', name: 'app_post_create', methods: ['GET', 'POST'])]
@@ -126,6 +125,11 @@ class PostController extends AbstractController
     #[Route('/post/{id}', name: 'app_post_show', methods: ['GET'])]
     public function show(Post $post): Response
     {
+        if ($this->deviceDetectorService->isMobile()) {
+            return $this->render('post/show_mobile.html.twig', [
+                'post' => $post,
+            ]);
+        }
         return $this->render('post/show.html.twig', [
             'post' => $post,
         ]);

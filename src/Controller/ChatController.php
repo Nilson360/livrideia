@@ -13,7 +13,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[isGranted('ROLE_USER')]
 class ChatController extends AbstractController
 {
     private DeviceDetectorService $deviceDetector;
@@ -209,6 +211,19 @@ class ChatController extends AbstractController
                 'receiver' => $message->getReceiver()->getId(),
                 'createdAt' => $message->getCreatedAt()->format('H:i')
             ]
+        ]);
+    }
+
+    #[Route('/chat/current-user-id', name: 'app_chat_current_user_id', methods: ['GET'])]
+    public function getCurrentUserId(): JsonResponse
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->json(['error' => 'Unauthorized'], 401);
+        }
+
+        return $this->json([
+            'userId' => $user->getId()
         ]);
     }
 }

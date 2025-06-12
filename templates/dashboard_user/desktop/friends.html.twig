@@ -34,7 +34,7 @@
                         <!-- Actions -->
                         <div class="flex items-center gap-2 ml-4">
                             <!-- Bouton Message -->
-                            <a href="{{ path('app_chat') }}?user={{ friend.id }}"
+                            <a href="{{ path('app_chat_conversation', {userId:friend.id}) }}"
                                class="p-2 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-all duration-200 hover:scale-105"
                                title="Envoyer un message">
                                 <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

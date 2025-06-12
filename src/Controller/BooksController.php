@@ -5,7 +5,9 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[isGranted('ROLE_USER')]
 class BooksController extends AbstractController
 {
     #[Route('/livres/{section}', name: 'app_books_section', requirements: ['section' => 'semaine|newsletter-history|suggestions|sorties'])]

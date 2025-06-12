@@ -226,9 +226,6 @@
                     <button class="tab-link flex-1 py-4 px-6 text-center font-medium transition-all duration-200 text-gray-600 hover:text-[#FF8A00] hover:bg-gray-50"
                             data-tab="friends">
                         <div class="flex items-center justify-center">
-                            <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zm4 18v-6h2.5l-2.54-7.63A2.996 2.996 0 0 0 17.13 7H16c-.8 0-1.54.34-2.05.89L12 11l-1.95-3.11C9.54 7.34 8.8 7 8 7H6.87c-1.31 0-2.41.83-2.83 2.06L1.5 16H4v6h4v-6h2v6h4v-6h2v6h4z"/>
-                            </svg>
                             {% if app.user and app.user.id == user.id %}Mes amis{% else %}Amis{% endif %}
                         </div>
                     </button>

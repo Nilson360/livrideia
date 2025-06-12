@@ -127,5 +127,78 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getQuery()
             ->getSingleScalarResult();
     }
+    
+    /**
+     * Buscar usuários por nome/username
+     */
+    public function searchUsers(string $query, int $currentUserId, int $limit = 10): array
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->where('u.id != :currentUserId')
+            ->andWhere('(u.fullName LIKE :query OR u.username LIKE :query)')
+            ->setParameter('currentUserId', $currentUserId)
+            ->setParameter('query', '%' . $query . '%')
+            ->orderBy('u.fullName', 'ASC')
+            ->setMaxResults($limit);
 
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * Obter amigos em comum entre dois usuários
+     */
+    public function getMutualFriends(int $userId1, int $userId2): array
+    {
+        // Amigos do usuário 1
+        $friends1Subquery = $this->getEntityManager()->createQueryBuilder()
+            ->select('IDENTITY(f1.receiver)')
+            ->from('App\Entity\Friend', 'f1')
+            ->where('f1.sender = :userId1 AND f1.status = :accepted')
+            ->andWhere('f1.receiver != :userId2')
+            ->getDQL();
+
+        $friends1ReverseSubquery = $this->getEntityManager()->createQueryBuilder()
+            ->select('IDENTITY(f1r.sender)')
+            ->from('App\Entity\Friend', 'f1r')
+            ->where('f1r.receiver = :userId1 AND f1r.status = :accepted')
+            ->andWhere('f1r.sender != :userId2')
+            ->getDQL();
+
+        // Amigos em comum
+        $qb = $this->createQueryBuilder('u')
+            ->where("u.id IN ($friends1Subquery) OR u.id IN ($friends1ReverseSubquery)")
+            ->andWhere('u.id IN (
+            SELECT IDENTITY(f2.receiver) FROM App\Entity\Friend f2 
+            WHERE f2.sender = :userId2 AND f2.status = :accepted
+        ) OR u.id IN (
+            SELECT IDENTITY(f2r.sender) FROM App\Entity\Friend f2r 
+            WHERE f2r.receiver = :userId2 AND f2r.status = :accepted
+        )')
+            ->setParameter('userId1', $userId1)
+            ->setParameter('userId2', $userId2)
+            ->setParameter('accepted', 'accepted');
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * Obter usuários mais ativos (baseado em posts recentes)
+     */
+    public function getMostActiveUsers(int $limit = 5): array
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->select('u, COUNT(p.id) as postCount')
+            ->leftJoin('u.posts', 'p', 'WITH', 'p.createdAt > :lastWeek')
+            ->where('u.lastActivity > :lastDay')
+            ->groupBy('u.id')
+            ->orderBy('postCount', 'DESC')
+            ->addOrderBy('u.lastActivity', 'DESC')
+            ->setParameter('lastWeek', new \DateTimeImmutable('-1 week'))
+            ->setParameter('lastDay', new \DateTimeImmutable('-1 day'))
+            ->setMaxResults($limit);
+
+        return array_map(function($result) {
+            return $result[0]; // Retornar apenas o usuário, não o count
+        }, $qb->getQuery()->getResult());
+    }
 }

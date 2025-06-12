@@ -1,0 +1,176 @@
+{% extends 'home/mobile/base.mobile.html.twig' %}
+
+{% block title %}{{ user.username }} - Profil{% endblock %}
+
+{% block content %}
+    <div class="bg-gray-50 min-h-screen">
+        {# Header avec photo de couverture #}
+        {% include 'dashboard_user/mobile/profile/profileOther/components/header.html.twig' %}
+
+        {# Boutons d'action #}
+        {% include 'dashboard_user/mobile/profile/profileOther/components/actions.html.twig' %}
+
+        {# Contenu des onglets #}
+        {% include 'dashboard_user/mobile/profile/profileOther/components/tabs_navigation.html.twig' %}
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Gestion des onglets
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    // Réinitialiser tous les onglets
+                    tabButtons.forEach(btn => {
+                        btn.classList.remove('text-[#FF8A00]', 'border-b-2', 'border-[#FF8A00]', 'font-semibold');
+                        btn.classList.add('text-gray-500', 'font-medium');
+                        const indicator = btn.querySelector('.absolute');
+                        if (indicator) indicator.remove();
+                    });
+
+                    tabContents.forEach(content => {
+                        content.classList.add('hidden');
+                    });
+
+                    // Activer l'onglet cliqué
+                    this.classList.remove('text-gray-500', 'font-medium');
+                    this.classList.add('text-[#FF8A00]', 'border-b-2', 'border-[#FF8A00]', 'font-semibold');
+
+                    // Ajouter l'indicateur visuel
+                    const indicator = document.createElement('div');
+                    indicator.className = 'absolute bottom-0 left-0 right-0 h-0.5 bg-[#FF8A00] rounded-full';
+                    this.appendChild(indicator);
+
+                    const tabName = this.getAttribute('data-tab');
+                    document.getElementById(tabName + '-tab').classList.remove('hidden');
+
+                    // Charger le contenu des amis si nécessaire
+                    if (tabName === 'friends' && !document.querySelector('#friends-list-container .friend-item')) {
+                        loadFriends();
+                    }
+                });
+            });
+
+            // Animation d'apparition
+            const elements = document.querySelectorAll('article, .bg-white');
+            elements.forEach((element, index) => {
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(20px)';
+
+                setTimeout(() => {
+                    element.style.transition = 'all 0.4s ease-out';
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+
+        // Gestion du menu d'options
+        function toggleOptionsMenu() {
+            const menu = document.getElementById('options-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Fermer le menu en cliquant ailleurs
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('#options-menu') && !e.target.closest('button[onclick="toggleOptionsMenu()"]')) {
+                document.getElementById('options-menu').classList.add('hidden');
+            }
+        });
+
+        // Fonction pour charger les amis
+        async function loadFriends() {
+            try {
+                const response = await fetch('{{ path("app_profile_friends", {"id": user.id}) }}', {
+                    headers: {'X-Requested-With': 'XMLHttpRequest'}
+                });
+
+                if (!response.ok) {
+                    throw new Error('Erreur réseau');
+                }
+
+                const html = await response.text();
+                document.getElementById('friends-list-container').innerHTML = html;
+            } catch (error) {
+                console.error('Erreur lors du chargement des amis:', error);
+                document.getElementById('friends-list-container').innerHTML =
+                    '<div class="text-center py-8"><p class="text-gray-500">Erreur lors du chargement des amis.</p></div>';
+            }
+        }
+
+        // Fonctions pour les actions d'amitié
+        async function sendFriendRequest(userId) {
+            try {
+                const response = await fetch(`/app/friend/add/${userId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Erreur lors de l\'envoi de la demande d\'ami');
+                }
+
+                location.reload();
+            } catch (error) {
+                console.error('Erreur:', error);
+                // Vous pourriez ajouter ici une notification d'erreur à l'utilisateur
+            }
+        }
+
+        // Fonction pour confirmer la suppression d'un ami
+        function confirmRemoveFriend(userId) {
+            if (confirm('Êtes-vous sûr de vouloir retirer cet ami ?')) {
+                removeFriend(userId);
+            }
+        }
+
+        // Fonction pour retirer un ami
+        async function removeFriend(userId) {
+            try {
+                const response = await fetch(`/app/friend/remove/${userId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Erreur lors de la suppression de l\'ami');
+                }
+
+                location.reload();
+            } catch (error) {
+                console.error('Erreur:', error);
+                // Vous pourriez ajouter ici une notification d'erreur à l'utilisateur
+            }
+        }
+
+        // Fonction pour partager le profil
+        function shareProfile() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Profil sur Livrideia',
+                    url: window.location.href
+                })
+                    .catch(error => console.error('Erreur lors du partage:', error));
+            } else {
+                // Fallback pour les navigateurs qui ne supportent pas l'API Web Share
+                const url = window.location.href;
+                navigator.clipboard.writeText(url)
+                    .then(() => alert('Lien copié dans le presse-papier !'))
+                    .catch(err => console.error('Erreur lors de la copie:', err));
+            }
+        }
+
+        function reportUser() {
+            alert('Fonctionnalité de signalement en cours de développement');
+        }
+    </script>
+
+{% endblock %}

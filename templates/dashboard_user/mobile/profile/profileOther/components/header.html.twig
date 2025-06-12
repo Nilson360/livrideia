@@ -1,0 +1,110 @@
+<div class="relative">
+    {# Photo de couverture #}
+    <div class="h-32 bg-gradient-to-br from-[#FF8A00] to-[#e67300] relative overflow-hidden">
+        {% if user.coverPath %}
+            <img src="{{ asset(user.coverPath) }}" alt="Photo de couverture" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+        {% else %}
+            {# Motif géométrique par défaut #}
+            <div class="absolute inset-0 opacity-20">
+                <svg class="w-full h-full" viewBox="0 0 100 100" fill="none">
+                    <circle cx="25" cy="25" r="3" fill="white"/>
+                    <circle cx="50" cy="15" r="2" fill="white"/>
+                    <circle cx="75" cy="30" r="2.5" fill="white"/>
+                    <circle cx="15" cy="50" r="2" fill="white"/>
+                    <circle cx="40" cy="45" r="3" fill="white"/>
+                    <circle cx="70" cy="55" r="2" fill="white"/>
+                    <circle cx="85" cy="75" r="2.5" fill="white"/>
+                    <circle cx="30" cy="80" r="2" fill="white"/>
+                </svg>
+            </div>
+        {% endif %}
+
+        {# Bouton retour #}
+        <button onclick="history.back()"
+                class="absolute top-4 left-4 p-2 bg-black/30 backdrop-blur-sm rounded-full text-white active:scale-95 transition-transform">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+            </svg>
+        </button>
+
+        {# Badge de vérification si applicable #}
+        {% if user.isVerified %}
+            <div class="absolute top-4 right-4 p-2 bg-blue-500 rounded-full">
+                <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+            </div>
+        {% endif %}
+    </div>
+
+    {# Avatar et informations principales #}
+    <div class="px-4 -mt-16 relative z-10">
+        <div class="flex flex-col items-center">
+            <div class="relative">
+                <div class="w-32 h-32 rounded-full border-4 border-white overflow-hidden shadow-xl bg-white">
+                    <img src="{{ asset(user.avatarPath|default('uploads/avatars/user_default.png')) }}"
+                         alt="{{ user.userName }}"
+                         class="w-full h-full object-cover">
+                </div>
+
+                {# Badge de statut en ligne #}
+                <div class="absolute top-2 right-2 w-6 h-6 bg-emerald-500 border-2 border-white rounded-full shadow-sm"></div>
+
+                {# Badge de vérification sur l'avatar #}
+                {% if user.isVerified %}
+                    <div class="absolute bottom-2 right-2 w-8 h-8 bg-blue-500 border-2 border-white rounded-full flex items-center justify-center shadow-lg">
+                        <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                        </svg>
+                    </div>
+                {% endif %}
+            </div>
+
+            {# Informations utilisateur #}
+            <div class="text-center mt-4 mb-6">
+                <div class="flex items-center justify-center mb-2">
+                    <h1 class="text-2xl font-bold text-gray-800">{{ user.fullName }}</h1>
+                    {% if user.isVerified %}
+                        <svg class="w-6 h-6 text-blue-500 ml-2" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                    {% endif %}
+                </div>
+                <p class="text-[#FF8A00] font-medium text-lg">@{{ user.username }}</p>
+                <p class="text-gray-500 text-sm mt-1">Membre depuis {{ user.createdAt|date('M Y') }}</p>
+
+                {# Stats utilisateur #}
+                <div class="flex items-center justify-center space-x-6 mt-4">
+                    <div class="text-center">
+                        <div class="text-xl font-bold text-gray-800">{{ posts|length }}</div>
+                        <div class="text-xs text-gray-500">Publications</div>
+                    </div>
+                    <div class="w-px h-8 bg-gray-300"></div>
+                    <div class="text-center">
+                        <div class="text-xl font-bold text-gray-800" id="friends-count">
+                            {% set friendsCount = 0 %}
+                            {% for friendship in user.sentFriendRequests %}
+                                {% if friendship.status == 'accepted' %}
+                                    {% set friendsCount = friendsCount + 1 %}
+                                {% endif %}
+                            {% endfor %}
+                            {% for friendship in user.receivedFriendRequests %}
+                                {% if friendship.status == 'accepted' %}
+                                    {% set friendsCount = friendsCount + 1 %}
+                                {% endif %}
+                            {% endfor %}
+                            {{ friendsCount }}
+                        </div>
+                        {# <div class="text-xs text-gray-500">Amis</div> #}
+                    </div>
+                    <div class="w-px h-8 bg-gray-300"></div>
+                    <div class="text-center">
+                        <div class="text-xl font-bold text-gray-800">{{ user.likes|length }}</div>
+                        <div class="text-xs text-gray-500">J'aime</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

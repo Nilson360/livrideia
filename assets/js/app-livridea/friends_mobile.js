@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // Animation d'apparition des amis
     const friendItems = document.querySelectorAll('.friend-item');
     friendItems.forEach((item, index) => {
         item.style.opacity = '0';
@@ -22,15 +21,15 @@ document.addEventListener('DOMContentLoaded', function () {
             btn.classList.add('bg-gray-100', 'text-gray-600');
         });
 
-        // Activation du bouton cliqué
+        // Ativação do botão clicado ou do primeiro, com verificação de existência
         if (event && event.target) {
             event.target.classList.add('active');
             event.target.classList.remove('bg-gray-100', 'text-gray-600');
-        } else {
-            // Si appelé par JS sans event (reset), activer le premier bouton
+        } else if (filterBtns.length > 0) {
             filterBtns[0].classList.add('active');
             filterBtns[0].classList.remove('bg-gray-100', 'text-gray-600');
         }
+
 
         // Filtrer les amis
         friends.forEach((friend, index) => {
@@ -147,6 +146,5 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 
-    // Active le filtre "Tous" au chargement
     window.filterFriends('all');
 });

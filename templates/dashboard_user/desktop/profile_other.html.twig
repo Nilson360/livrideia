@@ -100,7 +100,7 @@
                                                     Retirer de mes amis
                                                 </button>
                                             </form>
-                                            <a href="{{ path('app_chat') }}?user={{ user.id }}"
+                                            <a href="{{ path('app_chat_conversation', {userId:user.id}) }}"
                                                class="bg-emerald-500 text-white px-6 py-3 rounded-xl shadow-md hover:shadow-lg font-semibold transition-all duration-200 hover:scale-105 hover:bg-emerald-600 flex items-center">
                                                 <svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="currentColor">
                                                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>

@@ -24,7 +24,7 @@
                             <a href="{{ path('app_chat_conversation', {'userId': friend.id}) }}"
                                class="flex items-center p-4 space-x-3 hover:bg-gray-50">
                                 <div class="relative">
-                                    <img src="{{ asset(friend.avatarUrl|default('/images/default-profile.png')) }}"
+                                    <img src="{{ asset(friend.avatarUrl|default('uploads/avatars/user_default.png')) }}"
                                          alt="{{ friend.fullName }}"
                                          class="w-12 h-12 rounded-full border border-gray-200">
                                 </div>

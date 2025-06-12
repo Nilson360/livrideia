@@ -1,6 +1,7 @@
 <header class="px-4 py-3 border-b border-gray-200 bg-white/95 backdrop-blur-md shadow-sm flex justify-between items-center sticky top-0 z-50">
     {# Logo Livridea Mobile Premium #}
-    <a href="{{ path('app_home') }}" class="flex items-center space-x-2 group active:scale-95 transition-transform duration-200">
+    <a href="{{ path('app_home') }}"
+       class="flex items-center space-x-2 group active:scale-95 transition-transform duration-200">
         <div class="relative">
             <img src="{{ asset('images/logo.svg') }}"
                  alt="Livridea Logo"
@@ -22,8 +23,10 @@
         {# Recherche Mobile #}
         <a href="{{ path('app_search') }}" class="relative group">
             <div class="p-2.5 rounded-xl bg-gray-50 active:bg-gradient-to-br active:from-[#FF8A00]/10 active:to-[#FF8A00]/5 transition-all duration-200 active:scale-95">
-                <svg class="w-5 h-5 text-gray-600 group-active:text-[#FF8A00] transition-colors duration-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                <svg class="w-5 h-5 text-gray-600 group-active:text-[#FF8A00] transition-colors duration-200"
+                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                 </svg>
             </div>
         </a>
@@ -31,7 +34,8 @@
         {# Messages Mobile avec Badge #}
         <a href="{{ path('app_chat') }}" class="relative group">
             <div class="p-2.5 rounded-xl bg-gray-50 active:bg-gradient-to-br active:from-[#FF8A00]/10 active:to-[#FF8A00]/5 transition-all duration-200 active:scale-95">
-                <svg class="w-5 h-5 text-gray-600 group-active:text-[#FF8A00] transition-colors duration-200" viewBox="0 0 24 24" fill="currentColor">
+                <svg class="w-5 h-5 text-gray-600 group-active:text-[#FF8A00] transition-colors duration-200"
+                     viewBox="0 0 24 24" fill="currentColor">
                     <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
                 </svg>
             </div>
@@ -45,7 +49,7 @@
         <a href="{{ path('dashboard_user_profile') }}" class="relative group">
             <div class="relative">
                 <div class="w-9 h-9 rounded-full overflow-hidden border-2 border-gray-200 active:border-[#FF8A00] transition-all duration-200 active:scale-95 shadow-sm bg-white">
-                    <img src="{{ asset(app.user.avatarPath|default('/images/default-profile.png')) }}"
+                    <img src="{{ asset(app.user.avatarPath|default('uploads/avatars/user_default.png')) }}"
                          alt="Profile"
                          class="w-full h-full object-cover">
                 </div>
