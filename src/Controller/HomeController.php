@@ -3,11 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Contact;
-use App\Entity\Friend;
 use App\Entity\Post;
 use App\Entity\User;
 use App\Form\ContactType;
 use App\Form\PostFormType;
+use App\Repository\FriendRepository;
+use App\Repository\PostRepository;
+use App\Repository\UserRepository;
 use App\Service\DeviceDetectorService;
 use App\Service\EmailService;
 use App\Service\FileUploader;
@@ -16,14 +18,19 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[isGranted('ROLE_USER')]
 class HomeController extends AbstractController
 {
     public function __construct(
         private readonly DeviceDetectorService  $deviceDetector,
         private readonly EntityManagerInterface $em,
         private readonly FileUploader           $uploader,
-        private readonly EmailService           $emailService
+        private readonly EmailService           $emailService,
+        private readonly UserRepository $userRepository,
+        private readonly PostRepository $postRepository,
+        private readonly FriendRepository $friendRepository,
     )
     {
 
@@ -32,11 +39,8 @@ class HomeController extends AbstractController
     #[Route('/', name: 'app_home')]
     public function index(Request $request): Response
     {
-        // Vérification de l'authentification
+
         $user = $this->getUser();
-        if (!$user) {
-            return $this->redirectToRoute('app_login');
-        }
 
         // Création du post
         $post = new Post();
@@ -49,7 +53,7 @@ class HomeController extends AbstractController
             $imageFile = $form->get('imageFile')->getData();
             if ($imageFile) {
                 try {
-                    $newFilename = $this->uploader->upload($imageFile);
+                    $newFilename = $this->uploader->upload($imageFile, 'posts');
                     $post->setImagePath($newFilename);
                 } catch (\Exception $e) {
                     $this->addFlash('error', 'Erreur lors du téléchargement de l\'image.');
@@ -63,13 +67,13 @@ class HomeController extends AbstractController
         }
 
         // Récupération des posts triés par date de création décroissante
-        $posts = $this->em->getRepository(Post::class)->findBy([], ['created_at' => 'DESC']);
+        $posts = $this->postRepository->findBy([], ['createdAt' => 'DESC']);
 
         // Utilisation d'une méthode dédiée dans le repository pour les suggestions d'amis
-        $suggestedUsers = $this->em->getRepository(User::class)->getSugeredUsers($user->getId());
+        $suggestedUsers = $this->userRepository->getSugeredUsers($user->getId());
 
         // Récupérer les demandes d'amitié en attente
-        $friendRequests = $this->em->getRepository(Friend::class)->findBy([
+        $friendRequests = $this->friendRepository->findBy([
             'receiver' => $user,
             'status' => 'pending'
         ]);
