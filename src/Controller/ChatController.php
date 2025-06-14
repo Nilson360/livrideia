@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Message;
 use App\Entity\User;
+use App\Repository\MessageRepository;
+use App\Repository\UserRepository;
 use App\Service\DeviceDetectorService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,52 +20,31 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[isGranted('ROLE_USER')]
 class ChatController extends AbstractController
 {
-    private DeviceDetectorService $deviceDetector;
-
-    public function __construct(DeviceDetectorService $deviceDetector)
-    {
-        $this->deviceDetector = $deviceDetector;
-    }
+    public function __construct(
+        private readonly DeviceDetectorService $deviceDetector,
+        private readonly EntityManagerInterface $em,
+        private readonly MessageRepository $messageRepository,
+        private readonly UserRepository $userRepository,
+        private readonly HubInterface $hub
+    ) {}
 
     #[Route('/chat', name: 'app_chat')]
-    public function chat(Request $request, EntityManagerInterface $em): Response
+    public function chat(Request $request): Response
     {
         $user = $this->getUser();
         if (!$user) {
             return $this->redirectToRoute('app_login');
         }
 
-        $friends = $em->getRepository(User::class)->findFriends($user);
-        $messageRepo = $em->getRepository(Message::class);
-
-        // Créer un tableau enrichi avec les derniers messages et la dernière activité
-        $enrichedFriends = [];
-        foreach ($friends as $friend) {
-            $lastMessage = $messageRepo->createQueryBuilder('m')
-                ->where('(m.sender = :u1 AND m.receiver = :u2) OR (m.sender = :u2 AND m.receiver = :u1)')
-                ->setParameter('u1', $user)
-                ->setParameter('u2', $friend)
-                ->orderBy('m.createdAt', 'DESC')
-                ->setMaxResults(1)
-                ->getQuery()
-                ->getOneOrNullResult();
-
-            $enrichedFriends[] = [
-                'id' => $friend->getId(),
-                'fullName' => $friend->getFullName(),
-                'username' => $friend->getUsername(),
-                'avatarUrl' => $friend->getAvatarPath() ?? null,
-                'lastMessage' => $lastMessage ? $lastMessage->getContent() : 'Aucun message',
-                'lastActive' => $lastMessage ? $lastMessage->getCreatedAt()->format('H:i') : '',
-            ];
-        }
+        $friends = $this->userRepository->findFriends($user);
+        $enrichedFriends = $this->messageRepository->getEnrichedFriendsData($user, $friends);
 
         // Vérifier si un ami spécifique est demandé pour la conversation
         $selectedFriendId = $request->query->get('user');
         $selectedFriend = null;
 
         if ($selectedFriendId) {
-            $selectedFriend = $em->getRepository(User::class)->find($selectedFriendId);
+            $selectedFriend = $this->userRepository->find($selectedFriendId);
 
             // Vérifier si c'est bien un ami
             if ($selectedFriend && !in_array($selectedFriend->getId(), array_column($enrichedFriends, 'id'))) {
@@ -71,9 +52,12 @@ class ChatController extends AbstractController
             }
         }
 
+        $totalUnreadCount = $this->messageRepository->countUnreadMessages($user);
+
         $templateData = [
             'friends' => $enrichedFriends,
-            'selectedFriend' => $selectedFriend
+            'selectedFriend' => $selectedFriend,
+            'totalUnreadCount' => $totalUnreadCount
         ];
 
         // Détection de l'appareil et choix du template approprié
@@ -81,77 +65,63 @@ class ChatController extends AbstractController
             return $this->render('chat/mobile/index.html.twig', $templateData);
         }
 
-        // Version desktop par défaut
         return $this->render('chat/desktop/index.html.twig', $templateData);
     }
 
     #[Route('/chat/messages/{userId}', name: 'app_chat_messages')]
-    public function getMessages(int $userId, EntityManagerInterface $em): JsonResponse
+    public function getMessages(int $userId): JsonResponse
     {
         $user = $this->getUser();
         if (!$user) {
             return $this->json(['error' => 'Unauthorized'], 401);
         }
 
-        $friend = $em->getRepository(User::class)->find($userId);
+        $friend = $this->userRepository->find($userId);
         if (!$friend) {
             return $this->json(['error' => 'User not found'], 404);
         }
 
-        $messages = $em->getRepository(Message::class)
-            ->createQueryBuilder('m')
-            ->where('(m.sender = :u1 AND m.receiver = :u2) OR (m.sender = :u2 AND m.receiver = :u1)')
-            ->setParameter('u1', $user)
-            ->setParameter('u2', $friend)
-            ->orderBy('m.createdAt', 'ASC')
-            ->getQuery()
-            ->getResult();
+        // Marcar mensagens como lidas
+        $this->messageRepository->markMessagesAsRead($user, $friend);
+        $this->em->flush();
 
-        $formattedMessages = [];
-        foreach ($messages as $message) {
-            $formattedMessages[] = [
-                'id' => $message->getId(),
-                'content' => $message->getContent(),
-                'sender' => $message->getSender()->getId(),
-                'receiver' => $message->getReceiver()->getId(),
-                'createdAt' => $message->getCreatedAt()->format('H:i')
-            ];
-        }
+        $messages = $this->messageRepository->getConversationMessages($user, $friend);
+        $formattedMessages = $this->messageRepository->formatMessagesForJson($messages);
+
+        // Nova contagem de mensagens não lidas após marcar como lidas
+        $newUnreadCount = $this->messageRepository->countUnreadMessages($user);
 
         return $this->json([
-            'messages' => $formattedMessages
+            'messages' => $formattedMessages,
+            'newUnreadCount' => $newUnreadCount
         ]);
     }
 
     #[Route('/chat/conversation/{userId}', name: 'app_chat_conversation')]
-    public function viewConversation(int $userId, EntityManagerInterface $em): Response
+    public function viewConversation(int $userId): Response
     {
         $user = $this->getUser();
         if (!$user) {
             return $this->redirectToRoute('app_login');
         }
 
-        $friend = $em->getRepository(User::class)->find($userId);
+        $friend = $this->userRepository->find($userId);
         if (!$friend) {
             return $this->redirectToRoute('app_chat');
         }
 
         // Vérifier si c'est un ami
-        $friends = $em->getRepository(User::class)->findFriends($user);
-        $isFriend = false;
-        foreach ($friends as $f) {
-            if ($f->getId() === $friend->getId()) {
-                $isFriend = true;
-                break;
-            }
-        }
-
-        if (!$isFriend) {
+        if (!$this->userRepository->areFriends($user, $friend)) {
             return $this->redirectToRoute('app_chat');
         }
 
+        // Marcar mensagens como lidas quando entrar na conversa
+        $this->messageRepository->markMessagesAsRead($user, $friend);
+        $this->em->flush();
+
         $templateData = [
-            'friend' => $friend
+            'friend' => $friend,
+            'totalUnreadCount' => $this->messageRepository->countUnreadMessages($user)
         ];
 
         // Détection de l'appareil et choix du template approprié
@@ -164,7 +134,7 @@ class ChatController extends AbstractController
     }
 
     #[Route('/chat/send', name: 'app_chat_send', methods: ['POST'])]
-    public function sendMessage(Request $request, EntityManagerInterface $em, HubInterface $hub): JsonResponse
+    public function sendMessage(Request $request): JsonResponse
     {
         $user = $this->getUser();
         if (!$user) {
@@ -178,7 +148,7 @@ class ChatController extends AbstractController
             return $this->json(['error' => 'Missing parameters'], 400);
         }
 
-        $receiver = $em->getRepository(User::class)->find($receiverId);
+        $receiver = $this->userRepository->find($receiverId);
         if (!$receiver) {
             return $this->json(['error' => 'Receiver not found'], 404);
         }
@@ -188,29 +158,50 @@ class ChatController extends AbstractController
         $message->setReceiver($receiver);
         $message->setContent($content);
         $message->setCreatedAt(new \DateTimeImmutable());
+        $message->setIsRead(false);
 
-        $em->persist($message);
-        $em->flush();
+        $this->em->persist($message);
+        $this->em->flush();
+
+        // Nova contagem de mensagens não lidas para o destinatário
+        $receiverUnreadCount = $this->messageRepository->countUnreadMessages($receiver);
 
         // Publication via Mercure
         $update = new Update(
             "chat_user_" . $receiverId,
             json_encode([
                 'senderId' => $user->getId(),
+                'senderName' => $user->getFullName(),
                 'content' => $message->getContent(),
-                'timestamp' => $message->getCreatedAt()->format('H:i')
+                'timestamp' => $message->getCreatedAt()->format('H:i'),
+                'unreadCount' => $receiverUnreadCount
             ])
         );
-        $hub->publish($update);
+        $this->hub->publish($update);
 
         return $this->json([
             'message' => [
-                'id' => $message->getId(),
+                'id' => (int)$message->getId(),
                 'content' => $message->getContent(),
-                'sender' => $message->getSender()->getId(),
-                'receiver' => $message->getReceiver()->getId(),
+                'sender' => (int)$message->getSender()->getId(),
+                'receiver' => (int)$message->getReceiver()->getId(),
                 'createdAt' => $message->getCreatedAt()->format('H:i')
             ]
+        ]);
+    }
+
+    #[Route('/api/chat/unread-count', name: 'app_chat_unread_count', methods: ['GET'])]
+    public function getUnreadCount(): JsonResponse
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $unreadCount = $this->messageRepository->countUnreadMessages($user);
+
+        return $this->json([
+            'unreadCount' => $unreadCount
         ]);
     }
 

@@ -33,24 +33,25 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
-    public function getSugeredUsers($userId): array
+    /**
+     * Obtenir les utilisateurs suggérés pour ajouter comme amis
+     */
+    public function getSuggestedUsers($userId): array
     {
-        $qb = $this->createQueryBuilder('u')
+        return $this->createQueryBuilder('u')
             ->where('u.id != :userId')
             ->setParameter('userId', $userId)
             ->andWhere('u.id NOT IN (
-            SELECT IDENTITY(fr.sender) FROM App\Entity\Friend fr WHERE fr.receiver = :userId AND fr.status IN (:statuses)
-        )')
+                SELECT IDENTITY(fr.sender) FROM App\Entity\Friend fr WHERE fr.receiver = :userId AND fr.status IN (:statuses)
+            )')
             ->andWhere('u.id NOT IN (
-            SELECT IDENTITY(fs.receiver) FROM App\Entity\Friend fs WHERE fs.sender = :userId AND fs.status IN (:statuses)
-        )')
+                SELECT IDENTITY(fs.receiver) FROM App\Entity\Friend fs WHERE fs.sender = :userId AND fs.status IN (:statuses)
+            )')
             ->setParameter('statuses', ['pending', 'accepted'])
             ->orderBy('u.id', 'ASC')
             ->setMaxResults(10)
             ->getQuery()
             ->getResult();
-
-        return $qb;
     }
 
     /**
@@ -75,17 +76,39 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $query->getResult();
     }
 
+    /**
+     * Vérifier si deux utilisateurs sont amis
+     */
+    public function areFriends(User $user1, User $user2): bool
+    {
+        $count = $this->getEntityManager()->createQueryBuilder()
+            ->select('COUNT(f.id)')
+            ->from('App\Entity\Friend', 'f')
+            ->where('((f.sender = :u1 AND f.receiver = :u2) OR (f.sender = :u2 AND f.receiver = :u1))')
+            ->andWhere('f.status = :status')
+            ->setParameter('u1', $user1)
+            ->setParameter('u2', $user2)
+            ->setParameter('status', 'accepted')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return $count > 0;
+    }
+
+    /**
+     * Chercher les utilisateurs par nom ou username
+     */
     public function searchByNameOrUsername(?string $query): array
     {
-        // Se a query for null ou vazia, retornar array vazio
+        // Si la query est null ou vide, retourner un tableau vide
         if (empty($query) || trim($query) === '') {
             return [];
         }
 
-        // Limpar e validar a query
+        // Nettoyer et valider la query
         $cleanQuery = trim($query);
 
-        // Se a query for muito curta, retornar array vazio
+        // Si la query est trop courte, retourner un tableau vide
         if (strlen($cleanQuery) < 2) {
             return [];
         }
@@ -100,9 +123,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     /**
-     * Récupère les suggestions d'utilisateurs avec pagination (pour la page dédiée)
+     * Récupère les suggestions d'utilisateurs avec pagination
      */
-    public function getSuggestedUsersWithPagination($userId, int $limit, int $offset): array
+    public function getSuggestedUsersWithPagination(int $userId, int $limit, int $offset): array
     {
         return $this->createQueryBuilder('u')
             ->where('u.id != :userId')
@@ -114,7 +137,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 SELECT IDENTITY(fs.receiver) FROM App\Entity\Friend fs WHERE fs.sender = :userId AND fs.status IN (:statuses)
             )')
             ->setParameter('statuses', ['pending', 'accepted'])
-
             ->setFirstResult($offset)
             ->setMaxResults($limit)
             ->getQuery()
@@ -122,9 +144,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     /**
-     * Compte le total de suggestions disponibles
+     * Compter le total de suggestions disponibles
      */
-    public function countSuggestedUsers($userId): int
+    public function countSuggestedUsers(int $userId): int
     {
         return (int)$this->createQueryBuilder('u')
             ->select('COUNT(u.id)')
@@ -142,27 +164,27 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     /**
-     * Buscar usuários por nome/username
+     * Chercher les utilisateurs par nom/username
      */
     public function searchUsers(string $query, int $currentUserId, int $limit = 10): array
     {
-        $qb = $this->createQueryBuilder('u')
+        return $this->createQueryBuilder('u')
             ->where('u.id != :currentUserId')
             ->andWhere('(u.fullName LIKE :query OR u.username LIKE :query)')
             ->setParameter('currentUserId', $currentUserId)
             ->setParameter('query', '%' . $query . '%')
             ->orderBy('u.fullName', 'ASC')
-            ->setMaxResults($limit);
-
-        return $qb->getQuery()->getResult();
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
     }
 
     /**
-     * Obter amigos em comum entre dois usuários
+     * Obtenir les amis communs entre deux utilisateurs
      */
     public function getMutualFriends(int $userId1, int $userId2): array
     {
-        // Amigos do usuário 1
+        // Amis de l'utilisateur 1
         $friends1Subquery = $this->getEntityManager()->createQueryBuilder()
             ->select('IDENTITY(f1.receiver)')
             ->from('App\Entity\Friend', 'f1')
@@ -177,25 +199,25 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->andWhere('f1r.sender != :userId2')
             ->getDQL();
 
-        // Amigos em comum
-        $qb = $this->createQueryBuilder('u')
+        // Amis communs
+        return $this->createQueryBuilder('u')
             ->where("u.id IN ($friends1Subquery) OR u.id IN ($friends1ReverseSubquery)")
             ->andWhere('u.id IN (
-            SELECT IDENTITY(f2.receiver) FROM App\Entity\Friend f2 
-            WHERE f2.sender = :userId2 AND f2.status = :accepted
-        ) OR u.id IN (
-            SELECT IDENTITY(f2r.sender) FROM App\Entity\Friend f2r 
-            WHERE f2r.receiver = :userId2 AND f2r.status = :accepted
-        )')
+                SELECT IDENTITY(f2.receiver) FROM App\Entity\Friend f2 
+                WHERE f2.sender = :userId2 AND f2.status = :accepted
+            ) OR u.id IN (
+                SELECT IDENTITY(f2r.sender) FROM App\Entity\Friend f2r 
+                WHERE f2r.receiver = :userId2 AND f2r.status = :accepted
+            )')
             ->setParameter('userId1', $userId1)
             ->setParameter('userId2', $userId2)
-            ->setParameter('accepted', 'accepted');
-
-        return $qb->getQuery()->getResult();
+            ->setParameter('accepted', 'accepted')
+            ->getQuery()
+            ->getResult();
     }
 
     /**
-     * Obter usuários mais ativos (baseado em posts recentes)
+     * Obtenir les utilisateurs les plus actifs (basé sur les posts récents)
      */
     public function getMostActiveUsers(int $limit = 5): array
     {
@@ -210,8 +232,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->setParameter('lastDay', new \DateTimeImmutable('-1 day'))
             ->setMaxResults($limit);
 
-        return array_map(function($result) {
-            return $result[0]; // Retornar apenas o usuário, não o count
+        return array_map(function ($result) {
+            return $result[0]; // Retourner seulement l'utilisateur, pas le count
         }, $qb->getQuery()->getResult());
     }
 }

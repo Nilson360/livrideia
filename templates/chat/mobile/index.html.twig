@@ -22,18 +22,53 @@
                     {% for friend in friends %}
                         <li class="friend-item border-b">
                             <a href="{{ path('app_chat_conversation', {'userId': friend.id}) }}"
-                               class="flex items-center p-4 space-x-3 hover:bg-gray-50">
+                               class="flex items-center p-4 space-x-3 hover:bg-gray-50 transition-colors duration-200
+                                      {{ friend.hasUnread ? 'bg-blue-50 border-l-4 border-l-blue-500' : '' }}">
+
                                 <div class="relative">
                                     <img src="{{ asset(friend.avatarUrl|default('uploads/avatars/user_default.png')) }}"
                                          alt="{{ friend.fullName }}"
-                                         class="w-12 h-12 rounded-full border border-gray-200">
+                                         class="w-12 h-12 rounded-full border-2
+                                                {{ friend.hasUnread ? 'border-blue-500' : 'border-gray-200' }}">
+
+                                    {# Indicateur de statut en ligne #}
+                                    <div class="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full"></div>
+
+                                    {# Badge de messages non lus #}
+                                    {% if friend.hasUnread %}
+                                        <div class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full min-w-[20px] h-5 flex items-center justify-center font-bold border-2 border-white shadow-md animate-pulse">
+                                            {{ friend.unreadCount > 99 ? '99+' : friend.unreadCount }}
+                                        </div>
+                                    {% endif %}
                                 </div>
+
                                 <div class="flex-1 min-w-0">
-                                    <div class="flex justify-between">
-                                        <h3 class="font-medium text-gray-900 truncate">{{ friend.fullName }}</h3>
-                                        <span class="text-xs text-gray-500">{{ friend.lastActive }}</span>
+                                    <div class="flex justify-between items-start">
+                                        <h3 class="font-medium truncate {{ friend.hasUnread ? 'text-gray-900 font-semibold' : 'text-gray-900' }}">
+                                            {{ friend.fullName }}
+                                        </h3>
+                                        <div class="flex flex-col items-end space-y-1">
+                                            <span class="text-xs {{ friend.hasUnread ? 'text-blue-600 font-medium' : 'text-gray-500' }}">
+                                                {{ friend.lastActive }}
+                                            </span>
+                                            {% if friend.hasUnread %}
+                                                <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                            {% endif %}
+                                        </div>
                                     </div>
-                                    <p class="text-sm text-gray-500 truncate">{{ friend.lastMessage }}</p>
+
+                                    <div class="flex items-center justify-between mt-1">
+                                        <p class="text-sm truncate {{ friend.hasUnread ? 'text-gray-700 font-medium' : 'text-gray-500' }}">
+                                            {{ friend.lastMessage }}
+                                        </p>
+
+                                        {# Icône de message non lu #}
+                                        {% if friend.hasUnread %}
+                                            <svg class="w-4 h-4 text-blue-500 ml-2 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
+                                            </svg>
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </a>
                         </li>
@@ -49,7 +84,7 @@
                 </div>
                 <h3 class="text-lg font-medium text-gray-900 mb-1">Aucune conversation</h3>
                 <p class="text-gray-500 mb-4">Commencez à discuter avec vos amis</p>
-                <a href="{{ path('app_friends') }}" class="bg-[#FF8A00] text-white px-4 py-2 rounded-lg text-sm">
+                <a href="{{ path('app_friends') }}" class="bg-[#FF8A00] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#e67300] transition-colors">
                     Voir mes amis
                 </a>
             </div>
@@ -69,6 +104,69 @@
                     item.style.display = name.includes(query) ? 'block' : 'none';
                 });
             });
+
+            // Connexion Mercure pour mises à jour en temps réel
+            if (typeof EventSource !== 'undefined') {
+                const currentUserId = {{ app.user.id }};
+                const eventSource = new EventSource(`http://localhost:8080/.well-known/mercure?topic=chat_user_${currentUserId}`);
+
+                eventSource.onmessage = function(event) {
+                    try {
+                        const data = JSON.parse(event.data);
+                        updateConversationsList(data);
+
+                        // Mettre à jour le badge global
+                        if (typeof window.updateChatBadge === 'function' && data.unreadCount) {
+                            window.updateChatBadge(data.unreadCount);
+                        }
+                    } catch (error) {
+                        console.error('Erreur Mercure:', error);
+                    }
+                };
+            }
+
+            // Fonction pour mettre à jour la liste des conversations
+            function updateConversationsList(data) {
+                const senderId = data.senderId;
+                const friendItems = document.querySelectorAll('.friend-item');
+
+                friendItems.forEach(item => {
+                    const link = item.querySelector('a');
+                    const href = link.getAttribute('href');
+
+                    // Vérifier si cette conversation correspond au senderId
+                    if (href.includes(`userId=${senderId}`)) {
+                        // Trouver les éléments à mettre à jour
+                        const avatar = item.querySelector('img').parentElement;
+                        const nameElement = item.querySelector('h3');
+                        const messageElement = item.querySelector('p');
+                        const timeElement = item.querySelector('.text-xs');
+
+                        // Ajouter le badge si il n'existe pas
+                        let badge = avatar.querySelector('.bg-red-500');
+                        if (!badge) {
+                            badge = document.createElement('div');
+                            badge.className = 'absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full min-w-[20px] h-5 flex items-center justify-center font-bold border-2 border-white shadow-md animate-pulse';
+                            avatar.appendChild(badge);
+                        }
+
+                        // Mettre à jour le contenu
+                        badge.textContent = data.unreadCount > 99 ? '99+' : data.unreadCount;
+                        messageElement.textContent = data.content;
+                        timeElement.textContent = data.timestamp;
+
+                        // Ajouter les styles "non lu"
+                        link.classList.add('bg-blue-50', 'border-l-4', 'border-l-blue-500');
+                        nameElement.classList.add('font-semibold');
+                        messageElement.classList.remove('text-gray-500');
+                        messageElement.classList.add('text-gray-700', 'font-medium');
+
+                        // Déplacer la conversation en haut de la liste
+                        const parentList = item.parentElement;
+                        parentList.insertBefore(item, parentList.firstChild);
+                    }
+                });
+            }
         });
     </script>
 {% endblock %}
