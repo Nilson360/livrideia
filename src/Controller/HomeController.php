@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Contact;
 use App\Entity\Post;
-use App\Entity\User;
 use App\Form\ContactType;
 use App\Form\PostFormType;
 use App\Repository\FriendRepository;
@@ -28,9 +27,9 @@ class HomeController extends AbstractController
         private readonly EntityManagerInterface $em,
         private readonly FileUploader           $uploader,
         private readonly EmailService           $emailService,
-        private readonly UserRepository $userRepository,
-        private readonly PostRepository $postRepository,
-        private readonly FriendRepository $friendRepository,
+        private readonly UserRepository         $userRepository,
+        private readonly PostRepository         $postRepository,
+        private readonly FriendRepository       $friendRepository,
     )
     {
 
@@ -133,18 +132,36 @@ class HomeController extends AbstractController
     }
 
     #[Route('/recherche', name: 'app_search')]
-    public function search(Request $request, EntityManagerInterface $em): Response
+    public function search(Request $request): Response
     {
         $query = $request->query->get('q');
+        $users = [];
+        $posts = [];
 
-        $users = $em->getRepository(User::class)->searchByNameOrUsername($query);
-        $posts = $em->getRepository(Post::class)->searchByContent($query);
+        $hasQuery = !empty($query);
+        $isQueryTooShort = $hasQuery && strlen(trim($query)) < 2;
+        $isValidQuery = $hasQuery && !$isQueryTooShort;
 
-        return $this->render('results.html.twig', [
+        if ($isValidQuery) {
+            $users = $this->userRepository->searchByNameOrUsername($query);
+            $posts = $this->postRepository->searchByContent($query);
+        }
+
+        $templateData = [
             'query' => $query,
             'users' => $users,
             'posts' => $posts,
-        ]);
+            'hasQuery' => $hasQuery,
+            'isQueryTooShort' => $isQueryTooShort,
+            'isValidQuery' => $isValidQuery,
+            'totalResults' => count($users) + count($posts)
+        ];
+
+        if ($this->deviceDetector->isMobile()) {
+            return $this->render('search/result_mobile.html.twig', $templateData);
+        }
+
+        return $this->render('search/results.html.twig', $templateData);
     }
 
     #[Route('/{page}', name: 'app_static_page', requirements: [

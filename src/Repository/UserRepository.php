@@ -75,12 +75,25 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $query->getResult();
     }
 
-    public function searchByNameOrUsername(string $query): array
+    public function searchByNameOrUsername(?string $query): array
     {
+        // Se a query for null ou vazia, retornar array vazio
+        if (empty($query) || trim($query) === '') {
+            return [];
+        }
+
+        // Limpar e validar a query
+        $cleanQuery = trim($query);
+
+        // Se a query for muito curta, retornar array vazio
+        if (strlen($cleanQuery) < 2) {
+            return [];
+        }
+
         return $this->createQueryBuilder('u')
             ->where('LOWER(u.username) LIKE :query')
             ->orWhere('LOWER(u.fullName) LIKE :query')
-            ->setParameter('query', '%' . strtolower($query) . '%')
+            ->setParameter('query', '%' . strtolower($cleanQuery) . '%')
             ->orderBy('u.username', 'ASC')
             ->getQuery()
             ->getResult();
@@ -127,7 +140,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getQuery()
             ->getSingleScalarResult();
     }
-    
+
     /**
      * Buscar usuários por nome/username
      */
