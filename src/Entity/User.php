@@ -538,4 +538,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->lastActivity = new \DateTimeImmutable();
         return $this;
     }
+    /**
+     * Compter le nombre d'amis acceptés
+     */
+    public function getFriendsCount(): int
+    {
+        $count = 0;
+
+        // Compter les demandes envoyées et acceptées
+        foreach ($this->sentFriendRequests as $request) {
+            if ($request->getStatus() === 'accepted') {
+                $count++;
+            }
+        }
+
+        // Compter les demandes reçues et acceptées
+        foreach ($this->receivedFriendRequests as $request) {
+            if ($request->getStatus() === 'accepted') {
+                $count++;
+            }
+        }
+
+        return $count;
+    }
 }

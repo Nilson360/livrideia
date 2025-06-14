@@ -36,7 +36,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     /**
      * Obtenir les utilisateurs suggérés pour ajouter comme amis
      */
-    public function getSuggestedUsers($userId): array
+    public function getSuggestedUsers(int $userId): array
     {
         return $this->createQueryBuilder('u')
             ->where('u.id != :userId')
@@ -232,8 +232,80 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->setParameter('lastDay', new \DateTimeImmutable('-1 day'))
             ->setMaxResults($limit);
 
-        return array_map(function ($result) {
+        return array_map(function($result) {
             return $result[0]; // Retourner seulement l'utilisateur, pas le count
         }, $qb->getQuery()->getResult());
+    }
+
+    /**
+     * Enrichir les utilisateurs avec les amis en commun
+     */
+    public function enrichUsersWithMutualFriends(User $currentUser, array $users): array
+    {
+        $enrichedUsers = [];
+
+        foreach ($users as $user) {
+            $mutualFriends = $this->getMutualFriends($currentUser->getId(), $user->getId());
+
+            $enrichedUsers[] = [
+                'user' => $user,
+                'mutualFriends' => $mutualFriends,
+                'mutualFriendsCount' => count($mutualFriends),
+                'isOnline' => $this->isUserOnline($user)
+            ];
+        }
+
+        return $enrichedUsers;
+    }
+
+    /**
+     * Formater les utilisateurs pour l'API
+     */
+    public function formatUsersForApi(User $currentUser, array $users): array
+    {
+        $usersData = [];
+
+        foreach ($users as $user) {
+            $mutualFriends = $this->getMutualFriends($currentUser->getId(), $user->getId());
+
+            $usersData[] = [
+                'id' => $user->getId(),
+                'username' => $user->getUsername(),
+                'fullName' => $user->getFullName(),
+                'avatarPath' => $user->getAvatarPath(),
+                'mutualFriendsCount' => count($mutualFriends),
+                'isOnline' => $this->isUserOnline($user)
+            ];
+        }
+
+        return $usersData;
+    }
+
+    /**
+     * Formater les utilisateurs pour la recherche
+     */
+    public function formatUsersForSearch(User $currentUser, array $users): array
+    {
+        return array_map(function($user) use ($currentUser) {
+            return [
+                'id' => $user->getId(),
+                'fullName' => $user->getFullName(),
+                'username' => $user->getUsername(),
+                'avatarPath' => $user->getAvatarPath(),
+                'mutualFriendsCount' => count($this->getMutualFriends($currentUser->getId(), $user->getId())),
+                'isFriend' => $currentUser->isFriendsWith($user),
+                'isOnline' => $this->isUserOnline($user)
+            ];
+        }, $users);
+    }
+
+    /**
+     * Vérifier si l'utilisateur est en ligne
+     */
+    private function isUserOnline(User $user): bool
+    {
+        // Vérifier si l'utilisateur était actif dans les 5 dernières minutes
+        return $user->getLastActivity() &&
+            $user->getLastActivity() > new \DateTimeImmutable('-5 minutes');
     }
 }

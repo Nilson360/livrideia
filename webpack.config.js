@@ -34,7 +34,7 @@ Encore
     .addEntry('user_photo_galery', './assets/js/app-livridea/user_photo_galery.js')
     .addEntry('friends_common', './assets/js/app-livridea/friends_common.js')
     .addEntry('chat-conversation', './assets/js/app-livridea/chat-conversation.js')
-
+    .addEntry('discover-mobile', './assets/js/app-livridea/discover-mobile.js')
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
     .splitEntryChunks()
 

@@ -7,8 +7,10 @@ use App\Entity\User;
 use App\Entity\Post;
 use App\Entity\Like;
 use App\Entity\Comment;
+use App\Repository\FriendRepository;
 use App\Repository\UserRepository;
 use App\Repository\PostRepository;
+use App\Repository\LikeRepository;
 use App\Service\NotificationService;
 use App\Service\DeviceDetectorService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -22,25 +24,15 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_USER')]
 class DiscoverController extends AbstractController
 {
-    private NotificationService $notificationService;
-    private EntityManagerInterface $entityManager;
-    private UserRepository $userRepository;
-    private PostRepository $postRepository;
-    private DeviceDetectorService $deviceDetector;
-
     public function __construct(
-        NotificationService $notificationService,
-        EntityManagerInterface $entityManager,
-        UserRepository $userRepository,
-        PostRepository $postRepository,
-        DeviceDetectorService $deviceDetector
-    ) {
-        $this->notificationService = $notificationService;
-        $this->entityManager = $entityManager;
-        $this->userRepository = $userRepository;
-        $this->postRepository = $postRepository;
-        $this->deviceDetector = $deviceDetector;
-    }
+        private readonly NotificationService $notificationService,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly UserRepository $userRepository,
+        private readonly PostRepository $postRepository,
+        private readonly FriendRepository $friendRepository,
+        private readonly LikeRepository $likeRepository,
+        private readonly DeviceDetectorService $deviceDetector
+    ) {}
 
     /**
      * Page principale de découverte - Auto-détection mobile/desktop
@@ -53,16 +45,16 @@ class DiscoverController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        // Mettre à jour la dernière atividade do usuário
+        // Mettre à jour la dernière activité
         $user->updateLastActivity();
         $this->entityManager->flush();
 
-        // Détecter le type d'appareil
+        // Détection de l'appareil et choix du template approprié
         if ($this->deviceDetector->isMobile()) {
             return $this->discoverMobile($request);
-        } else {
-            return $this->discoverDesktop($request);
         }
+
+        return $this->discoverDesktop($request);
     }
 
     /**
@@ -72,29 +64,20 @@ class DiscoverController extends AbstractController
     public function discoverMobile(Request $request): Response
     {
         $user = $this->getUser();
-
-        // Pagination pour les suggestions
         $page = max(1, $request->query->getInt('page', 1));
-        $limit = 10; // 10 suggestions par page sur mobile
+        $limit = 10;
 
-        // Obtenir les suggestions d'amis
-        $suggestedUsers = $this->userRepository->getSuggestedUsersWithPagination($user->getId(), $limit, $page);
+        $suggestedUsers = $this->userRepository->getSuggestedUsersWithPagination($user->getId(), $limit, ($page - 1) * $limit);
         $totalSuggestions = $this->userRepository->countSuggestedUsers($user->getId());
         $totalPages = ceil($totalSuggestions / $limit);
 
-        // Récupérer les demandes d'amitié en attente
-        $friendRequests = $this->entityManager->getRepository(Friend::class)->findBy([
-            'receiver' => $user,
-            'status' => 'pending'
-        ], ['createdAt' => 'DESC']);
+        $friendRequests = $this->friendRepository->getPendingRequests($user);
 
-        // Ajouter informations sur les amis en commun
-        foreach ($suggestedUsers as $suggestedUser) {
-            $suggestedUser->mutualFriends = $this->getMutualFriends($user, $suggestedUser);
-        }
+        // Enrichir avec amis en commun
+        $enrichedUsers = $this->userRepository->enrichUsersWithMutualFriends($user, $suggestedUsers);
 
         return $this->render('home/mobile/discover/index.html.twig', [
-            'suggestedUsers' => $suggestedUsers,
+            'enrichedUsers' => $enrichedUsers,
             'friendRequests' => $friendRequests,
             'currentPage' => $page,
             'totalPages' => $totalPages,
@@ -111,30 +94,21 @@ class DiscoverController extends AbstractController
     public function discoverDesktop(Request $request): Response
     {
         $user = $this->getUser();
-
-        // Pagination pour le feed
         $page = max(1, $request->query->getInt('page', 1));
         $limit = 15;
 
-        // Posts découverte - de personnes qui ne sont pas amies
         $discoverPosts = $this->postRepository->getDiscoverPosts($user->getId(), $limit, $page);
+        $suggestedUsers = $this->userRepository->getSuggestedUsersWithPagination($user->getId(), 5, 0);
+        $totalSuggestions = $this->userRepository->countSuggestedUsers($user->getId());
+        $friendRequests = $this->friendRepository->getPendingRequestsLimited($user, 3);
 
-        // Suggestions d'amis limitées pour la sidebar
-        $suggestedUsers = $this->userRepository->getSuggestedUsersWithPagination($user->getId(), 5, 1);
-
-        // Demandes d'amitié
-        $friendRequests = $this->entityManager->getRepository(Friend::class)->findBy([
-            'receiver' => $user,
-            'status' => 'pending'
-        ], ['createdAt' => 'DESC'], 3); // Limiter à 3 pour la sidebar
-
-        // Tendances et stats
-        $trendingBooks = $this->getTrendingBooks();
-        $activeUsers = $this->getActiveUsers(5);
+        $trendingBooks = $this->postRepository->getTrendingBooks();
+        $activeUsers = $this->userRepository->getMostActiveUsers(5);
 
         return $this->render('home/desktop/discover/index.html.twig', [
             'discoverPosts' => $discoverPosts,
             'suggestedUsers' => $suggestedUsers,
+            'totalSuggestions' => $totalSuggestions,
             'friendRequests' => $friendRequests,
             'trendingBooks' => $trendingBooks,
             'activeUsers' => $activeUsers,
@@ -154,22 +128,7 @@ class DiscoverController extends AbstractController
         $limit = $request->query->getInt('limit', 10);
 
         $suggestedUsers = $this->userRepository->getSuggestedUsersWithPagination($user->getId(), $limit, $page);
-
-        // Ajouter les amis en commun
-        $usersData = [];
-        foreach ($suggestedUsers as $suggestedUser) {
-            $mutualFriends = $this->getMutualFriends($user, $suggestedUser);
-
-            $usersData[] = [
-                'id' => $suggestedUser->getId(),
-                'username' => $suggestedUser->getUsername(),
-                'fullName' => $suggestedUser->getFullName(),
-                'avatarPath' => $suggestedUser->getAvatarPath(),
-                'bio' => $suggestedUser->getBio(),
-                'mutualFriendsCount' => count($mutualFriends),
-                'isOnline' => $this->isUserOnline($suggestedUser)
-            ];
-        }
+        $usersData = $this->userRepository->formatUsersForApi($user, $suggestedUsers);
 
         return $this->json([
             'users' => $usersData,
@@ -189,8 +148,8 @@ class DiscoverController extends AbstractController
             return $this->json(['error' => 'Vous ne pouvez pas vous ajouter vous-même.'], 400);
         }
 
-        // Vérifier si une demande existe déjà
-        $existingRequest = $this->entityManager->getRepository(Friend::class)->findOneBy([
+        // Vérifier si demande existe déjà (même logique que FriendController)
+        $existingRequest = $this->friendRepository->findOneBy([
             'sender' => $sender,
             'receiver' => $receiver,
         ]);
@@ -200,7 +159,7 @@ class DiscoverController extends AbstractController
         }
 
         // Vérifier si ils sont déjà amis (relation inverse)
-        $existingFriendship = $this->entityManager->getRepository(Friend::class)->findOneBy([
+        $existingFriendship = $this->friendRepository->findOneBy([
             'sender' => $receiver,
             'receiver' => $sender,
             'status' => 'accepted'
@@ -223,8 +182,7 @@ class DiscoverController extends AbstractController
         $this->notificationService->sendNotification(
             $receiver,
             'friend_request',
-            $sender,
-            'Nouvelle demande d\'amitié de ' . $sender->getFullName()
+            $sender
         );
 
         return $this->json([
@@ -251,15 +209,14 @@ class DiscoverController extends AbstractController
         }
 
         $friend->setStatus('accepted');
-        $friend->setAcceptedAt(new \DateTimeImmutable());
+        $friend->setUpdatedAt(new \DateTimeImmutable());
         $this->entityManager->flush();
 
         // Notification d'acceptation
         $this->notificationService->sendNotification(
             $friend->getSender(),
             'friend_accept',
-            $user,
-            $user->getFullName() . ' a accepté votre demande d\'amitié!'
+            $user
         );
 
         return $this->json([
@@ -307,44 +264,22 @@ class DiscoverController extends AbstractController
     {
         $user = $this->getUser();
 
-        $existingLike = $this->entityManager->getRepository(Like::class)->findOneBy([
-            'user' => $user,
-            'post' => $post
-        ]);
+        $result = $this->likeRepository->toggleLike($user, $post);
 
-        if ($existingLike) {
-            // Unlike
-            $this->entityManager->remove($existingLike);
-            $isLiked = false;
-        } else {
-            // Like
-            $like = new Like();
-            $like->setUser($user);
-            $like->setPost($post);
-            $like->setCreatedAt(new \DateTimeImmutable());
-            $this->entityManager->persist($like);
-            $isLiked = true;
-
-            // Notification au propriétaire du post (sauf si c'est le même utilisateur)
-            if ($post->getUser()->getId() !== $user->getId()) {
-                $this->notificationService->sendNotification(
-                    $post->getUser(),
-                    'post_like',
-                    $user,
-                    $user->getFullName() . ' a aimé votre publication'
-                );
-            }
+        // Notification si nouveau like et pas le propriétaire
+        if ($result['isLiked'] && $post->getUser()->getId() !== $user->getId()) {
+            $this->notificationService->sendNotification(
+                $post->getUser(),
+                'post_like',
+                $user,
+                $user->getFullName() . ' a aimé votre publication'
+            );
         }
 
-        $this->entityManager->flush();
-
-        // Recompter les likes
-        $likesCount = $this->entityManager->getRepository(Like::class)->count(['post' => $post]);
-
         return $this->json([
-            'isLiked' => $isLiked,
-            'likesCount' => $likesCount,
-            'message' => $isLiked ? 'Publication aimée!' : 'Like retiré'
+            'isLiked' => $result['isLiked'],
+            'likesCount' => $result['likesCount'],
+            'message' => $result['isLiked'] ? 'Publication aimée!' : 'Like retiré'
         ]);
     }
 
@@ -379,8 +314,7 @@ class DiscoverController extends AbstractController
             $this->notificationService->sendNotification(
                 $post->getUser(),
                 'post_comment',
-                $user,
-                $user->getFullName() . ' a commenté votre publication'
+                $user
             );
         }
 
@@ -409,7 +343,7 @@ class DiscoverController extends AbstractController
     {
         $user = $this->getUser();
         $query = trim($request->query->get('q', ''));
-        $type = $request->query->get('type', 'all'); // 'users', 'posts', 'all'
+        $type = $request->query->get('type', 'all');
 
         if (strlen($query) < 2) {
             return $this->json(['error' => 'La recherche doit contenir au moins 2 caractères.'], 400);
@@ -419,104 +353,14 @@ class DiscoverController extends AbstractController
 
         if ($type === 'users' || $type === 'all') {
             $users = $this->userRepository->searchUsers($query, $user->getId(), 10);
-            $results['users'] = array_map(function($u) use ($user) {
-                return [
-                    'id' => $u->getId(),
-                    'fullName' => $u->getFullName(),
-                    'username' => $u->getUsername(),
-                    'avatarPath' => $u->getAvatarPath(),
-                    'bio' => $u->getBio(),
-                    'mutualFriendsCount' => count($this->getMutualFriends($user, $u)),
-                    'isFriend' => $user->isFriendsWith($u)
-                ];
-            }, $users);
+            $results['users'] = $this->userRepository->formatUsersForSearch($user, $users);
         }
 
         if ($type === 'posts' || $type === 'all') {
             $posts = $this->postRepository->searchPosts($query, $user->getId(), 10);
-            $results['posts'] = array_map(function($p) {
-                return [
-                    'id' => $p->getId(),
-                    'content' => substr($p->getContent(), 0, 150) . '...',
-                    'createdAt' => $p->getCreatedAt()->format('Y-m-d H:i:s'),
-                    'user' => [
-                        'fullName' => $p->getUser()->getFullName(),
-                        'username' => $p->getUser()->getUsername(),
-                        'avatarPath' => $p->getUser()->getAvatarPath()
-                    ]
-                ];
-            }, $posts);
+            $results['posts'] = $this->postRepository->formatPostsForSearch($posts);
         }
 
         return $this->json($results);
-    }
-
-    // ====== MÉTODOS AUXILIARES ======
-
-    /**
-     * Obter amigos em comum entre dois usuários
-     */
-    private function getMutualFriends(User $user1, User $user2): array
-    {
-        return $this->userRepository->getMutualFriends($user1->getId(), $user2->getId());
-    }
-
-    /**
-     * Verificar se usuário está online (você pode implementar sua própria lógica)
-     */
-    private function isUserOnline(User $user): bool
-    {
-        // Implementar lógica de usuário online
-        // Por exemplo, verificar última atividade nos últimos 5 minutos
-        return $user->getLastActivity() &&
-            $user->getLastActivity() > new \DateTimeImmutable('-5 minutes');
-    }
-
-    /**
-     * Obter livros em tendência
-     */
-    private function getTrendingBooks(): array
-    {
-        // Implementação simples baseada em posts que mencionam livros
-        // Você pode melhorar isso baseado em sua estrutura de dados de livros
-
-        $qb = $this->entityManager->createQueryBuilder();
-        $qb->select('p')
-            ->from(Post::class, 'p')
-            ->where('p.content LIKE :book1 OR p.content LIKE :book2 OR p.content LIKE :livre')
-            ->andWhere('p.createdAt > :lastMonth')
-            ->andWhere('p.visibility = :public OR p.visibility IS NULL')
-            ->setParameter('book1', '%#livre%')
-            ->setParameter('book2', '%#book%')
-            ->setParameter('livre', '%livre%')
-            ->setParameter('lastMonth', new \DateTimeImmutable('-1 month'))
-            ->setParameter('public', 'public')
-            ->orderBy('p.createdAt', 'DESC')
-            ->setMaxResults(5);
-
-        $posts = $qb->getQuery()->getResult();
-
-        // Extrair informações de livros dos posts (placeholder)
-        $books = [];
-        foreach ($posts as $post) {
-            // Lógica simples para extrair nome de livros
-            if (preg_match('/"([^"]+)"/', $post->getContent(), $matches)) {
-                $books[] = [
-                    'title' => $matches[1],
-                    'mentions' => 1, // Você pode implementar contagem real
-                    'post' => $post
-                ];
-            }
-        }
-
-        return array_slice($books, 0, 5);
-    }
-
-    /**
-     * Obter usuários mais ativos
-     */
-    private function getActiveUsers(int $limit = 5): array
-    {
-        return $this->userRepository->getMostActiveUsers($limit);
     }
 }

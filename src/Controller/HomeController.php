@@ -69,7 +69,7 @@ class HomeController extends AbstractController
         $posts = $this->postRepository->findBy([], ['createdAt' => 'DESC']);
 
         // Utilisation d'une méthode dédiée dans le repository pour les suggestions d'amis
-        $suggestedUsers = $this->userRepository->getSuggestedUsers($user);
+        $suggestedUsers = $this->userRepository->getSuggestedUsers($user->getId());
 
         // Récupérer les demandes d'amitié en attente
         $friendRequests = $this->friendRepository->findBy([

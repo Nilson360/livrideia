@@ -15,31 +15,28 @@
             <span class="text-xs {% if app.request.attributes.get('_route') == 'app_home' %}font-semibold{% else %}font-medium{% endif %}">Accueil</span>
         </a>
 
-        {# Profil avec Avatar #}
-        <a href="{{ path('dashboard_user_profile') }}"
+        {# Découvrir #}
+        <a href="{{ path('app_discover') }}"
            class="flex flex-col items-center p-2 rounded-xl transition-all duration-200 active:scale-95 min-w-[68px] relative
-                  {% if app.request.attributes.get('_route') == 'dashboard_user_profile' %}text-[#FF8A00] bg-gradient-to-br from-orange-50 to-orange-100/50 shadow-sm{% else %}text-gray-500 active:bg-gray-50{% endif %}">
-            <div class="relative mb-1">
-                <div class="w-6 h-6 rounded-full overflow-hidden border border-gray-300">
-                    <img src="{{ asset(app.user.avatarPath|default('uploads/avatars/user_default.png')) }}"
-                         alt="Profile"
-                         class="w-full h-full object-cover">
-                </div>
-                <div class="absolute -bottom-0.5 -right-0.5 w-2 h-2 bg-emerald-500 border border-white rounded-full"></div>
-                {% if app.request.attributes.get('_route') == 'dashboard_user_profile' %}
+                  {% if app.request.attributes.get('_route') == 'app_menu' %}text-[#FF8A00] bg-gradient-to-br from-orange-50 to-orange-100/50 shadow-sm{% else %}text-gray-500 active:bg-gray-50{% endif %}">
+            <div class="relative">
+                <svg class="w-6 h-6 mb-1" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+                {% if app.request.attributes.get('_route') == 'app_menu' %}
                     <div class="absolute -top-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-[#FF8A00] rounded-full shadow-sm"></div>
                 {% endif %}
             </div>
-            <span class="text-xs {% if app.request.attributes.get('_route') == 'dashboard_user_profile' %}font-semibold{% else %}font-medium{% endif %}">Profil</span>
+            <span class="text-xs {% if app.request.attributes.get('_route') == 'app_menu' %}font-semibold{% else %}font-medium{% endif %}">Découvrir</span>
         </a>
 
         {# Bouton Publier Central #}
-        <button onclick="openPublishModal()" class="bg-gradient-to-br from-[#FF8A00] to-[#e67300] text-white p-3 rounded-full shadow-lg active:scale-95 transition-all duration-200 relative overflow-hidden">
-            <svg class="w-7 h-7 relative z-10" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-            </svg>
-            <div class="absolute inset-0 bg-white/20 rounded-full animate-pulse"></div>
-        </button>
+{#        <button onclick="openPublishModal()" class="bg-gradient-to-br from-[#FF8A00] to-[#e67300] text-white p-3 rounded-full shadow-lg active:scale-95 transition-all duration-200 relative overflow-hidden">#}
+{#            <svg class="w-7 h-7 relative z-10" viewBox="0 0 24 24" fill="currentColor">#}
+{#                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>#}
+{#            </svg>#}
+{#            <div class="absolute inset-0 bg-white/20 rounded-full animate-pulse"></div>#}
+{#        </button>#}
 
         {# Notifications avec Badge Dynamique #}
         <a href="{{ path('notifications_list') }}"
@@ -60,19 +57,22 @@
             <span class="text-xs {% if app.request.attributes.get('_route') == 'notifications_list' %}font-semibold{% else %}font-medium{% endif %}">Notifications</span>
         </a>
 
-        {# Découvrir #}
-        <a href="{{ path('app_discover') }}"
+        {# Profil avec Avatar #}
+        <a href="{{ path('dashboard_user_profile') }}"
            class="flex flex-col items-center p-2 rounded-xl transition-all duration-200 active:scale-95 min-w-[68px] relative
-                  {% if app.request.attributes.get('_route') == 'app_menu' %}text-[#FF8A00] bg-gradient-to-br from-orange-50 to-orange-100/50 shadow-sm{% else %}text-gray-500 active:bg-gray-50{% endif %}">
-            <div class="relative">
-                <svg class="w-6 h-6 mb-1" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                </svg>
-                {% if app.request.attributes.get('_route') == 'app_menu' %}
+                  {% if app.request.attributes.get('_route') == 'dashboard_user_profile' %}text-[#FF8A00] bg-gradient-to-br from-orange-50 to-orange-100/50 shadow-sm{% else %}text-gray-500 active:bg-gray-50{% endif %}">
+            <div class="relative mb-1">
+                <div class="w-6 h-6 rounded-full overflow-hidden border border-gray-300">
+                    <img src="{{ asset(app.user.avatarPath|default('uploads/avatars/user_default.png')) }}"
+                         alt="Profile"
+                         class="w-full h-full object-cover">
+                </div>
+                <div class="absolute -bottom-0.5 -right-0.5 w-2 h-2 bg-emerald-500 border border-white rounded-full"></div>
+                {% if app.request.attributes.get('_route') == 'dashboard_user_profile' %}
                     <div class="absolute -top-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-[#FF8A00] rounded-full shadow-sm"></div>
                 {% endif %}
             </div>
-            <span class="text-xs {% if app.request.attributes.get('_route') == 'app_menu' %}font-semibold{% else %}font-medium{% endif %}">Découvrir</span>
+            <span class="text-xs {% if app.request.attributes.get('_route') == 'dashboard_user_profile' %}font-semibold{% else %}font-medium{% endif %}">Profil</span>
         </a>
     </div>
 
@@ -84,12 +84,10 @@
 {# Script pour interactions et animations #}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Contador dinâmico de notificações
         const notificationBadge = document.getElementById('notification-badge');
         const notificationCount = document.getElementById('notification-count');
         let currentCount = 0;
 
-        // Função para atualizar o contador de notificações
         async function updateNotificationCount() {
             try {
                 const response = await fetch('{{ path("notifications_unread_count") }}', {
@@ -107,7 +105,6 @@
                 const data = await response.json();
                 const newCount = data.count || 0;
 
-                // Atualizar apenas se o contador mudou
                 if (newCount !== currentCount) {
                     updateBadgeDisplay(newCount);
                     currentCount = newCount;
@@ -117,13 +114,11 @@
             }
         }
 
-        // Função para atualizar a exibição do badge
         function updateBadgeDisplay(count) {
             if (count > 0) {
                 notificationCount.textContent = count > 99 ? '99+' : count;
                 notificationBadge.classList.remove('hidden');
 
-                // Animação de entrada
                 if (count > currentCount) {
                     notificationBadge.style.transform = 'scale(1.2)';
                     setTimeout(() => {
@@ -135,32 +130,16 @@
             }
         }
 
-        // Carregamento inicial
         updateNotificationCount();
 
-        // Atualização periódica (a cada 30 segundos)
         setInterval(updateNotificationCount, 30000);
 
-        // Atualizar quando a página ganha foco
         document.addEventListener('visibilitychange', function() {
             if (!document.hidden) {
                 updateNotificationCount();
             }
         });
 
-        // Atualizar quando volta do background (mobile)
         window.addEventListener('focus', updateNotificationCount);
     });
-
-    // Função para ouvrir o modal de publication
-    function openPublishModal() {
-        // Ici vous pouvez ajouter votre logique pour ouvrir un modal ou rediriger
-        console.log('Ouverture du modal de publication');
-
-        // Exemplo de redireção vers une page de création de post
-        // window.location.href = '{{ path("app_post_create") }}';
-
-        // Ou ouverture d'un modal
-        // document.getElementById('publish-modal').classList.remove('hidden');
-    }
 </script>
