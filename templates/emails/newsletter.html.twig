@@ -1,0 +1,145 @@
+{% extends 'emails/base.html.twig' %}
+
+{% block title %}{{ story.title|default('Histoire de la semaine') }} - Newsletter Livridea{% endblock %}
+
+{% block content %}
+    <div style="text-align: center; margin-bottom: 32px;">
+        <div style="background: linear-gradient(135deg, #fef3e2, #fed7aa); padding: 8px 16px; border-radius: 20px; display: inline-block; margin-bottom: 16px;">
+            <span style="color: #92400e; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">📖 Newsletter Livridea</span>
+        </div>
+        <h2 style="color: #1f2937; margin: 0;">{{ story.title|default('L\'Histoire de la Semaine') }}</h2>
+        <p style="color: #6b7280; margin: 8px 0 0 0; font-style: italic;">{{ story.date|default('now')|date('d F Y') }}</p>
+    </div>
+
+    {% if story.featured_image %}
+        <div style="text-align: center; margin: 32px 0;">
+            <img src="{{ story.featured_image }}" alt="{{ story.title }}"
+                 style="max-width: 100%; height: 200px; object-fit: cover; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+        </div>
+    {% endif %}
+
+    <div class="highlight-box">
+        <h3>✨ {{ story.subtitle|default('Découvrez l\'histoire qui passionne nos lecteurs cette semaine') }}</h3>
+        <p>{{ story.intro|default('Plongez dans un récit captivant qui vous transportera dans un univers littéraire unique.') }}</p>
+    </div>
+
+    {% if story.content %}
+        <div style="background: #f9fafb; padding: 24px; border-radius: 12px; margin: 24px 0; border: 1px solid #e5e7eb;">
+            {{ story.content|raw }}
+        </div>
+    {% else %}
+        <div style="background: #f9fafb; padding: 24px; border-radius: 12px; margin: 24px 0; border: 1px solid #e5e7eb;">
+            <h3 style="color: #1f2937; margin-bottom: 16px;">📚 L'Histoire de cette semaine</h3>
+
+            <p>Il était une fois, dans une petite librairie cachée au cœur de Paris, un livre mystérieux qui n'attendait
+                qu'un lecteur curieux pour révéler ses secrets...</p>
+
+            <p>Margot, jeune bibliothécaire passionnée, découvre un matin un ouvrage inconnu posé sur son bureau. Aucune
+                trace de son origine, aucun bordereau de livraison. Juste un titre gravé en lettres dorées : <em>"Les
+                    Murmures du Temps"</em>.</p>
+
+            <p>En ouvrant délicatement la première page, elle découvre une dédicace troublante : <strong>"Pour celle qui
+                    saura écouter l'âme des livres - M.L., 1847"</strong>. Comment un livre vieux de plus de 170 ans
+                peut-il porter son nom ?</p>
+
+            <blockquote
+                    style="border-left: 4px solid #FF8A00; padding-left: 16px; margin: 20px 0; font-style: italic; color: #4b5563;">
+                "Chaque livre porte en lui l'empreinte de tous ceux qui l'ont lu avant nous. Ils murmurent leurs
+                histoires à qui sait les entendre."
+            </blockquote>
+
+            <p>Au fil des pages, Margot comprend que ce livre a le pouvoir de révéler l'histoire secrète de tous les
+                ouvrages qui l'entourent. Chaque roman, chaque poème devient le témoin de vies passées, d'amours perdus,
+                de rêves abandonnés...</p>
+
+            <p>Mais ce don merveilleux cache un mystère plus profond. Qui était M.L. ? Pourquoi ce livre l'a-t-il
+                choisie ? Et surtout, quel prix devra-t-elle payer pour devenir la gardienne de tous ces murmures
+                littéraires ?</p>
+        </div>
+    {% endif %}
+
+    {% if story.featured_books %}
+        <h3 style="color: #1f2937; margin: 32px 0 20px 0;">📖 Les livres qui ont inspiré cette histoire</h3>
+
+        {% for book in story.featured_books %}
+            <div class="book-card">
+                <div class="book-cover">
+                    {% if book.cover %}
+                        <img src="{{ book.cover }}" alt="{{ book.title }}">
+                    {% endif %}
+                </div>
+                <div class="book-info">
+                    <h3>{{ book.title }}</h3>
+                    <div class="author">{{ book.author }}</div>
+                    <div class="description">{{ book.description|slice(0, 120) }}...</div>
+                    {% if book.rating %}
+                        <div style="margin-top: 8px;">
+                            {% for i in 1..5 %}
+                                <span style="color: {{ i <= book.rating ? '#F59E0B' : '#D1D5DB' }};">⭐</span>
+                            {% endfor %}
+                            <span style="color: #6b7280; font-size: 14px; margin-left: 8px;">{{ book.rating }}/5</span>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="highlight-box">
+        <h3>💭 Réflexion de la semaine</h3>
+        <p><em>"Les livres sont des miroirs : on n'y voit que ce qu'on y apporte."</em> - Carlos Ruiz Zafón</p>
+        <p>Cette semaine, nous vous invitons à réfléchir sur la façon dont chaque lecture nous transforme, nous enrichit
+            et nous connecte aux expériences universelles de l'humanité.</p>
+    </div>
+
+    {% if story.discussion_question %}
+        <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 20px; margin: 24px 0; border-radius: 0 8px 8px 0;">
+            <h3 style="color: #1e40af; margin-bottom: 8px;">🤔 Question pour la communauté</h3>
+            <p style="color: #1e40af; margin: 0;">{{ story.discussion_question }}</p>
+        </div>
+    {% else %}
+        <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 20px; margin: 24px 0; border-radius: 0 8px 8px 0;">
+            <h3 style="color: #1e40af; margin-bottom: 8px;">🤔 Question pour la communauté</h3>
+            <p style="color: #1e40af; margin: 0;">Avez-vous déjà eu l'impression qu'un livre vous avait "choisi" ?
+                Partagez votre expérience avec la communauté Livridea !</p>
+        </div>
+    {% endif %}
+
+    <div style="text-align: center; margin: 40px 0;">
+        <a href="{{ discussionUrl|default('#') }}" class="btn">Rejoindre la discussion</a>
+        <div style="margin-top: 16px;">
+            <a href="{{ storiesUrl|default('#') }}" class="btn-secondary" style="margin-right: 16px;">Toutes nos
+                histoires</a>
+            <a href="{{ siteUrl|default('#') }}" class="btn-secondary">Découvrir Livridea</a>
+        </div>
+    </div>
+
+    <div class="stats">
+        <div class="stat">
+            <div class="stat-number">{{ story.views|default('2.3K') }}</div>
+            <div class="stat-label">Lectures</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">{{ story.comments|default('87') }}</div>
+            <div class="stat-label">Commentaires</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">{{ story.shares|default('156') }}</div>
+            <div class="stat-label">Partages</div>
+        </div>
+    </div>
+
+    <h3 style="color: #1f2937; margin: 32px 0 16px 0;">📬 Prochaines histoires</h3>
+    <p style="color: #6b7280;">Restez connecté pour découvrir nos prochaines histoires passionnantes :</p>
+    <ul style="color: #4b5563; padding-left: 20px;">
+        <li style="margin-bottom: 8px;"><strong>Semaine prochaine :</strong> "Le Café des Écrivains Oubliés"</li>
+        <li style="margin-bottom: 8px;"><strong>Dans 15 jours :</strong> "La Bibliothèque Interdite"</li>
+        <li style="margin-bottom: 8px;"><strong>Fin du mois :</strong> "Les Lettres d'Amour Anonymes"</li>
+    </ul>
+
+    <p style="margin-top: 32px; font-style: italic; color: #6b7280;">
+        Merci de nous suivre dans ces aventures littéraires !<br>
+        À très bientôt pour une nouvelle histoire,<br>
+        L'équipe Livridea 📖✨
+    </p>
+{% endblock %}

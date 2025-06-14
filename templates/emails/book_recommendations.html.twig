@@ -1,0 +1,188 @@
+{% extends 'emails/base.html.twig' %}
+
+{% block title %}📖 {{ sectionTitle|default('Vos recommandations personnalisées') }} - Livridea{% endblock %}
+
+{% block content %}
+    <div style="text-align: center; margin-bottom: 32px;">
+        <div style="background: linear-gradient(135deg, #fef3e2, #fed7aa); padding: 8px 16px; border-radius: 20px; display: inline-block; margin-bottom: 16px;">
+            <span style="color: #92400e; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">✨ Spécialement pour vous</span>
+        </div>
+        <h2 style="color: #1f2937; margin: 0;">{{ sectionTitle|default('Recommandations personnalisées') }}</h2>
+        <p style="color: #6b7280; margin: 8px 0 0 0;">Basées sur vos goûts et votre historique de lecture</p>
+    </div>
+
+    <p>Bonjour {{ user.fullName|default(user.username) }},</p>
+
+    <p>Notre intelligence artificielle a analysé vos préférences, vos notes et vos lectures récentes pour vous proposer une sélection de livres parfaitement adaptés à vos goûts. Découvrez ci-dessous vos recommandations de la semaine !</p>
+
+    {% if user.favoriteGenres is defined and user.favoriteGenres|length > 0 %}
+        <div style="background: #f0fdf4; border-left: 4px solid #10b981; padding: 16px; margin: 24px 0; border-radius: 0 8px 8px 0;">
+            <h3 style="color: #065f46; margin-bottom: 8px;">🎯 Basé sur vos genres préférés</h3>
+            <p style="color: #065f46; margin: 0;">
+                {% for genre in user.favoriteGenres %}
+                    <span style="background: #dcfce7; padding: 2px 8px; border-radius: 12px; margin-right: 8px;">{{ genre }}</span>
+                {% endfor %}
+            </p>
+        </div>
+    {% endif %}
+
+    <h3 style="color: #1f2937; margin: 32px 0 20px 0;">📚 Nos recommandations pour vous</h3>
+
+    {% if books is defined and books|length > 0 %}
+        {% for book in books %}
+            <div class="book-card">
+                <div class="book-cover">
+                    {% if book.cover %}
+                        <img src="{{ book.cover }}" alt="{{ book.title }}">
+                    {% else %}
+                        <div style="background: linear-gradient(135deg, #FF8A00, #e67300); display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">📖</div>
+                    {% endif %}
+                </div>
+                <div class="book-info">
+                    <h3>{{ book.title }}</h3>
+                    <div class="author">{{ book.author }}</div>
+
+                    {% if book.matchReason is defined %}
+                        <div style="background: #eff6ff; color: #1e40af; padding: 4px 8px; border-radius: 4px; font-size: 12px; margin: 8px 0; display: inline-block;">
+                            💡 {{ book.matchReason }}
+                        </div>
+                    {% endif %}
+
+                    <div class="description">{{ book.description|slice(0, 150) }}{% if book.description|length > 150 %}...{% endif %}</div>
+
+                    {% if book.rating %}
+                        <div style="margin: 12px 0;">
+                            {% for i in 1..5 %}
+                                <span style="color: {{ i <= book.rating ? '#F59E0B' : '#D1D5DB' }};">⭐</span>
+                            {% endfor %}
+                            <span style="color: #6b7280; font-size: 14px; margin-left: 8px;">{{ book.rating }}/5 ({{ book.reviewsCount|default('23') }} avis)</span>
+                        </div>
+                    {% endif %}
+
+                    {% if book.similarity is defined %}
+                        <div style="background: #fef3e2; color: #92400e; padding: 8px; border-radius: 6px; margin-top: 12px; font-size: 14px;">
+                            🔗 <strong>{{ book.similarity }}% de correspondance</strong> avec vos goûts
+                        </div>
+                    {% endif %}
+
+                    {% if book.price %}
+                        <div style="margin-top: 12px;">
+                            <span style="color: #1f2937; font-weight: 600; font-size: 16px;">{{ book.price }}€</span>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        {# Recommandations d'exemple #}
+        <div class="book-card">
+            <div class="book-cover">
+                <div style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">🌙</div>
+            </div>
+            <div class="book-info">
+                <h3>Les Chroniques de Lumina</h3>
+                <div class="author">Éléa Martineau</div>
+                <div style="background: #eff6ff; color: #1e40af; padding: 4px 8px; border-radius: 4px; font-size: 12px; margin: 8px 0; display: inline-block;">
+                    💡 Recommandé car vous avez aimé "Le Seigneur des Anneaux"
+                </div>
+                <div class="description">Une fantasy épique qui mêle magie ancestrale et technologies futuristes. Suivez Anya dans sa quête pour sauver son monde de l'obscurité éternelle.</div>
+                <div style="margin: 12px 0;">
+                    ⭐⭐⭐⭐⭐
+                    <span style="color: #6b7280; font-size: 14px; margin-left: 8px;">4.7/5 (892 avis)</span>
+                </div>
+                <div style="background: #fef3e2; color: #92400e; padding: 8px; border-radius: 6px; margin-top: 12px; font-size: 14px;">
+                    🔗 <strong>94% de correspondance</strong> avec vos goûts
+                </div>
+            </div>
+        </div>
+
+        <div class="book-card">
+            <div class="book-cover">
+                <div style="background: linear-gradient(135deg, #ef4444, #dc2626); display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">🔍</div>
+            </div>
+            <div class="book-info">
+                <h3>L'Énigme du Phare</h3>
+                <div class="author">Marc Delacroix</div>
+                <div style="background: #eff6ff; color: #1e40af; padding: 4px 8px; border-radius: 4px; font-size: 12px; margin: 8px 0; display: inline-block;">
+                    💡 Vous adorez les thrillers psychologiques
+                </div>
+                <div class="description">Un gardien de phare disparaît mystérieusement. Quand l'inspectrice Moreau arrive sur l'île, elle découvre que rien n'est ce qu'il paraît...</div>
+                <div style="margin: 12px 0;">
+                    ⭐⭐⭐⭐☆
+                    <span style="color: #6b7280; font-size: 14px; margin-left: 8px;">4.3/5 (267 avis)</span>
+                </div>
+                <div style="background: #fef3e2; color: #92400e; padding: 8px; border-radius: 6px; margin-top: 12px; font-size: 14px;">
+                    🔗 <strong>89% de correspondance</strong> avec vos goûts
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="highlight-box">
+        <h3>🎯 Pourquoi ces recommandations ?</h3>
+        <p>Notre algorithme a analysé :</p>
+        <ul style="margin: 8px 0; padding-left: 20px;">
+            <li>Vos {{ user.booksRead|default('47') }} livres lus et vos notes</li>
+            <li>Vos {{ user.favoriteBooks|length|default('12') }} livres favoris</li>
+            <li>Les genres que vous préférez</li>
+            <li>Les avis d'autres lecteurs aux goûts similaires</li>
+        </ul>
+    </div>
+
+    <h3 style="color: #1f2937; margin: 32px 0 16px 0;">🔥 Tendances dans vos genres préférés</h3>
+
+    <div style="background: #f9fafb; padding: 20px; border-radius: 12px; margin: 20px 0;">
+        <h4 style="color: #1f2937; margin-bottom: 16px;">📈 Ce qui cartonne en ce moment :</h4>
+        <ul style="color: #4b5563; margin: 0; padding-left: 20px;">
+            <li style="margin-bottom: 8px;"><strong>Fantasy urbaine :</strong> +34% de lectures ce mois</li>
+            <li style="margin-bottom: 8px;"><strong>Romance contemporaine :</strong> +28% d'engouement</li>
+            <li style="margin-bottom: 8px;"><strong>Thrillers psychologiques :</strong> +22% de popularité</li>
+            <li style="margin-bottom: 8px;"><strong>Science-fiction climatique :</strong> Genre émergent</li>
+        </ul>
+    </div>
+
+    {% if similarReaders is defined %}
+        <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 20px; margin: 24px 0; border-radius: 0 8px 8px 0;">
+            <h3 style="color: #1e40af; margin-bottom: 8px;">👥 Lecteurs aux goûts similaires lisent aussi</h3>
+            <p style="color: #1e40af; margin: 0;">{{ similarReaders|length }} lecteurs avec des préférences proches des vôtres ont également adoré ces livres.</p>
+        </div>
+    {% endif %}
+
+    <div style="text-align: center; margin: 40px 0;">
+        <a href="{{ booksUrl|default('#') }}" class="btn">Découvrir plus de recommandations</a>
+        <div style="margin-top: 16px;">
+            <a href="{{ quizUrl|default('#') }}" class="btn-secondary" style="margin-right: 16px;">Affiner mes goûts</a>
+            <a href="{{ trendsUrl|default('#') }}" class="btn-secondary">Voir les tendances</a>
+        </div>
+    </div>
+
+    <div class="stats">
+        <div class="stat">
+            <div class="stat-number">{{ recommendations.accuracy|default('92') }}%</div>
+            <div class="stat-label">Précision</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">{{ user.booksRead|default('47') }}</div>
+            <div class="stat-label">Livres analysés</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">{{ recommendations.count|default('156') }}</div>
+            <div class="stat-label">Recommandations</div>
+        </div>
+    </div>
+
+    <div class="highlight-box">
+        <h3>💡 Améliorez vos recommandations</h3>
+        <p>Plus vous notez de livres et interagissez avec Livridea, plus nos suggestions deviennent précises ! N'hésitez pas à :</p>
+        <ul style="margin: 8px 0; padding-left: 20px;">
+            <li>Noter vos dernières lectures</li>
+            <li>Ajouter des livres à vos favoris</li>
+            <li>Indiquer vos genres préférés dans vos paramètres</li>
+        </ul>
+    </div>
+
+    <p style="margin-top: 32px; font-style: italic; color: #6b7280;">
+        Excellentes découvertes !<br>
+        L'équipe Livridea 📚✨
+    </p>
+{% endblock %}

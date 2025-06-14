@@ -1,0 +1,198 @@
+{% extends 'emails/base.html.twig' %}
+
+{% block title %}🆕 Nouvelles sorties littéraires - Livridea{% endblock %}
+
+{% block content %}
+    <div style="text-align: center; margin-bottom: 32px;">
+        <div style="background: linear-gradient(135deg, #ecfdf5, #d1fae5); padding: 8px 16px; border-radius: 20px; display: inline-block; margin-bottom: 16px;">
+            <span style="color: #065f46; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">🆕 Nouvelles Sorties</span>
+        </div>
+        <h2 style="color: #1f2937; margin: 0;">Les dernières pépites littéraires</h2>
+        <p style="color: #6b7280; margin: 8px 0 0 0;">{{ 'now'|date('F Y') }} • Sélection Livridea</p>
+    </div>
+
+    <p>Bonjour {{ user.fullName|default(user.username) }},</p>
+
+    <p>Notre équipe de passionnés a déniché pour vous les dernières sorties qui font déjà parler d'elles dans l'univers
+        littéraire. Découvrez sans plus attendre ces nouveautés qui pourraient bien devenir vos prochains coups de cœur
+        !</p>
+
+    <div class="highlight-box">
+        <h3>⭐ Coup de cœur de la rédaction</h3>
+        {% if featured_book is defined %}
+            <p><strong>{{ featured_book.title }}</strong> de {{ featured_book.author }} - Une œuvre qui nous a
+                littéralement bouleversés et que nous recommandons sans hésitation !</p>
+        {% else %}
+            <p><strong>"Les Échos du Silence"</strong> de Marie Dubois - Une œuvre qui nous a littéralement bouleversés
+                et que nous recommandons sans hésitation !</p>
+        {% endif %}
+    </div>
+
+    <h3 style="color: #1f2937; margin: 32px 0 20px 0;">📚 Nouvelles sorties de ce mois</h3>
+
+    {% if new_books is defined and new_books|length > 0 %}
+        {% for book in new_books %}
+            <div class="book-card">
+                <div class="book-cover">
+                    {% if book.cover %}
+                        <img src="{{ book.cover }}" alt="{{ book.title }}">
+                    {% else %}
+                        <div style="background: linear-gradient(135deg, #FF8A00, #e67300); display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">
+                            📖
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="book-info">
+                    <h3>{{ book.title }}</h3>
+                    <div class="author">{{ book.author }}</div>
+                    <div style="color: #10b981; font-size: 12px; font-weight: 600; margin: 4px 0; text-transform: uppercase;">
+                        {{ book.category|default('Nouveauté') }}
+                        • {{ book.publicationDate|default('now')|date('d/m/Y') }}
+                    </div>
+                    <div class="description">{{ book.description|slice(0, 150) }}{% if book.description|length > 150 %}...{% endif %}</div>
+
+                    {% if book.price %}
+                        <div style="margin-top: 12px;">
+                            <span style="color: #1f2937; font-weight: 600; font-size: 16px;">{{ book.price }}€</span>
+                            {% if book.originalPrice and book.originalPrice != book.price %}
+                                <span style="color: #9ca3af; text-decoration: line-through; margin-left: 8px;">{{ book.originalPrice }}€</span>
+                                <span style="color: #ef4444; font-weight: 600; margin-left: 8px;">-{{ ((book.originalPrice - book.price) / book.originalPrice * 100)|round }}%</span>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+
+                    {% if book.preorder %}
+                        <div style="background: #fef3e2; color: #92400e; padding: 4px 8px; border-radius: 4px; font-size: 12px; margin-top: 8px; display: inline-block;">
+                            📅 Précommande - Sortie le {{ book.releaseDate|date('d/m/Y') }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        {# Données d'exemple si pas de livres fournis #}
+        <div class="book-card">
+            <div class="book-cover">
+                <div style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">
+                    📘
+                </div>
+            </div>
+            <div class="book-info">
+                <h3>L'Archipel des Murmures</h3>
+                <div class="author">Clara Moreau</div>
+                <div style="color: #10b981; font-size: 12px; font-weight: 600; margin: 4px 0; text-transform: uppercase;">
+                    Roman • 15/12/2024
+                </div>
+                <div class="description">Une épopée poétique qui nous transporte sur une île mystérieuse où les mots ont
+                    le pouvoir de façonner la réalité. Un premier roman éblouissant qui marque l'arrivée d'une nouvelle
+                    voix de la littérature française.
+                </div>
+                <div style="margin-top: 12px;">
+                    <span style="color: #1f2937; font-weight: 600; font-size: 16px;">18,90€</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="book-card">
+            <div class="book-cover">
+                <div style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">
+                    🌟
+                </div>
+            </div>
+            <div class="book-info">
+                <h3>Mémoires d'une Libraire</h3>
+                <div class="author">Sylvie Delacroix</div>
+                <div style="color: #10b981; font-size: 12px; font-weight: 600; margin: 4px 0; text-transform: uppercase;">
+                    Autobiographie • 22/12/2024
+                </div>
+                <div class="description">Quarante ans de passion pour les livres racontés avec humour et tendresse. Des
+                    anecdotes touchantes sur les lecteurs, les auteurs et cette magie quotidienne qui opère entre les
+                    rayons d'une librairie.
+                </div>
+                <div style="margin-top: 12px;">
+                    <span style="color: #1f2937; font-weight: 600; font-size: 16px;">16,50€</span>
+                    <span style="color: #9ca3af; text-decoration: line-through; margin-left: 8px;">19,90€</span>
+                    <span style="color: #ef4444; font-weight: 600; margin-left: 8px;">-17%</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="book-card">
+            <div class="book-cover">
+                <div style="background: linear-gradient(135deg, #10b981, #059669); display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">
+                    🌿
+                </div>
+            </div>
+            <div class="book-info">
+                <h3>Le Jardin des Mots Perdus</h3>
+                <div class="author">Antoine Réveillé</div>
+                <div style="color: #10b981; font-size: 12px; font-weight: 600; margin: 4px 0; text-transform: uppercase;">
+                    Poésie • 08/01/2025
+                </div>
+                <div class="description">Un recueil de poèmes qui explore la beauté fragile du langage et notre rapport
+                    à la nature. Des vers qui résonnent comme un appel à préserver la poésie du quotidien.
+                </div>
+                <div style="background: #fef3e2; color: #92400e; padding: 4px 8px; border-radius: 4px; font-size: 12px; margin-top: 8px; display: inline-block;">
+                    📅 Précommande - Sortie le 08/01/2025
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <div style="background: #f0fdf4; border-left: 4px solid #10b981; padding: 20px; margin: 32px 0; border-radius: 0 8px 8px 0;">
+        <h3 style="color: #065f46; margin-bottom: 8px;">🎁 Offre spéciale nouveautés</h3>
+        <p style="color: #065f46; margin: 0;">Profitez de <strong>-15%</strong> sur toutes les précommandes avec le code
+            <strong>NOUVEAU2024</strong>. Offre valable jusqu'au 31 décembre !</p>
+    </div>
+
+    <h3 style="color: #1f2937; margin: 32px 0 16px 0;">📖 Genres tendance ce mois-ci</h3>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 12px; margin: 20px 0;">
+        <span style="background: #eff6ff; color: #1e40af; padding: 6px 12px; border-radius: 20px; font-size: 14px; font-weight: 500;">#Romance</span>
+        <span style="background: #f0fdf4; color: #065f46; padding: 6px 12px; border-radius: 20px; font-size: 14px; font-weight: 500;">#ScienceFiction</span>
+        <span style="background: #fef3e2; color: #92400e; padding: 6px 12px; border-radius: 20px; font-size: 14px; font-weight: 500;">#Thriller</span>
+        <span style="background: #fdf4ff; color: #7c2d12; padding: 6px 12px; border-radius: 20px; font-size: 14px; font-weight: 500;">#Autobiographie</span>
+        <span style="background: #ecfdf5; color: #064e3b; padding: 6px 12px; border-radius: 20px; font-size: 14px; font-weight: 500;">#Poésie</span>
+    </div>
+
+    <div style="text-align: center; margin: 40px 0;">
+        <a href="{{ newBooksUrl|default('#') }}" class="btn">Découvrir toutes les nouveautés</a>
+        <div style="margin-top: 16px;">
+            <a href="{{ preordersUrl|default('#') }}" class="btn-secondary" style="margin-right: 16px;">Précommandes</a>
+            <a href="{{ trendsUrl|default('#') }}" class="btn-secondary">Tendances</a>
+        </div>
+    </div>
+
+    <div class="stats">
+        <div class="stat">
+            <div class="stat-number">23</div>
+            <div class="stat-label">Nouveautés ce mois</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">156</div>
+            <div class="stat-label">Précommandes</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">4.8★</div>
+            <div class="stat-label">Note moyenne</div>
+        </div>
+    </div>
+
+    <div class="highlight-box">
+        <h3>📅 Agenda littéraire</h3>
+        <ul style="margin: 0; padding-left: 20px;">
+            <li style="margin-bottom: 8px;"><strong>28 décembre :</strong> Dédicace de Clara Moreau à la Fnac
+                Saint-Lazare
+            </li>
+            <li style="margin-bottom: 8px;"><strong>5 janvier :</strong> Salon du livre de Lyon - Stand Livridea</li>
+            <li style="margin-bottom: 8px;"><strong>12 janvier :</strong> Rencontre virtuelle avec nos auteurs coups de
+                cœur
+            </li>
+        </ul>
+    </div>
+
+    <p style="margin-top: 32px; font-style: italic; color: #6b7280;">
+        Bonnes découvertes littéraires !<br>
+        L'équipe Livridea 📚✨
+    </p>
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends 'emails/base.html.twig' %}
+
+{% block title %}Bienvenue dans l'univers Livridea! 📚{% endblock %}
+
+{% block content %}
+    <h2>Bienvenue {{ user.fullName|default(user.username) }}! 🎉</h2>
+
+    <p>Nous sommes absolument ravis de vous accueillir dans la grande famille Livridea ! Votre aventure littéraire
+        commence maintenant, et nous avons hâte de la partager avec vous.</p>
+
+    <div class="highlight-box">
+        <h3>🌟 Votre compte est maintenant actif !</h3>
+        <p>Vous pouvez dès à présent explorer toutes les fonctionnalités qui font de Livridea votre compagnon littéraire
+            idéal.</p>
+    </div>
+
+    <h3 style="color: #1f2937; margin: 24px 0 16px 0;">Ce que vous pouvez faire dès maintenant :</h3>
+
+    <ul style="list-style: none; padding: 0;">
+        <li style="margin-bottom: 12px; display: flex; align-items: center;">
+            <span style="background: #FF8A00; color: white; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; margin-right: 12px; font-size: 12px;">📖</span>
+            <strong>Découvrir nos sélections littéraires</strong> - Nos experts vous proposent chaque semaine des
+            pépites
+        </li>
+        <li style="margin-bottom: 12px; display: flex; align-items: center;">
+            <span style="background: #FF8A00; color: white; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; margin-right: 12px; font-size: 12px;">⭐</span>
+            <strong>Noter et commenter vos lectures</strong> - Partagez vos impressions avec la communauté
+        </li>
+        <li style="margin-bottom: 12px; display: flex; align-items: center;">
+            <span style="background: #FF8A00; color: white; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; margin-right: 12px; font-size: 12px;">💝</span>
+            <strong>Créer votre bibliothèque personnelle</strong> - Organisez vos coups de cœur et votre liste de
+            lecture
+        </li>
+        <li style="margin-bottom: 12px; display: flex; align-items: center;">
+            <span style="background: #FF8A00; color: white; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; margin-right: 12px; font-size: 12px;">📝</span>
+            <strong>Partager vos citations préférées</strong> - Inspirez la communauté avec vos passages favoris
+        </li>
+        <li style="margin-bottom: 12px; display: flex; align-items: center;">
+            <span style="background: #FF8A00; color: white; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; margin-right: 12px; font-size: 12px;">👥</span>
+            <strong>Rejoindre la communauté</strong> - Suivez d'autres passionnés et découvrez leurs recommandations
+        </li>
+    </ul>
+
+    <div style="text-align: center; margin: 40px 0;">
+        <a href="{{ loginUrl }}" class="btn">Commencer mon exploration littéraire</a>
+    </div>
+
+    <div class="stats">
+        <div class="stat">
+            <div class="stat-number">15K+</div>
+            <div class="stat-label">Livres référencés</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">8K+</div>
+            <div class="stat-label">Lecteurs actifs</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">50K+</div>
+            <div class="stat-label">Avis partagés</div>
+        </div>
+    </div>
+
+    <h3 style="color: #1f2937; margin: 32px 0 16px 0;">🎯 Pour commencer, nous vous suggérons de :</h3>
+
+    <ol style="padding-left: 20px; color: #4b5563;">
+        <li style="margin-bottom: 8px;"><strong>Compléter votre profil</strong> - Ajoutez une photo et parlez-nous de
+            vos goûts littéraires
+        </li>
+        <li style="margin-bottom: 8px;"><strong>Explorer nos sections</strong> - "Livres de la semaine", "Suggestions
+            personnalisées", "Dernières sorties"
+        </li>
+        <li style="margin-bottom: 8px;"><strong>Ajouter vos premiers favoris</strong> - Notre algorithme vous proposera
+            des recommandations sur mesure
+        </li>
+        <li style="margin-bottom: 8px;"><strong>Rejoindre des discussions</strong> - Participez aux échanges sur vos
+            livres préférés
+        </li>
+    </ol>
+
+    <div class="highlight-box">
+        <h3>💡 Le saviez-vous ?</h3>
+        <p>Plus vous interagissez avec Livridea, plus nos recommandations deviennent précises ! Notre système
+            d'intelligence artificielle apprend de vos goûts pour vous proposer des livres qui vous correspondent
+            parfaitement.</p>
+    </div>
+
+    <p style="margin-top: 32px;">Si vous avez la moindre question ou besoin d'aide pour débuter, n'hésitez pas à nous
+        contacter. Notre équipe sera ravie de vous accompagner dans cette belle aventure littéraire !</p>
+
+    <p style="font-style: italic; color: #6b7280; margin-top: 24px;">
+        Excellente découverte et belles lectures à venir !<br>
+        L'équipe Livridea 📚✨
+    </p>
+
+    <div style="text-align: center; margin: 30px 0;">
+        <a href="{{ discoverUrl }}" class="btn-secondary" style="margin-right: 16px;">Découvrir les tendances</a>
+        <a href="{{ profileUrl|default('#') }}" class="btn-secondary">Compléter mon profil</a>
+    </div>
+{% endblock %}

@@ -1,0 +1,219 @@
+{% extends 'emails/base.html.twig' %}
+
+{% block title %}{{ communication.title|default('Actualités Livridea') }} - Livridea{% endblock %}
+
+{% block content %}
+    <div style="text-align: center; margin-bottom: 32px;">
+        {% if communication.type == 'announcement' %}
+            <div style="background: linear-gradient(135deg, #dbeafe, #bfdbfe); padding: 8px 16px; border-radius: 20px; display: inline-block; margin-bottom: 16px;">
+                <span style="color: #1e40af; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">📢 Annonce</span>
+            </div>
+        {% elseif communication.type == 'update' %}
+            <div style="background: linear-gradient(135deg, #ecfdf5, #d1fae5); padding: 8px 16px; border-radius: 20px; display: inline-block; margin-bottom: 16px;">
+                <span style="color: #065f46; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">🔄 Mise à jour</span>
+            </div>
+        {% elseif communication.type == 'event' %}
+            <div style="background: linear-gradient(135deg, #fef3e2, #fed7aa); padding: 8px 16px; border-radius: 20px; display: inline-block; margin-bottom: 16px;">
+                <span style="color: #92400e; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">🎉 Événement</span>
+            </div>
+        {% else %}
+            <div style="background: linear-gradient(135deg, #f3f4f6, #e5e7eb); padding: 8px 16px; border-radius: 20px; display: inline-block; margin-bottom: 16px;">
+                <span style="color: #374151; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">📰 Actualités</span>
+            </div>
+        {% endif %}
+
+        <h2 style="color: #1f2937; margin: 0;">{{ communication.title|default('Actualités Livridea') }}</h2>
+        <p style="color: #6b7280; margin: 8px 0 0 0;">{{ communication.date|default('now')|date('d F Y') }}</p>
+    </div>
+
+    <p>Bonjour {{ user.fullName|default(user.username) }},</p>
+
+    {% if communication.content %}
+        {{ communication.content|raw }}
+    {% else %}
+        {# Contenu d'exemple selon le type #}
+        {% if communication.type == 'announcement' %}
+            <p>Nous avons une grande nouvelle à partager avec vous ! Livridea continue d'évoluer pour vous offrir une
+                expérience de lecture toujours plus enrichissante.</p>
+
+            <div class="highlight-box">
+                <h3>🚀 Nouvelle fonctionnalité : Clubs de lecture virtuels</h3>
+                <p>Rejoignez ou créez votre propre club de lecture virtuel ! Organisez des discussions, planifiez vos
+                    lectures communes et partagez vos impressions en temps réel avec d'autres passionnés.</p>
+            </div>
+
+            <h3 style="color: #1f2937; margin: 24px 0 16px 0;">✨ Ce qui vous attend :</h3>
+            <ul style="color: #4b5563; padding-left: 20px;">
+                <li style="margin-bottom: 8px;"><strong>Création de clubs thématiques :</strong> Roman historique,
+                    science-fiction, poésie...
+                </li>
+                <li style="margin-bottom: 8px;"><strong>Calendrier de lectures :</strong> Organisez vos sessions et
+                    suivez le rythme du groupe
+                </li>
+                <li style="margin-bottom: 8px;"><strong>Discussions enrichies :</strong> Commentaires, citations, notes
+                    partagées
+                </li>
+                <li style="margin-bottom: 8px;"><strong>Rencontres virtuelles :</strong> Visioconférences avec les
+                    auteurs
+                </li>
+            </ul>
+
+        {% elseif communication.type == 'update' %}
+            <p>Nous venons de déployer plusieurs améliorations basées sur vos retours et suggestions. Voici les
+                nouveautés qui vous attendent !</p>
+
+            <div class="highlight-box">
+                <h3>🔧 Améliorations de l'expérience utilisateur</h3>
+                <p>Interface plus intuitive, recherche améliorée et nouvelles options de personnalisation pour une
+                    navigation optimale.</p>
+            </div>
+
+            <h3 style="color: #1f2937; margin: 24px 0 16px 0;">🆕 Nouveautés de cette version :</h3>
+            <ul style="color: #4b5563; padding-left: 20px;">
+                <li style="margin-bottom: 8px;"><strong>Recherche intelligente :</strong> Trouvez des livres par humeur,
+                    longueur ou thème
+                </li>
+                <li style="margin-bottom: 8px;"><strong>Mode sombre :</strong> Lecture confortable en soirée</li>
+                <li style="margin-bottom: 8px;"><strong>Notifications personnalisées :</strong> Choisissez ce qui vous
+                    intéresse
+                </li>
+                <li style="margin-bottom: 8px;"><strong>Exports de données :</strong> Sauvegardez vos listes et notes
+                </li>
+            </ul>
+
+        {% elseif communication.type == 'event' %}
+            <p>Préparez-vous pour un événement exceptionnel ! Livridea organise sa première semaine littéraire virtuelle
+                avec des auteurs renommés, des ateliers d'écriture et des surprises.</p>
+
+            <div class="highlight-box">
+                <h3>📅 Semaine Littéraire Livridea 2025</h3>
+                <p><strong>Du 15 au 22 janvier 2025</strong> - Une semaine dédiée à la passion des mots avec des
+                    événements quotidiens gratuits pour tous nos membres.</p>
+            </div>
+
+            <h3 style="color: #1f2937; margin: 24px 0 16px 0;">🎭 Programme de la semaine :</h3>
+            <ul style="color: #4b5563; padding-left: 20px;">
+                <li style="margin-bottom: 8px;"><strong>Lundi :</strong> Masterclass avec Leïla Slimani - "L'art du
+                    récit"
+                </li>
+                <li style="margin-bottom: 8px;"><strong>Mardi :</strong> Atelier d'écriture créative avec nos experts
+                </li>
+                <li style="margin-bottom: 8px;"><strong>Mercredi :</strong> Table ronde "La littérature à l'ère
+                    numérique"
+                </li>
+                <li style="margin-bottom: 8px;"><strong>Jeudi :</strong> Concours de nouvelles - Prix Livridea 2025</li>
+                <li style="margin-bottom: 8px;"><strong>Vendredi :</strong> Rencontre avec 5 auteurs émergents</li>
+                <li style="margin-bottom: 8px;"><strong>Weekend :</strong> Marathon de lecture communautaire</li>
+            </ul>
+
+        {% else %}
+            <p>Voici les dernières actualités de votre communauté littéraire préférée ! Restez informé de tout ce qui se
+                passe dans l'univers Livridea.</p>
+
+            <div class="highlight-box">
+                <h3>📊 Bilan du mois de décembre</h3>
+                <p>Un mois exceptionnel avec une communauté toujours plus active et des découvertes littéraires
+                    passionnantes.</p>
+            </div>
+
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-number">2.847</div>
+                    <div class="stat-label">Nouveaux membres</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">15.293</div>
+                    <div class="stat-label">Avis partagés</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">342</div>
+                    <div class="stat-label">Nouveaux livres</div>
+                </div>
+            </div>
+        {% endif %}
+    {% endif %}
+
+    {% if communication.callToAction %}
+        <div style="text-align: center; margin: 40px 0;">
+            <a href="{{ communication.callToAction.url }}" class="btn">{{ communication.callToAction.text }}</a>
+        </div>
+    {% else %}
+        <div style="text-align: center; margin: 40px 0;">
+            {% if communication.type == 'announcement' %}
+                <a href="{{ newFeatureUrl|default('#') }}" class="btn">Découvrir la nouveauté</a>
+            {% elseif communication.type == 'update' %}
+                <a href="{{ updatesUrl|default('#') }}" class="btn">Voir les nouveautés</a>
+            {% elseif communication.type == 'event' %}
+                <a href="{{ eventUrl|default('#') }}" class="btn">S'inscrire à l'événement</a>
+            {% else %}
+                <a href="{{ siteUrl|default('#') }}" class="btn">Découvrir Livridea</a>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    {% if communication.additionalInfo %}
+        <div style="background: #f9fafb; padding: 20px; border-radius: 12px; margin: 24px 0;">
+            <h3 style="color: #1f2937; margin-bottom: 16px;">ℹ️ Informations complémentaires</h3>
+            {{ communication.additionalInfo|raw }}
+        </div>
+    {% endif %}
+
+    {% if communication.type == 'event' %}
+        <div style="background: #fef3e2; border-left: 4px solid #FF8A00; padding: 20px; margin: 24px 0; border-radius: 0 8px 8px 0;">
+            <h3 style="color: #92400e; margin-bottom: 8px;">🎟️ Inscription gratuite mais obligatoire</h3>
+            <p style="color: #92400e; margin: 0;">Les places sont limitées pour garantir la qualité des échanges.
+                Inscrivez-vous dès maintenant pour ne pas manquer cet événement exceptionnel !</p>
+        </div>
+    {% endif %}
+
+    {% if communication.testimonials %}
+        <h3 style="color: #1f2937; margin: 32px 0 16px 0;">💬 Ce que disent nos membres</h3>
+        {% for testimonial in communication.testimonials %}
+            <blockquote
+                    style="background: #f9fafb; border-left: 4px solid #e5e7eb; padding: 16px; margin: 16px 0; font-style: italic; color: #4b5563;">
+                "{{ testimonial.content }}"
+                <footer style="margin-top: 8px; font-style: normal; color: #6b7280; font-size: 14px;">
+                    - {{ testimonial.author }}
+                </footer>
+            </blockquote>
+        {% endfor %}
+    {% endif %}
+
+    {% if communication.faq %}
+        <h3 style="color: #1f2937; margin: 32px 0 16px 0;">❓ Questions fréquentes</h3>
+        {% for faq in communication.faq %}
+            <div style="margin-bottom: 16px;">
+                <h4 style="color: #374151; margin-bottom: 8px;">{{ faq.question }}</h4>
+                <p style="color: #6b7280; margin: 0; padding-left: 16px;">{{ faq.answer }}</p>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 20px; margin: 32px 0; border-radius: 0 8px 8px 0;">
+        <h3 style="color: #1e40af; margin-bottom: 8px;">💌 Votre avis nous intéresse</h3>
+        <p style="color: #1e40af; margin: 0;">N'hésitez pas à nous faire part de vos retours, suggestions ou questions.
+            Votre opinion est précieuse pour améliorer continuellement Livridea !</p>
+    </div>
+
+    <div style="text-align: center; margin: 30px 0;">
+        <a href="{{ feedbackUrl|default('mailto:contact@livridea.com') }}" class="btn-secondary"
+           style="margin-right: 16px;">Nous faire un retour</a>
+        <a href="{{ communityUrl|default('#') }}" class="btn-secondary">Rejoindre la discussion</a>
+    </div>
+
+    {% if communication.nextCommunication %}
+        <div class="highlight-box">
+            <h3>📮 Prochaine communication</h3>
+            <p>{{ communication.nextCommunication.title }}- {{ communication.nextCommunication.date|date('d F Y') }}</p>
+        </div>
+    {% endif %}
+
+    <p style="margin-top: 32px; font-style: italic; color: #6b7280;">
+        {% if communication.type == 'event' %}
+            Au plaisir de vous retrouver lors de cet événement !<br>
+        {% else %}
+            Merci de faire partie de l'aventure Livridea !<br>
+        {% endif %}
+        L'équipe Livridea 📚✨
+    </p>
+{% endblock %}

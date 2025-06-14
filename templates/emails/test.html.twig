@@ -1,0 +1,209 @@
+{% extends 'emails/base.html.twig' %}
+
+{% block title %}🧪 Test Email - Livridea{% endblock %}
+
+{% block content %}
+    <div style="text-align: center; margin-bottom: 32px;">
+        <div style="background: linear-gradient(135deg, #f3e8ff, #e9d5ff); padding: 8px 16px; border-radius: 20px; display: inline-block; margin-bottom: 16px;">
+            <span style="color: #7c3aed; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">🧪 Email de Test</span>
+        </div>
+        <h2 style="color: #1f2937; margin: 0;">Test de Configuration Email</h2>
+        <p style="color: #6b7280; margin: 8px 0 0 0;">{{ 'now'|date('d F Y à H:i') }}</p>
+    </div>
+
+    <p>Bonjour {{ user.fullName|default(user.username|default('Utilisateur Test')) }},</p>
+
+    <p>Félicitations ! Si vous recevez cet email, cela signifie que la configuration email de Livridea fonctionne
+        parfaitement. Voici un résumé des tests effectués :</p>
+
+    <div class="highlight-box">
+        <h3>✅ Configuration validée</h3>
+        <p>Tous les composants de l'email semblent fonctionner correctement. Vous devriez voir ci-dessous tous les
+            éléments de design et les fonctionnalités testées.</p>
+    </div>
+
+    <h3 style="color: #1f2937; margin: 32px 0 20px 0;">🎨 Test des composants de design</h3>
+
+    {# Test des boutons #}
+    <div style="text-align: center; margin: 24px 0;">
+        <a href="#" class="btn" style="margin-right: 16px;">Bouton Principal</a>
+        <a href="#" class="btn-secondary">Bouton Secondaire</a>
+    </div>
+
+    {# Test des book cards #}
+    <h4 style="color: #374151; margin: 24px 0 16px 0;">📚 Test des cartes de livres</h4>
+
+    <div class="book-card">
+        <div class="book-cover">
+            <div style="background: linear-gradient(135deg, #FF8A00, #e67300); display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">
+                📖
+            </div>
+        </div>
+        <div class="book-info">
+            <h3>Livre de Test</h3>
+            <div class="author">Auteur Fictif</div>
+            <div class="description">Ceci est une description de test pour vérifier l'affichage des informations sur les
+                livres dans les emails Livridea.
+            </div>
+            <div style="margin-top: 8px;">
+                ⭐⭐⭐⭐⭐
+                <span style="color: #6b7280; font-size: 14px; margin-left: 8px;">4.8/5</span>
+            </div>
+        </div>
+    </div>
+
+    {# Test des statistiques #}
+    <h4 style="color: #374151; margin: 24px 0 16px 0;">📊 Test des statistiques</h4>
+
+    <div class="stats">
+        <div class="stat">
+            <div class="stat-number">1.2K</div>
+            <div class="stat-label">Test A</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">854</div>
+            <div class="stat-label">Test B</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">96%</div>
+            <div class="stat-label">Test C</div>
+        </div>
+    </div>
+
+    {# Test des différents types de boxes #}
+    <h4 style="color: #374151; margin: 24px 0 16px 0;">📦 Test des boîtes d'information</h4>
+
+    <div class="highlight-box">
+        <h3>🌟 Highlight Box</h3>
+        <p>Cette boîte utilise les couleurs principales de Livridea pour mettre en évidence des informations
+            importantes.</p>
+    </div>
+
+    <div style="background: #f0fdf4; border-left: 4px solid #10b981; padding: 20px; margin: 24px 0; border-radius: 0 8px 8px 0;">
+        <h3 style="color: #065f46; margin-bottom: 8px;">✅ Boîte de Succès</h3>
+        <p style="color: #065f46; margin: 0;">Message de confirmation ou de réussite avec couleur verte.</p>
+    </div>
+
+    <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 20px; margin: 24px 0; border-radius: 0 8px 8px 0;">
+        <h3 style="color: #1e40af; margin-bottom: 8px;">ℹ️ Boîte d'Information</h3>
+        <p style="color: #1e40af; margin: 0;">Message informatif avec couleur bleue pour attirer l'attention.</p>
+    </div>
+
+    <div style="background: #fef2f2; border-left: 4px solid #ef4444; padding: 20px; margin: 24px 0; border-radius: 0 8px 8px 0;">
+        <h3 style="color: #dc2626; margin-bottom: 8px;">⚠️ Boîte d'Alerte</h3>
+        <p style="color: #dc2626; margin: 0;">Message d'alerte ou d'avertissement avec couleur rouge.</p>
+    </div>
+
+    {# Test des éléments de texte #}
+    <h4 style="color: #374151; margin: 24px 0 16px 0;">📝 Test des éléments de texte</h4>
+
+    <p>Voici un paragraphe normal pour tester la lisibilité du texte dans les emails.</p>
+
+    <blockquote
+            style="border-left: 4px solid #FF8A00; padding-left: 16px; margin: 20px 0; font-style: italic; color: #4b5563;">
+        "Ceci est une citation de test pour vérifier l'affichage des blockquotes dans les emails Livridea."
+    </blockquote>
+
+    <ul style="color: #4b5563; padding-left: 20px;">
+        <li style="margin-bottom: 8px;">Premier élément de liste de test</li>
+        <li style="margin-bottom: 8px;">Deuxième élément avec <strong>texte en gras</strong></li>
+        <li style="margin-bottom: 8px;">Troisième élément avec <em>texte en italique</em></li>
+    </ul>
+
+    <ol style="color: #4b5563; padding-left: 20px;">
+        <li style="margin-bottom: 8px;">Liste numérotée - Premier</li>
+        <li style="margin-bottom: 8px;">Liste numérotée - Deuxième</li>
+        <li style="margin-bottom: 8px;">Liste numérotée - Troisième</li>
+    </ol>
+
+    {# Test des tags #}
+    <h4 style="color: #374151; margin: 24px 0 16px 0;">🏷️ Test des tags</h4>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0;">
+        <span style="background: #eff6ff; color: #1e40af; padding: 4px 12px; border-radius: 20px; font-size: 14px;">Tag Bleu</span>
+        <span style="background: #f0fdf4; color: #065f46; padding: 4px 12px; border-radius: 20px; font-size: 14px;">Tag Vert</span>
+        <span style="background: #fef3e2; color: #92400e; padding: 4px 12px; border-radius: 20px; font-size: 14px;">Tag Orange</span>
+        <span style="background: #fdf4ff; color: #7c2d12; padding: 4px 12px; border-radius: 20px; font-size: 14px;">Tag Violet</span>
+    </div>
+
+    {# Informations techniques #}
+    <h3 style="color: #1f2937; margin: 32px 0 20px 0;">🔧 Informations techniques</h3>
+
+    <div style="background: #f9fafb; padding: 20px; border-radius: 12px; margin: 20px 0; font-family: monospace; font-size: 14px;">
+        <h4 style="margin-bottom: 12px; font-family: inherit;">Variables de test :</h4>
+        <p style="margin: 4px 0;"><strong>Utilisateur :</strong> {{ user.fullName|default('Non défini') }}</p>
+        <p style="margin: 4px 0;"><strong>Email :</strong> {{ user.email|default('Non défini') }}</p>
+        <p style="margin: 4px 0;"><strong>Date :</strong> {{ 'now'|date('d/m/Y H:i:s') }}</p>
+        <p style="margin: 4px 0;"><strong>Environment :</strong> {{ app.environment|default('Non défini') }}</p>
+        <p style="margin: 4px 0;"><strong>Template :</strong> test.html.twig</p>
+    </div>
+
+    {# Test de responsive #}
+    <div style="background: #fef3e2; border-left: 4px solid #FF8A00; padding: 20px; margin: 24px 0; border-radius: 0 8px 8px 0;">
+        <h3 style="color: #92400e; margin-bottom: 8px;">📱 Test Responsive</h3>
+        <p style="color: #92400e; margin: 0;">Cet email devrait s'adapter automatiquement aux écrans mobiles. Les
+            boutons et cartes devraient se réorganiser pour une lecture optimale sur smartphone.</p>
+    </div>
+
+    {# Tests des liens #}
+    <h3 style="color: #1f2937; margin: 32px 0 20px 0;">🔗 Test des liens</h3>
+
+    <p>Tests des différents types de liens :</p>
+    <ul style="color: #4b5563; padding-left: 20px;">
+        <li style="margin-bottom: 8px;"><a href="{{ siteUrl|default('https://livridea.com') }}" style="color: #FF8A00;">Lien
+                vers le site principal</a></li>
+        <li style="margin-bottom: 8px;"><a href="{{ loginUrl|default('#') }}" style="color: #FF8A00;">Lien de
+                connexion</a></li>
+        <li style="margin-bottom: 8px;"><a href="{{ unsubscribeUrl|default('#') }}" style="color: #9ca3af;">Lien de
+                désabonnement</a></li>
+        <li style="margin-bottom: 8px;"><a href="mailto:support@livridea.com" style="color: #FF8A00;">Lien email de
+                support</a></li>
+    </ul>
+
+    <div style="text-align: center; margin: 40px 0;">
+        <a href="{{ siteUrl|default('https://livridea.com') }}" class="btn">Retour sur Livridea</a>
+    </div>
+
+    <div class="highlight-box">
+        <h3>🎯 Résultat du Test</h3>
+        <p>Si tous les éléments ci-dessus s'affichent correctement, avec les bonnes couleurs et la bonne mise en forme,
+            alors votre configuration email Livridea est parfaitement opérationnelle !</p>
+    </div>
+
+    <h3 style="color: #1f2937; margin: 32px 0 16px 0;">📋 Checklist de validation</h3>
+
+    <div style="background: #f9fafb; padding: 20px; border-radius: 12px;">
+        <h4 style="margin-bottom: 16px;">Vérifiez que :</h4>
+        <ul style="list-style: none; padding: 0;">
+            <li style="margin-bottom: 8px; display: flex; align-items: center;">
+                <span style="color: #10b981; margin-right: 8px;">✅</span>
+                L'email s'affiche correctement dans votre client email
+            </li>
+            <li style="margin-bottom: 8px; display: flex; align-items: center;">
+                <span style="color: #10b981; margin-right: 8px;">✅</span>
+                Les couleurs Livridea (orange #FF8A00) sont présentes
+            </li>
+            <li style="margin-bottom: 8px; display: flex; align-items: center;">
+                <span style="color: #10b981; margin-right: 8px;">✅</span>
+                Les boutons sont cliquables et bien stylés
+            </li>
+            <li style="margin-bottom: 8px; display: flex; align-items: center;">
+                <span style="color: #10b981; margin-right: 8px;">✅</span>
+                Les images et icônes s'affichent
+            </li>
+            <li style="margin-bottom: 8px; display: flex; align-items: center;">
+                <span style="color: #10b981; margin-right: 8px;">✅</span>
+                Le texte est lisible et bien formaté
+            </li>
+            <li style="margin-bottom: 8px; display: flex; align-items: center;">
+                <span style="color: #10b981; margin-right: 8px;">✅</span>
+                L'email est responsive sur mobile
+            </li>
+        </ul>
+    </div>
+
+    <p style="margin-top: 32px; font-style: italic; color: #6b7280;">
+        Configuration email validée avec succès !<br>
+        L'équipe technique Livridea 🔧✨
+    </p>
+{% endblock %}
