@@ -1,0 +1,195 @@
+{% extends 'home/desktop/base_desktop.html.twig' %}
+
+{% block title %}Profil de {{ user.username }}{% endblock %}
+
+{% block content %}
+    <div class="max-w-5xl mx-auto mt-8 mb-16 px-4">
+
+        <!-- Section Couverture et Profil -->
+        {% include 'dashboard_user/desktop/profile/profileOther/components/header.html.twig' %}
+
+        <!-- Navigation des onglets -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mt-6">
+            <div class="border-b border-gray-100">
+                <nav class="flex">
+                    <button class="tab-link flex-1 py-4 px-6 text-center font-semibold transition-all duration-200 border-b-2 border-[#FF8A00] text-[#FF8A00] bg-orange-50"
+                            data-tab="posts">
+                        <div class="flex items-center justify-center">
+                            <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                            </svg>
+                            Publications
+                        </div>
+                    </button>
+                    <button class="tab-link flex-1 py-4 px-6 text-center font-medium transition-all duration-200 text-gray-600 hover:text-[#FF8A00] hover:bg-gray-50"
+                            data-tab="photos">
+                        <div class="flex items-center justify-center">
+                            <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                            </svg>
+                            Photos
+                        </div>
+                    </button>
+                    <button class="tab-link flex-1 py-4 px-6 text-center font-medium transition-all duration-200 text-gray-600 hover:text-[#FF8A00] hover:bg-gray-50"
+                            data-tab="friends">
+                        <div class="flex items-center justify-center">
+                            <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zm4 18v-6h2.5l-2.54-7.63A2.996 2.996 0 0 0 17.13 7H16c-.8 0-1.54.34-2.05.89L12 11l-1.95-3.11C9.54 7.34 8.8 7 8 7H6.87c-1.31 0-2.41.83-2.83 2.06L1.5 16H4v6h4v-6h2v6h4v-6h2v6h4z"/>
+                            </svg>
+                            Amis
+                        </div>
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Contenus des onglets -->
+            <div class="p-6">
+                <div id="posts-content">
+                    {% if user.posts|length > 0 %}
+                        {% include 'home/desktop/components/posts.html.twig' %}
+                    {% else %}
+                        <div class="text-center py-12">
+                            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-8 h-8 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">Aucune publication</h3>
+                            <p class="text-gray-500">{{ user.fullName }} n'a pas encore publié de contenu.</p>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div id="friends-content" class="hidden"></div>
+
+                <div id="photos-content" class="hidden">
+                    <div class="text-center py-12">
+                        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Aucune photo</h3>
+                        <p class="text-gray-500">Les photos de {{ user.fullName }} apparaîtront ici.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Gestion des onglets avec animation
+            document.querySelectorAll('.tab-link').forEach(link => {
+                link.addEventListener('click', function (event) {
+                    event.preventDefault();
+
+                    // Réinitialiser tous les onglets
+                    document.querySelectorAll('.tab-link').forEach(l => {
+                        l.classList.remove('border-[#FF8A00]', 'text-[#FF8A00]', 'bg-orange-50');
+                        l.classList.add('text-gray-600', 'hover:text-[#FF8A00]', 'hover:bg-gray-50');
+                    });
+
+                    // Activer l'onglet sélectionné
+                    this.classList.add('border-[#FF8A00]', 'text-[#FF8A00]', 'bg-orange-50');
+                    this.classList.remove('text-gray-600', 'hover:text-[#FF8A00]', 'hover:bg-gray-50');
+
+                    // Masquer tous les contenus
+                    document.getElementById('posts-content').classList.add('hidden');
+                    document.getElementById('friends-content').classList.add('hidden');
+                    document.getElementById('photos-content').classList.add('hidden');
+
+                    const tab = this.getAttribute('data-tab');
+
+                    if (tab === 'posts') {
+                        document.getElementById('posts-content').classList.remove('hidden');
+                    } else if (tab === 'friends') {
+                        const friendsContent = document.getElementById('friends-content');
+                        friendsContent.classList.remove('hidden');
+
+                        if (!friendsContent.innerHTML.trim()) {
+                            // Chargement dynamique des amis
+                            friendsContent.innerHTML = `
+                                <div class="flex items-center justify-center py-8">
+                                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FF8A00] mr-4"></div>
+                                    <span class="text-gray-500">Chargement des amis...</span>
+                                </div>
+                            `;
+
+                            fetch('{{ path("app_profile_friends", {"id": user.id}) }}', {
+                                headers: {'X-Requested-With': 'XMLHttpRequest'}
+                            })
+                                .then(response => response.text())
+                                .then(html => {
+                                    friendsContent.innerHTML = html;
+
+                                    // Ajouter les event listeners pour les boutons de suppression
+                                    friendsContent.querySelectorAll('.remove-friend-btn').forEach(btn => {
+                                        btn.addEventListener('click', function (e) {
+                                            e.preventDefault();
+                                            let friendId = this.getAttribute('data-friend-id');
+                                            removeFriend(friendId, this);
+                                        });
+                                    });
+                                })
+                                .catch(error => {
+                                    friendsContent.innerHTML = `
+                                    <div class="text-center py-12">
+                                        <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <svg class="w-8 h-8 text-red-400" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                            </svg>
+                                        </div>
+                                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Erreur de chargement</h3>
+                                        <p class="text-gray-500">Impossible de charger la liste des amis.</p>
+                                    </div>
+                                `;
+                                    console.error('Erreur lors du chargement des amis:', error);
+                                });
+                        }
+                    } else if (tab === 'photos') {
+                        document.getElementById('photos-content').classList.remove('hidden');
+                    }
+                }});
+            });
+
+            function removeFriend(friendId, button) {
+                if (confirm('Êtes-vous sûr de vouloir retirer cet ami ?')) {
+                    fetch(`/friend/remove/${friendId}`, {
+                        method: "POST",
+                        headers: {"X-Requested-With": "XMLHttpRequest"}
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'removed') {
+                                let friendElement = button.closest('.friend-item');
+                                if (friendElement) {
+                                    // Animation de suppression
+                                    friendElement.style.transition = 'all 0.3s ease';
+                                    friendElement.style.opacity = '0';
+                                    friendElement.style.transform = 'translateX(-100%)';
+
+                                    setTimeout(() => {
+                                        friendElement.remove();
+
+                                        // Mettre à jour le compteur d'amis
+                                        const friendsCountEl = document.getElementById('friends-count');
+                                        if (friendsCountEl) {
+                                            const currentCount = parseInt(friendsCountEl.textContent);
+                                            friendsCountEl.textContent = Math.max(0, currentCount - 1);
+                                        }
+                                    }, 300);
+                                }
+                            } else {
+                                alert(data.error || 'Erreur lors de la suppression');
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Erreur lors de la suppression de l'amitié:", error);
+                            alert('Erreur de connexion');
+                        });
+                }
+            }
+        });
+    </script>
+{% endblock %}

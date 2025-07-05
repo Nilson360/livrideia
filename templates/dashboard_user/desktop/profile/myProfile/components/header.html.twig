@@ -1,0 +1,122 @@
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <!-- Image de couverture -->
+    <div class="h-64 relative bg-gradient-to-br from-[#FF8A00] to-[#e67300] flex items-center justify-center">
+        {% if user.coverPath is defined and user.coverPath %}
+            <img src="{{ asset(user.coverPath) }}" alt="Couverture de {{ user.username }}"
+                 class="w-full h-full object-cover">
+        {% else %}
+            <!-- Pattern par défaut avec motifs littéraires -->
+            <div class="absolute inset-0 opacity-20">
+                <svg class="w-full h-full" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <pattern id="books" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                        <circle cx="10" cy="10" r="1" fill="white" opacity="0.3"/>
+                        <rect x="8" y="6" width="4" height="8" fill="white" opacity="0.2"/>
+                    </pattern>
+                    <rect width="100" height="100" fill="url(#books)"/>
+                </svg>
+            </div>
+            <div class="relative z-10 text-white text-center">
+                <svg class="w-16 h-16 mx-auto mb-4 opacity-60" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 6.90909C10.8999 5.50893 9.20406 4.10877 5.00119 4.00602C4.72513 3.99928 4.5 4.22351 4.5 4.49965C4.5 6.54813 4.5 14.3034 4.5 16.597C4.5 16.8731 4.72515 17.09 5.00114 17.099C9.20405 17.2364 10.8999 19.0998 12 20.5M12 6.90909C13.1001 5.50893 14.7959 4.10877 18.9988 4.00602C19.2749 3.99928 19.5 4.21847 19.5 4.49461C19.5 6.78447 19.5 14.3064 19.5 16.5963C19.5 16.8724 19.2749 17.09 18.9989 17.099C14.796 17.2364 13.1001 19.0998 12 20.5M12 6.90909L12 20.5"/>
+                </svg>
+                <p class="text-lg font-medium opacity-80">Espace littéraire personnel</p>
+            </div>
+        {% endif %}
+
+        <!-- Bouton pour modifier la couverture -->
+        {% if app.user and app.user.id == user.id %}
+            <form id="cover-form" action="{{ path('dashboard_user_image_upload', {'type':'cover'}) }}" method="post"
+                  enctype="multipart/form-data" class="absolute top-4 right-4">
+                <input type="file" id="cover-file-input" name="coverFile" accept="image/png, image/jpeg, image/jpg"
+                       class="hidden" onchange="validateAndSubmitImage(this, 'cover-form')">
+                <label for="cover-file-input"
+                       class="cursor-pointer bg-white/90 hover:bg-white text-gray-700 rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 group flex items-center justify-center">
+                    <svg class="w-5 h-5 group-hover:scale-110 transition-transform" viewBox="0 0 24 24"
+                         fill="currentColor">
+                        <path d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                        <path d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                </label>
+            </form>
+        {% endif %}
+    </div>
+
+    <!-- Section Profil -->
+    <div class="p-6 relative">
+        <!-- Avatar -->
+        <div class="flex flex-col sm:flex-row items-center sm:items-start -mt-20 sm:-mt-16">
+            <div class="relative group">
+                <div class="w-32 h-32 rounded-full border-4 border-white bg-gray-100 overflow-hidden shadow-xl relative">
+                    {% if user.avatarPath is defined and user.avatarPath %}
+                        <img src="{{ asset(user.avatarPath) }}" alt="Photo de profil de {{ user.username }}"
+                             class="object-cover w-full h-full">
+                    {% else %}
+                        <div class="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+                            <svg class="w-16 h-16 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                            </svg>
+                        </div>
+                    {% endif %}
+
+                    <!-- Badge de statut en ligne -->
+                    <div class="absolute bottom-2 right-2 w-6 h-6 bg-emerald-500 border-3 border-white rounded-full shadow-sm"></div>
+
+                    <!-- Overlay pour modification avatar -->
+                    {% if app.user and app.user.id == user.id %}
+                        <form id="avatar-form" action="{{ path('dashboard_user_image_upload', {'type':'avatar'}) }}"
+                              method="post"
+                              enctype="multipart/form-data"
+                              class="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-full">
+                            <input type="file" id="avatar-file-input" name="avatarFile"
+                                   accept="image/png, image/jpeg, image/jpg" class="hidden"
+                                   onchange="validateAndSubmitImage(this, 'avatar-form')">
+                            <label for="avatar-file-input"
+                                   class="cursor-pointer text-white flex flex-col items-center">
+                                <svg class="w-8 h-8 mb-1" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                                    <path d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                                <span class="text-xs font-medium">Modifier</span>
+                            </label>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Informations utilisateur -->
+            <div class="mt-6 sm:mt-16 sm:ml-8 text-center sm:text-left flex-1">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-800 mb-2">{{ user.fullName }}</h1>
+                        <p class="text-[#FF8A00] font-semibold text-lg mb-1">@{{ user.username }}</p>
+                        <div class="flex items-center justify-center sm:justify-start text-gray-500 text-sm mb-4">
+                            <svg class="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                            <span>Membre depuis {{ user.createdAt|date('M Y') }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Boutons d'action -->
+                    {% include 'dashboard_user/desktop/profile/myProfile/components/actions.html.twig' %}
+                </div>
+
+                <!-- Statistiques -->
+                <div class="flex justify-center sm:justify-start gap-8 mt-6">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-gray-800">{{ user.posts|length }}</div>
+                        <div class="text-sm text-gray-500">Publications</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-gray-800">{{ friends|length }}</div>
+                        <div class="text-sm text-gray-500">Amis</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-gray-800">{{ user.likes|length }}</div>
+                        <div class="text-sm text-gray-500">J'aime</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

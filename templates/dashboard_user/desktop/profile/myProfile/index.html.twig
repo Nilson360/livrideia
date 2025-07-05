@@ -1,0 +1,134 @@
+{% extends 'home/desktop/base_desktop.html.twig' %}
+
+{% block title %}Profil de {{ user.username }}{% endblock %}
+
+{% block content %}
+    <div class="max-w-5xl mx-auto mt-8 mb-16 px-4">
+
+        <!-- Section Couverture et Profil -->
+            {% include 'dashboard_user/desktop/profile/myProfile/components/header.html.twig' %}
+
+        <!-- Navigation des onglets -->
+        {% include 'dashboard_user/desktop/profile/myProfile/components/tabs_navigations.html.twig' %}
+    </div>
+
+    <!-- Notification d'erreur -->
+    <div id="error-alert"
+         class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-xl shadow-lg hidden z-50 flex items-center">
+        <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+        </svg>
+        <span>Seules les images (JPG, JPEG, PNG) sont acceptées.</span>
+    </div>
+
+    <!-- Animation de chargement -->
+    <div id="upload-loader" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center">
+        <div class="bg-white rounded-xl p-6 shadow-xl">
+            <div class="flex items-center">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FF8A00] mr-4"></div>
+                <span class="text-gray-700 font-medium">Téléchargement en cours...</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Gestion des onglets avec animation
+            document.querySelectorAll('.tab-link').forEach(link => {
+                link.addEventListener('click', function (event) {
+                    event.preventDefault();
+
+                    // Réinitialiser tous les onglets
+                    document.querySelectorAll('.tab-link').forEach(l => {
+                        l.classList.remove('border-[#FF8A00]', 'text-[#FF8A00]', 'bg-orange-50');
+                        l.classList.add('text-gray-600', 'hover:text-[#FF8A00]', 'hover:bg-gray-50');
+                    });
+
+                    // Activer l'onglet sélectionné
+                    this.classList.add('border-[#FF8A00]', 'text-[#FF8A00]', 'bg-orange-50');
+                    this.classList.remove('text-gray-600', 'hover:text-[#FF8A00]', 'hover:bg-gray-50');
+
+                    // Masquer tous les contenus
+                    document.getElementById('posts-content').classList.add('hidden');
+                    document.getElementById('friends-content').classList.add('hidden');
+                    document.getElementById('photos-content').classList.add('hidden');
+
+                    const tab = this.getAttribute('data-tab');
+
+                    if (tab === 'posts') {
+                        document.getElementById('posts-content').classList.remove('hidden');
+                    } else if (tab === 'friends') {
+                        const friendsContent = document.getElementById('friends-content');
+                        friendsContent.classList.remove('hidden');
+
+                        if (!friendsContent.innerHTML.trim()) {
+                            // Chargement dynamique des amis
+                            friendsContent.innerHTML = `
+                                <div class="flex items-center justify-center py-8">
+                                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FF8A00] mr-4"></div>
+                                    <span class="text-gray-500">Chargement des amis...</span>
+                                </div>
+                            `;
+
+                            fetch('{{ path("app_profile_friends", {"id": user.id}) }}', {
+                                headers: {'X-Requested-With': 'XMLHttpRequest'}
+                            })
+                                .then(response => response.text())
+                                .then(html => {
+                                    friendsContent.innerHTML = html;
+                                })
+                                .catch(error => {
+                                    friendsContent.innerHTML = `
+                                    <div class="text-center py-12">
+                                        <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <svg class="w-8 h-8 text-red-400" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                            </svg>
+                                        </div>
+                                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Erreur de chargement</h3>
+                                        <p class="text-gray-500">Impossible de charger la liste des amis.</p>
+                                    </div>
+                                `;
+                                });
+                        }
+                    } else if (tab === 'photos') {
+                        document.getElementById('photos-content').classList.remove('hidden');
+                    }
+                });
+            });
+        });
+
+        // Fonction pour valider et soumettre l'upload d'images
+        function validateAndSubmitImage(input, formId) {
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+            const errorAlert = document.getElementById('error-alert');
+            const loader = document.getElementById('upload-loader');
+
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+
+                if (allowedTypes.includes(file.type)) {
+                    // Afficher le loader
+                    loader.classList.remove('hidden');
+
+                    // Soumettre le formulaire
+                    document.getElementById(formId).submit();
+                } else {
+                    // Afficher l'erreur
+                    errorAlert.classList.remove('hidden');
+                    setTimeout(() => {
+                        errorAlert.classList.add('hidden');
+                    }, 4000);
+
+                    // Réinitialiser l'input
+                    input.value = '';
+                }
+            }
+        }
+
+        // Masquer le loader quand la page se recharge (après upload)
+        window.addEventListener('beforeunload', function() {
+            document.getElementById('upload-loader').classList.add('hidden');
+        });
+    </script>
+{% endblock %}

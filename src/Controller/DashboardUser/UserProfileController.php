@@ -31,7 +31,6 @@ class UserProfileController extends AbstractController
         private readonly DeviceDetectorService  $deviceDetector,
         private readonly FileUploader           $fileUploader,
         private readonly PostRepository         $postRepository,
-        private readonly UserRepository         $userRepository,
         private readonly FriendRepository       $friendRepository,
         private readonly RequestStack           $requestStack,
     )
@@ -81,7 +80,7 @@ class UserProfileController extends AbstractController
         }
 
         // Version desktop par défaut
-        return $this->render('dashboard_user/desktop/profile.html.twig', $templateData);
+        return $this->render('dashboard_user/desktop/profile/myProfile/index.html.twig', $templateData);
     }
 
     #[Route('/profile/edit', name: 'dashboard_user_profile_edit', methods: ['GET', 'POST'])]
@@ -125,7 +124,7 @@ class UserProfileController extends AbstractController
         }
 
         // Version desktop par défaut
-        return $this->render('dashboard_user/desktop/edit_profile.html.twig', $templateData);
+        return $this->render('dashboard_user/desktop/profile/myProfile/edit_profile.html.twig', $templateData);
     }
 
     #[Route('/profile/change-password', name: 'dashboard_user_profile_change_password', methods: ['GET', 'POST'])]
@@ -174,7 +173,7 @@ class UserProfileController extends AbstractController
         }
 
         // Version desktop par défaut
-        return $this->render('dashboard_user/desktop/change_password.html.twig', $templateData);
+        return $this->render('dashboard_user/desktop/profile/myProfile/change_password.html.twig', $templateData);
     }
 
     #[Route('/profile/{id}/friends', name: 'app_profile_friends', methods: ['GET'])]
@@ -206,34 +205,6 @@ class UserProfileController extends AbstractController
 
         // Version desktop par défaut
         return $this->render('dashboard_user/desktop/friends.html.twig', $templateData);
-    }
-
-    #[Route('/utilisateur/{username}', name: 'dashboard_user_profile_other')]
-    public function userProfileOther(string $username): Response
-    {
-        // Trouver l'utilisateur par son nom d'utilisateur
-        $user = $this->userRepository->findOneBy(['username' => $username]);
-
-        if (!$user) {
-            throw $this->createNotFoundException('Utilisateur non trouvé');
-        }
-
-        // Vérifier si l'utilisateur connecté consulte son propre profil
-        $currentUser = $this->getUser();
-        if ($currentUser && $currentUser->getId() === $user->getId()) {
-            return $this->redirectToRoute('dashboard_user_profile');
-        }
-
-        $templateData = [
-            'user' => $user,
-            'posts' => $user->getPosts(),
-        ];
-
-        if ($this->deviceDetector->isMobile()) {
-            return $this->render('dashboard_user/mobile/profile/profileOther/profile_other.html.twig', $templateData);
-        }
-
-        return $this->render('dashboard_user/desktop/profile_other.html.twig', $templateData);
     }
 
     #[Route('/profile/image-upload/{type}', name: 'dashboard_user_image_upload', requirements: ['type' => 'avatar|cover'], methods: ['POST'])]
