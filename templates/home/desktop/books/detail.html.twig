@@ -34,9 +34,10 @@
                     <div class="sticky top-8">
                         <!-- Image du livre -->
                         <div class="bg-white rounded-2xl shadow-sm overflow-hidden mb-6">
-                            <img src="{{ book.cover }}"
+                            <img src="{{asset(book.coverFileName|default('uploads/books/default.png')) }}"
                                  alt="{{ book.title }}"
-                                 class="w-full h-auto object-cover">
+                                 class="w-full h-auto object-cover"
+                                 onerror="this.src='/uploads/books/default.png';">
                         </div>
 
                         <!-- Actions principales -->
@@ -46,7 +47,11 @@
                                     <svg class="w-5 h-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                                         <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
                                     </svg>
-                                    Ajouter au panier - {{ book.price }}€
+                                    {% if book.price %}
+                                        Ajouter au panier - {{ book.price }}€
+                                    {% else %}
+                                        Ajouter au panier
+                                    {% endif %}
                                 </button>
                             {% else %}
                                 <button disabled
@@ -100,12 +105,16 @@
                                         <span class="font-medium text-gray-900">{{ book.language }}</span>
                                     </div>
                                 {% endif %}
-                                {% if book.publication_date %}
+                                {% if book.publicationDate %}
                                     <div class="flex justify-between">
                                         <span class="text-gray-500">Parution :</span>
-                                        <span class="font-medium text-gray-900">{{ book.publication_date|date('d/m/Y') }}</span>
+                                        <span class="font-medium text-gray-900">{{ book.publicationDate|date('d/m/Y') }}</span>
                                     </div>
                                 {% endif %}
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500">Catégorie :</span>
+                                    <span class="font-medium text-gray-900">{{ book.category.name }}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -119,7 +128,7 @@
                             <div class="flex-1">
                                 <div class="flex items-center gap-2 mb-2">
                                     <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-sm font-medium">
-                                        {{ book.category }}
+                                        {{ book.category.name }}
                                     </span>
                                     {% if book.rating %}
                                         <div class="flex items-center bg-yellow-50 text-yellow-700 px-3 py-1 rounded-full">
@@ -145,11 +154,11 @@
                     </div>
 
                     <!-- Description détaillée -->
-                    {% if book.long_description %}
+                    {% if book.longDescription %}
                         <div class="bg-white rounded-2xl shadow-sm p-6 mb-6">
                             <h2 class="text-2xl font-bold text-gray-900 mb-4">À propos de ce livre</h2>
                             <div class="prose prose-lg max-w-none text-gray-700">
-                                <p>{{ book.long_description }}</p>
+                                <p>{{ book.longDescription }}</p>
                             </div>
                         </div>
                     {% endif %}
@@ -262,25 +271,43 @@
                     </div>
 
                     <!-- Livres similaires -->
-                    <div class="bg-white rounded-2xl shadow-sm p-6">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-6">Vous aimerez aussi</h2>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {% for i in 1..3 %}
-                                <div class="group cursor-pointer">
-                                    <div class="aspect-w-3 aspect-h-4 mb-3">
-                                        <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=200&h=300&fit=crop"
-                                             alt="Livre similaire"
-                                             class="w-full h-40 object-cover rounded-lg group-hover:scale-105 transition-transform duration-200">
-                                    </div>
-                                    <h3 class="font-semibold text-gray-900 text-sm mb-1 group-hover:text-emerald-600 transition-colors">
-                                        Livre recommandé {{ i }}
-                                    </h3>
-                                    <p class="text-emerald-600 text-sm font-medium">Auteur {{ i }}</p>
-                                    <p class="text-gray-900 font-bold text-sm mt-1">{{ random(5, 20) }}.90€</p>
-                                </div>
-                            {% endfor %}
+                    {% if similarBooks is defined and similarBooks|length > 0 %}
+                        <div class="bg-white rounded-2xl shadow-sm p-6">
+                            <h2 class="text-2xl font-bold text-gray-900 mb-6">Vous aimerez aussi</h2>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {% for similarBook in similarBooks %}
+                                    <a href="{{ path('app_book_detail', {id: similarBook.id}) }}" class="group cursor-pointer">
+                                        <div class="aspect-w-3 aspect-h-4 mb-3">
+                                            <img src="{{ similarBook.coverUrl }}"
+                                                 alt="{{ similarBook.title }}"
+                                                 class="w-full h-40 object-cover rounded-lg group-hover:scale-105 transition-transform duration-200"
+                                                 onerror="this.src='/uploads/books/default.png';">
+                                        </div>
+                                        <h3 class="font-semibold text-gray-900 text-sm mb-1 group-hover:text-emerald-600 transition-colors line-clamp-2">
+                                            {{ similarBook.title }}
+                                        </h3>
+                                        <p class="text-emerald-600 text-sm font-medium">{{ similarBook.author }}</p>
+                                        {% if similarBook.price %}
+                                            <p class="text-gray-900 font-bold text-sm mt-1">{{ similarBook.price }}€</p>
+                                        {% endif %}
+                                    </a>
+                                {% endfor %}
+                            </div>
                         </div>
-                    </div>
+                    {% else %}
+                        <!-- Fallback pour livres similaires si pas de données -->
+                        <div class="bg-white rounded-2xl shadow-sm p-6">
+                            <h2 class="text-2xl font-bold text-gray-900 mb-6">Vous aimerez aussi</h2>
+                            <div class="text-center py-8">
+                                <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                                    <svg class="w-8 h-8 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 6.90909C10.8999 5.50893 9.20406 4.10877 5.00119 4.00602C4.72513 3.99928 4.5 4.22351 4.5 4.49965C4.5 6.54813 4.5 14.3034 4.5 16.597C4.5 16.8731 4.72515 17.09 5.00114 17.099C9.20405 17.2364 10.8999 19.0998 12 20.5M12 6.90909C13.1001 5.50893 14.7959 4.10877 18.9988 4.00602C19.2749 3.99928 19.5 4.21847 19.5 4.49461C19.5 6.78447 19.5 14.3064 19.5 16.5963C19.5 16.8724 19.2749 17.09 18.9989 17.099C14.796 17.2364 13.1001 19.0998 12 20.5M12 6.90909L12 20.5" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                                    </svg>
+                                </div>
+                                <p class="text-gray-500">Aucune recommandation disponible pour le moment.</p>
+                            </div>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -308,6 +335,13 @@
             right: 0;
             bottom: 0;
             left: 0;
+        }
+
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
     </style>
 {% endblock %}

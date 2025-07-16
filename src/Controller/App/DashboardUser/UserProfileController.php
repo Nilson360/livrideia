@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\DashboardUser;
+namespace App\Controller\App\DashboardUser;
 
 use App\Entity\Friend;
 use App\Entity\Post;
@@ -10,7 +10,6 @@ use App\Form\PostFormType;
 use App\Form\ProfileType;
 use App\Repository\FriendRepository;
 use App\Repository\PostRepository;
-use App\Repository\UserRepository;
 use App\Service\DeviceDetectorService;
 use App\Service\FileUploader;
 use Doctrine\ORM\EntityManagerInterface;

@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\App;
 
 use App\Entity\Message;
-use App\Entity\User;
 use App\Repository\MessageRepository;
 use App\Repository\UserRepository;
 use App\Service\DeviceDetectorService;

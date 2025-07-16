@@ -1,15 +1,10 @@
 <?php
 
-namespace App\Controller\DashboardUser;
+namespace App\Controller\App\DashboardUser;
 
-use App\Repository\FriendRepository;
-use App\Repository\PostRepository;
 use App\Repository\UserRepository;
 use App\Service\DeviceDetectorService;
-use App\Service\FileUploader;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -19,15 +14,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class UserOtherProfileController extends AbstractController
 {
     public function __construct(
-        private readonly EntityManagerInterface $em,
-        private readonly DeviceDetectorService  $deviceDetector,
-        private readonly FileUploader           $fileUploader,
-        private readonly PostRepository         $postRepository,
-        private readonly UserRepository         $userRepository,
-        private readonly FriendRepository       $friendRepository,
-        private readonly RequestStack           $requestStack,
+        private readonly DeviceDetectorService $deviceDetector,
+        private readonly UserRepository        $userRepository,
     )
-
     {
     }
 

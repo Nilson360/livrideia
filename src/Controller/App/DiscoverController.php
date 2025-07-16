@@ -1,23 +1,22 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\App;
 
-use App\Entity\Friend;
-use App\Entity\User;
-use App\Entity\Post;
-use App\Entity\Like;
 use App\Entity\Comment;
+use App\Entity\Friend;
+use App\Entity\Post;
+use App\Entity\User;
 use App\Repository\FriendRepository;
-use App\Repository\UserRepository;
-use App\Repository\PostRepository;
 use App\Repository\LikeRepository;
-use App\Service\NotificationService;
+use App\Repository\PostRepository;
+use App\Repository\UserRepository;
 use App\Service\DeviceDetectorService;
+use App\Service\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 

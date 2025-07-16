@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\App;
 
 use App\Entity\Contact;
 use App\Entity\Post;
