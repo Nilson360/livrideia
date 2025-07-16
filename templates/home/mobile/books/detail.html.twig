@@ -66,8 +66,8 @@
             <div class="mb-6">
                 <h2 class="text-lg font-bold text-gray-900 mb-3">Description</h2>
                 <p class="text-gray-700 text-sm leading-relaxed">{{ book.description }}</p>
-                {% if book.description %}
-                    <p class="text-gray-700 text-sm leading-relaxed mt-3">{{ book.description }}</p>
+                {% if book.long_description  is defined and book.long_description is not null %}
+                    <p class="text-gray-700 text-sm leading-relaxed mt-3">{{ book.long_description }}</p>
                 {% endif %}
             </div>
 
@@ -99,7 +99,7 @@
                             <span class="font-medium text-gray-900">{{ book.language }}</span>
                         </div>
                     {% endif %}
-                    {% if book.publication_date %}
+                    {% if book.publication_date is defined and book.publication_date not null %}
                         <div class="flex justify-between">
                             <span class="text-gray-500">Parution :</span>
                             <span class="font-medium text-gray-900">{{ book.publication_date|date('d/m/Y') }}</span>
